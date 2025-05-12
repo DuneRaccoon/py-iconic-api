@@ -1,3 +1,47 @@
+class UpdateProductSetRequest(BaseRequestParamsModel):
+    """
+    Request model for updating a product set.
+    """
+    name: Optional[str] = None
+    description: Optional[str] = None
+    parent_sku: Optional[str] = None
+    brand_id: Optional[int] = None
+    primary_category_id: Optional[int] = None
+    categories: Optional[List[int]] = None
+    attributes: Optional[Dict[str, Any]] = None
+    size_system: Optional[int] = None
+    browse_nodes: Optional[List[int]] = None
+
+class GetCountByAttributeSetRequest(BaseRequestParamsModel):
+    """
+    Request model for getting count of product sets by attribute set.
+    """
+    status: Optional[Literal["all", "active", "inactive-all", "deleted-all", "image-missing", 
+                            "pending", "rejected", "disapproved", "sold-out", 
+                            "not-authorized", "price-rejected"]] = None
+    keyword: Optional[Union[str, List[str]]] = None
+    create_date_start: Optional[date_aliased] = None
+    create_date_end: Optional[date_aliased] = None
+    update_date_start: Optional[date_aliased] = None
+    update_date_end: Optional[date_aliased] = None
+    brand_ids: Optional[List[int]] = None
+    tags: Optional[List[str]] = None
+    visibility: Optional[Literal["Syncing"]] = None
+    in_stock: Optional[bool] = None
+    reserved: Optional[bool] = None
+    category_ids: Optional[List[int]] = None
+    only_with_tags: Optional[bool] = None
+    parent_sku: Optional[str] = None
+    group: Optional[str] = None
+
+class AddProductSetImageRequest(BaseRequestParamsModel):
+    """
+    Request model for adding an image to a product set.
+    """
+    position: Optional[int] = None
+    display_url: Optional[str] = None
+    overwrite: bool = False
+
 from __future__ import annotations
 
 from datetime import date as date_aliased, datetime as datetime_aliased
@@ -15,7 +59,9 @@ from ..models import (
     ShipmentTypes,
     FulfillmentType,
     Customer,
-    Provider
+    Provider,
+    ProductSetRead,
+    ProductSetCreated
 )
 
 from ..utils import clean_params
@@ -90,23 +136,36 @@ class ListOrdersRequest(BaseRequestParamsModel):
     
     def to_api_params(self) -> Dict[str, Any]:
         if self.section is not None:
-            if isinstance(section, OrderStatus):
-                section = f"status_{section.value}"
-            elif isinstance(section, ShipmentProviderType):
-                section = f"group_{section.value}"
+            if isinstance(self.section, OrderStatus):
+                section = f"status_{self.section.value}"
+            elif isinstance(self.section, ShipmentProviderType):
+                section = f"group_{self.section.value}"
+            else:
+                section = self.section
+        else:
+            section = None
         
         if self.customers is not None:
             customers_ = []  
             for customer in self.customers:
                 customers_.extend([customer.firstName, customer.lastName])
+        else:
+            customers_ = None
         
         if self.shipment_providers is not None:
             shipment_providers = [provider.id for provider in self.shipment_providers]
+        else:
+            shipment_providers = None
         
         if self.fulfilment_type is not None:
             fulfilment_type = self.fulfilment_type.value
+        else:
+            fulfilment_type = None
+            
         if self.shipment_type is not None:
             shipment_type = self.shipment_type.value
+        else:
+            shipment_type = None
             
         params = {k: v for k,v in {
             **self.model_dump(exclude_none=True),
@@ -115,7 +174,53 @@ class ListOrdersRequest(BaseRequestParamsModel):
             "shipment_providers": shipment_providers,
             "fulfilment_type": fulfilment_type,
             "shipment_type": shipment_type,
-        }.items() if k != 'x_context'}
+        }.items() if k != 'x_context' and v is not None}
+        
         cleaned_params = clean_params(params)
         return cleaned_params
-            
+
+class ListProductSetsRequest(BaseRequestParamsModel):
+    """
+    Request model for listing product sets.
+    """
+    status: Optional[Literal["all", "active", "inactive-all", "deleted-all", "image-missing", 
+                            "pending", "rejected", "disapproved", "sold-out", 
+                            "not-authorized", "price-rejected"]] = None
+    keyword: Optional[List[str]] = None
+    create_date_start: Optional[date_aliased] = None
+    create_date_end: Optional[date_aliased] = None
+    update_date_start: Optional[date_aliased] = None
+    update_date_end: Optional[date_aliased] = None
+    brand_ids: Optional[List[int]] = None
+    tags: Optional[List[str]] = None
+    visibility: Optional[Literal["Syncing"]] = None
+    in_stock: Optional[bool] = None
+    reserved: Optional[bool] = None
+    category_ids: Optional[List[int]] = None
+    only_with_tags: Optional[bool] = None
+    parent_sku: Optional[str] = None
+    product_set_uuids: Optional[List[str]] = None
+    product_set_ids: Optional[List[int]] = None
+    group: Optional[str] = None
+    order_by: Optional[Literal["createdAt"]] = None
+    order_direction: Optional[Literal["ASC", "DESC"]] = None
+
+class CreateProductSetRequest(BaseRequestParamsModel):
+    """
+    Request model for creating a product set.
+    """
+    name: str
+    price: float
+    status: Optional[Literal["active", "inactive"]] = "active"
+    seller_sku: str
+    parent_sku: Optional[str] = None
+    description: Optional[str] = None
+    brand_id: int
+    primary_category_id: int
+    categories: Optional[List[int]] = None
+    attributes: Dict[str, Any]
+    size_system: Optional[int] = None
+    browse_nodes: Optional[List[int]] = Field(default_factory=list)
+    variation: Optional[str] = None
+    shipment_type_id: Optional[int] = None
+    product_identifier: Optional[str] = None

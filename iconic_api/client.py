@@ -22,7 +22,7 @@ from .exceptions import (
     create_exception_from_response
 )
 from . import utils
-from .api import brands as brands_api, category as category_api, orders as orders_api # Import API modules
+from .api import brands as brands_api, category as category_api, orders as orders_api, product_sets as product_sets_api # Import API modules
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +64,7 @@ class BaseIconicClient:
         self.brands = brands_api.BrandsAPI(self) # type: ignore
         self.category = category_api.CategoryAPI(self) # type: ignore
         self.orders = orders_api.OrdersAPI(self) # type: ignore
+        self.product_sets = product_sets_api.ProductSetsAPI(self) # type: ignore
         # Add other API modules here
         # self.import_module = import_api.ImportAPI(self) # Example for 'Import' tag
 
