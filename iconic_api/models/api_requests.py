@@ -45,6 +45,18 @@ class BaseRequestParamsModel(BaseModel):
         cleaned_params = clean_params(params)
         return cleaned_params
     
+class ListBrandsRequest(BaseRequestParamsModel):
+    """
+    Request model for listing brands.
+    """
+    name: Optional[str] = None
+    brand_ids: Optional[List[int]] = None
+    brand_uuids: Optional[List[str]] = None
+    include_inaccessible: Optional[bool] = None
+    restricted_only: Optional[bool] = None
+    sort: Optional[Literal["createdAt", "updatedAt", "name"]] = None
+    sort_dir: Optional[Literal["asc", "desc"]] = None
+    
 class ListOrdersRequest(BaseRequestParamsModel):
     """
     Request model for listing orders.
