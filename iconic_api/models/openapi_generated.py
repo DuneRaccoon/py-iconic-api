@@ -3848,6 +3848,15 @@ class ProductSkusImages(BaseModel):
     __root__: List[ProductSkusImage]
 
 
+class ProductSetsImage(BaseModel):
+    productSetId: Optional[int] = Field(None, example=5)
+    images: Optional[List[Image]] = None
+
+
+class ProductSetsImages(BaseModel):
+    __root__: List[ProductSetsImage]
+
+
 class ProductSetsTag(BaseModel):
     tagId: Optional[int] = Field(None, example=5)
     tagName: Optional[str] = Field(None, example='Fresh products')
@@ -3856,6 +3865,9 @@ class ProductSetsTag(BaseModel):
 
 class ProductSetsTags(BaseModel):
     __root__: List[ProductSetsTag]
+
+
+
 
 
 class Kpi(BaseModel):

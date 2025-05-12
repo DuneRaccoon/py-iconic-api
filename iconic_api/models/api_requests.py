@@ -1,47 +1,3 @@
-class UpdateProductSetRequest(BaseRequestParamsModel):
-    """
-    Request model for updating a product set.
-    """
-    name: Optional[str] = None
-    description: Optional[str] = None
-    parent_sku: Optional[str] = None
-    brand_id: Optional[int] = None
-    primary_category_id: Optional[int] = None
-    categories: Optional[List[int]] = None
-    attributes: Optional[Dict[str, Any]] = None
-    size_system: Optional[int] = None
-    browse_nodes: Optional[List[int]] = None
-
-class GetCountByAttributeSetRequest(BaseRequestParamsModel):
-    """
-    Request model for getting count of product sets by attribute set.
-    """
-    status: Optional[Literal["all", "active", "inactive-all", "deleted-all", "image-missing", 
-                            "pending", "rejected", "disapproved", "sold-out", 
-                            "not-authorized", "price-rejected"]] = None
-    keyword: Optional[Union[str, List[str]]] = None
-    create_date_start: Optional[date_aliased] = None
-    create_date_end: Optional[date_aliased] = None
-    update_date_start: Optional[date_aliased] = None
-    update_date_end: Optional[date_aliased] = None
-    brand_ids: Optional[List[int]] = None
-    tags: Optional[List[str]] = None
-    visibility: Optional[Literal["Syncing"]] = None
-    in_stock: Optional[bool] = None
-    reserved: Optional[bool] = None
-    category_ids: Optional[List[int]] = None
-    only_with_tags: Optional[bool] = None
-    parent_sku: Optional[str] = None
-    group: Optional[str] = None
-
-class AddProductSetImageRequest(BaseRequestParamsModel):
-    """
-    Request model for adding an image to a product set.
-    """
-    position: Optional[int] = None
-    display_url: Optional[str] = None
-    overwrite: bool = False
-
 from __future__ import annotations
 
 from datetime import date as date_aliased, datetime as datetime_aliased
@@ -90,6 +46,42 @@ class BaseRequestParamsModel(BaseModel):
         params = self.model_dump(exclude_none=True)
         cleaned_params = clean_params(params)
         return cleaned_params
+
+class UpdateProductSetRequest(BaseRequestParamsModel):
+    """
+    Request model for updating a product set.
+    """
+    name: Optional[str] = None
+    description: Optional[str] = None
+    parent_sku: Optional[str] = None
+    brand_id: Optional[int] = None
+    primary_category_id: Optional[int] = None
+    categories: Optional[List[int]] = None
+    attributes: Optional[Dict[str, Any]] = None
+    size_system: Optional[int] = None
+    browse_nodes: Optional[List[int]] = None
+
+class GetCountByAttributeSetRequest(BaseRequestParamsModel):
+    """
+    Request model for getting count of product sets by attribute set.
+    """
+    status: Optional[Literal["all", "active", "inactive-all", "deleted-all", "image-missing", 
+                            "pending", "rejected", "disapproved", "sold-out", 
+                            "not-authorized", "price-rejected"]] = None
+    keyword: Optional[Union[str, List[str]]] = None
+    create_date_start: Optional[date_aliased] = None
+    create_date_end: Optional[date_aliased] = None
+    update_date_start: Optional[date_aliased] = None
+    update_date_end: Optional[date_aliased] = None
+    brand_ids: Optional[List[int]] = None
+    tags: Optional[List[str]] = None
+    visibility: Optional[Literal["Syncing"]] = None
+    in_stock: Optional[bool] = None
+    reserved: Optional[bool] = None
+    category_ids: Optional[List[int]] = None
+    only_with_tags: Optional[bool] = None
+    parent_sku: Optional[str] = None
+    group: Optional[str] = None
     
 class ListBrandsRequest(BaseRequestParamsModel):
     """
@@ -224,3 +216,24 @@ class CreateProductSetRequest(BaseRequestParamsModel):
     variation: Optional[str] = None
     shipment_type_id: Optional[int] = None
     product_identifier: Optional[str] = None
+
+class AddProductSetImageRequest(BaseRequestParamsModel):
+    """
+    Request model for adding an image to a product set.
+    """
+    position: Optional[int] = None
+    display_url: Optional[str] = None
+    overwrite: bool = False
+
+class UpdateProductSetImageRequest(BaseRequestParamsModel):
+    """
+    Request model for updating a product set image via URL.
+    """
+    position: Optional[int] = None
+    display_url: Optional[str] = None
+
+class ProductSetIdsRequest(BaseRequestParamsModel):
+    """
+    Request model for endpoints that accept a list of product set IDs.
+    """
+    product_set_ids: List[int]

@@ -9,7 +9,12 @@ from ..models import (
     UpdateProductSetRequest,
     AddProductSetImageRequest,
     GetCountByAttributeSetRequest,
-    Image
+    UpdateProductSetImageRequest,
+    ProductSetIdsRequest,
+    Image,
+    ProductSetsImage,
+    ProductSetsCoverImage,
+    ProductSetsTag
 )
 
 T = TypeVar('T')
@@ -426,3 +431,251 @@ class ProductSetsAPI(BaseAPIModule):
             )
         
         return Image(**response_data)
+    
+    def update_product_set_image(self, product_set_id: int, image_id: int, payload: UpdateProductSetImageRequest) -> Image:
+        """
+        Update an image of the product-set using a URL.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            image_id: Numeric ID of the Image
+            payload: Image data including URL and/or position
+            
+        Returns:
+            The updated image
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(by_alias=True, exclude_none=True))
+        
+        response_data = self._client._make_request_sync(
+            "PATCH", 
+            f"/v2/product-set/{product_set_id}/images/{image_id}", 
+            json_data=prepared_payload
+        )
+        
+        return Image(**response_data)
+    
+    async def update_product_set_image_async(self, product_set_id: int, image_id: int, payload: UpdateProductSetImageRequest) -> Image:
+        """
+        Update an image of the product-set using a URL (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            image_id: Numeric ID of the Image
+            payload: Image data including URL and/or position
+            
+        Returns:
+            The updated image
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(by_alias=True, exclude_none=True))
+        
+        response_data = await self._client._make_request_async(
+            "PATCH", 
+            f"/v2/product-set/{product_set_id}/images/{image_id}", 
+            json_data=prepared_payload
+        )
+        
+        return Image(**response_data)
+    
+    def upload_updated_product_set_image(self, product_set_id: int, image_id: int, image_file_path: str, position: Optional[int] = None) -> Image:
+        """
+        Update an image of the product-set by uploading a new file.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            image_id: Numeric ID of the Image
+            image_file_path: Path to the image file to upload
+            position: Optional position for the image
+            
+        Returns:
+            The updated image
+        """
+        with open(image_file_path, "rb") as f:
+            files = {"file1": (image_file_path.split('/')[-1], f)}
+            form_data = {}
+            
+            if position is not None:
+                form_data["position"] = str(position)
+            
+            response_data = self._client._make_request_sync(
+                "PATCH", 
+                f"/v2/product-set/{product_set_id}/images/{image_id}", 
+                form_data=form_data,
+                files=files
+            )
+        
+        return Image(**response_data)
+    
+    async def upload_updated_product_set_image_async(self, product_set_id: int, image_id: int, image_file_path: str, position: Optional[int] = None) -> Image:
+        """
+        Update an image of the product-set by uploading a new file (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            image_id: Numeric ID of the Image
+            image_file_path: Path to the image file to upload
+            position: Optional position for the image
+            
+        Returns:
+            The updated image
+        """
+        with open(image_file_path, "rb") as f:
+            files = {"file1": (image_file_path.split('/')[-1], f)}
+            form_data = {}
+            
+            if position is not None:
+                form_data["position"] = str(position)
+            
+            response_data = await self._client._make_request_async(
+                "PATCH", 
+                f"/v2/product-set/{product_set_id}/images/{image_id}", 
+                form_data=form_data,
+                files=files
+            )
+        
+        return Image(**response_data)
+        
+    def delete_product_set_image(self, product_set_id: int, image_id: int) -> None:
+        """
+        Delete an image of the product-set.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            image_id: Numeric ID of the Image
+        """
+        self._client._make_request_sync(
+            "DELETE", 
+            f"/v2/product-set/{product_set_id}/images/{image_id}"
+        )
+    
+    async def delete_product_set_image_async(self, product_set_id: int, image_id: int) -> None:
+        """
+        Delete an image of the product-set (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            image_id: Numeric ID of the Image
+        """
+        await self._client._make_request_async(
+            "DELETE", 
+            f"/v2/product-set/{product_set_id}/images/{image_id}"
+        )
+    
+    def get_product_sets_cover_images(self, product_set_ids: List[int]) -> List[ProductSetsCoverImage]:
+        """
+        Get the URL of main images by product sets ids.
+        
+        Args:
+            product_set_ids: List of ProductSet ids (max 100)
+            
+        Returns:
+            List of product set cover images
+        """
+        params = {"productSetIds[]": product_set_ids}
+        
+        response_data = self._client._make_request_sync(
+            "GET", 
+            "/v2/product-sets/cover-image", 
+            params=params
+        )
+        
+        return [ProductSetsCoverImage(**item) for item in response_data]
+    
+    async def get_product_sets_cover_images_async(self, product_set_ids: List[int]) -> List[ProductSetsCoverImage]:
+        """
+        Get the URL of main images by product sets ids (async).
+        
+        Args:
+            product_set_ids: List of ProductSet ids (max 100)
+            
+        Returns:
+            List of product set cover images
+        """
+        params = {"productSetIds[]": product_set_ids}
+        
+        response_data = await self._client._make_request_async(
+            "GET", 
+            "/v2/product-sets/cover-image", 
+            params=params
+        )
+        
+        return [ProductSetsCoverImage(**item) for item in response_data]
+    
+    def get_product_sets_images(self, product_set_ids: List[int]) -> List[ProductSetsImage]:
+        """
+        Get the images by product sets ids.
+        
+        Args:
+            product_set_ids: List of ProductSet ids (max 100)
+            
+        Returns:
+            List of product sets with their images
+        """
+        params = {"productSetIds[]": product_set_ids}
+        
+        response_data = self._client._make_request_sync(
+            "GET", 
+            "/v2/product-sets/images", 
+            params=params
+        )
+        
+        return [ProductSetsImage(**item) for item in response_data]
+    
+    async def get_product_sets_images_async(self, product_set_ids: List[int]) -> List[ProductSetsImage]:
+        """
+        Get the images by product sets ids (async).
+        
+        Args:
+            product_set_ids: List of ProductSet ids (max 100)
+            
+        Returns:
+            List of product sets with their images
+        """
+        params = {"productSetIds[]": product_set_ids}
+        
+        response_data = await self._client._make_request_async(
+            "GET", 
+            "/v2/product-sets/images", 
+            params=params
+        )
+        
+        return [ProductSetsImage(**item) for item in response_data]
+    
+    def get_product_sets_tags(self, product_set_ids: List[int]) -> List[ProductSetsTag]:
+        """
+        Get the product tags of the products within given product sets ids.
+        
+        Args:
+            product_set_ids: List of ProductSet ids (max 100)
+            
+        Returns:
+            List of product set tags
+        """
+        params = {"productSetIds[]": product_set_ids}
+        
+        response_data = self._client._make_request_sync(
+            "GET", 
+            "/v2/product-sets/tags", 
+            params=params
+        )
+        
+        return [ProductSetsTag(**item) for item in response_data]
+    
+    async def get_product_sets_tags_async(self, product_set_ids: List[int]) -> List[ProductSetsTag]:
+        """
+        Get the product tags of the products within given product sets ids (async).
+        
+        Args:
+            product_set_ids: List of ProductSet ids (max 100)
+            
+        Returns:
+            List of product set tags
+        """
+        params = {"productSetIds[]": product_set_ids}
+        
+        response_data = await self._client._make_request_async(
+            "GET", 
+            "/v2/product-sets/tags", 
+            params=params
+        )
+        
+        return [ProductSetsTag(**item) for item in response_data]
