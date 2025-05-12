@@ -120,7 +120,7 @@ class ShipmentTypes(Enum):
 
     warehouse = 'warehouse'
     dropshipping = 'dropshipping'
-    cross_docking = 'cross-docking'
+    cross_docking = 'crossdocking'
 
 
 class StatementType2(Enum):
@@ -2250,10 +2250,9 @@ class ShipmentProviderType(Enum):
     sameday = 'sameday'
 
 
-class Status8(Enum):
+class OrderStatus(Enum):
     """
     Order Item status.
-
     """
 
     pending = 'pending'
@@ -2268,7 +2267,39 @@ class Status8(Enum):
     return_rejected = 'return_rejected'
     return_delivered = 'return_delivered'
     payment_pending = 'payment_pending'
+    
+    def get_preceeding_status(self):
+        """
+        Get the preceding status of the current order status.
+        """
+        preceding_statuses = {
+            OrderStatus.pending: None,
+            OrderStatus.shipped: OrderStatus.pending,
+            OrderStatus.canceled: OrderStatus.shipped,
+            OrderStatus.returned: OrderStatus.shipped,
+            OrderStatus.failed: OrderStatus.shipped,
+            OrderStatus.delivered: OrderStatus.shipped,
+            OrderStatus.ready_to_ship: OrderStatus.pending,
+            OrderStatus.return_shipped_by_customer: OrderStatus.return_waiting_for_approval,
+            OrderStatus.return_waiting_for_approval: None,
+            OrderStatus.return_rejected: None,
+            OrderStatus.return_delivered: None,
+            OrderStatus.payment_pending: None
+        }
+        return preceding_statuses.get(self, None)
 
+class PackedStatus(Enum):
+    """
+    Packed status.
+    """
+
+    fully_packed = 'fully_packed'
+    partially_packed = 'partially_packed'
+    not_packed = 'not_packed'
+    
+class FulfillmentType(Enum):
+    merchant = 'merchant'
+    venture = 'venture'
 
 class Type1(Enum):
     """
@@ -2519,7 +2550,7 @@ class ManifestStatus(Enum):
     return_shipped = 'return_shipped'
 
 
-class Item1(BaseModel):
+class OrderItem(BaseModel):
     id: int = Field(..., description='Unique numeric identifier', example=1111)
     srcId: str = Field(..., description='Order item src ID', example='MY-32022990')
     sellerId: int = Field(..., description='Seller ID', example=11112)
@@ -2529,7 +2560,7 @@ class Item1(BaseModel):
         description='Unique string ID',
         example='9d6ca7ce-4d71-46bf-aa5e-a0727eca880z',
     )
-    status: Status8 = Field(..., description='Order Item status.\n', example='pending')
+    status: OrderStatus = Field(..., description='Order Item status.\n', example='pending')
     isProcessable: bool = Field(
         ...,
         description="It's true if order item shipment type is not `consignment` and src_status is not `awaiting_fulfillment`",
@@ -2734,7 +2765,7 @@ class Order(BaseModel):
     orderItemIds: List[int] = Field(
         ..., description='Ids of the order items in the order', example=[1111]
     )
-    items: List[Item1] = Field(..., description='Order items')
+    items: List[OrderItem] = Field(..., description='Order items')
 
 
 class SalesOrderCommentItem(BaseModel):
@@ -3094,7 +3125,7 @@ class OrderItem(BaseModel):
         description='Unique string ID',
         example='9d6ca7ce-4d71-46bf-aa5e-a0727eca880z',
     )
-    status: Status8 = Field(..., description='Order Item status.\n', example='pending')
+    status: OrderStatus = Field(..., description='Order Item status.\n', example='pending')
     isProcessable: bool = Field(
         ...,
         description="It's true if order item shipment type is not `consignment` and src_status is not `awaiting_fulfillment`",
