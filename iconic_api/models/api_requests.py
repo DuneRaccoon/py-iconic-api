@@ -237,3 +237,43 @@ class ProductSetIdsRequest(BaseRequestParamsModel):
     Request model for endpoints that accept a list of product set IDs.
     """
     product_set_ids: List[int]
+
+class CreateProductRequest(BaseRequestParamsModel):
+    """
+    Request model for creating a product for a product set.
+    """
+    seller_sku: str
+    variation: str
+    status: Optional[Literal["active", "inactive", "deleted"]] = "active"
+    shipment_type_id: Optional[int] = None
+    product_identifier: Optional[str] = None
+    name: Optional[str] = None
+
+class UpdateProductRequest(BaseRequestParamsModel):
+    """
+    Request model for updating a product.
+    """
+    seller_sku: Optional[str] = None
+    variation: Optional[str] = None
+    status: Optional[Literal["active", "inactive", "deleted"]] = None
+    shipment_type_id: Optional[int] = None
+    product_identifier: Optional[str] = None
+    name: Optional[str] = None
+
+class SearchHybridRequest(BaseRequestParamsModel):
+    """
+    Request model for searching hybrid products.
+    """
+    query: str
+
+class CreateProductBySinRequest(BaseRequestParamsModel):
+    """
+    Request model for creating products by SIN.
+    """
+    sin: str
+
+class ProductGroupRequest(BaseRequestParamsModel):
+    """
+    Request model for product group operations.
+    """
+    name: str

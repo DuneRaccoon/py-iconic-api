@@ -14,7 +14,15 @@ from ..models import (
     Image,
     ProductSetsImage,
     ProductSetsCoverImage,
-    ProductSetsTag
+    ProductSetsTag,
+    Product,
+    ProductRead,
+    HybridProduct,
+    CreateProductRequest,
+    UpdateProductRequest,
+    SearchHybridRequest,
+    CreateProductBySinRequest,
+    ProductGroupRequest
 )
 
 T = TypeVar('T')
@@ -558,6 +566,372 @@ class ProductSetsAPI(BaseAPIModule):
         await self._client._make_request_async(
             "DELETE", 
             f"/v2/product-set/{product_set_id}/images/{image_id}"
+        )
+        
+    def get_products(self, product_set_id: int) -> List[ProductRead]:
+        """
+        Get list of products for a ProductSet.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            List of products in the product set
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/products"
+        )
+        
+        return [ProductRead(**item) for item in response_data]
+    
+    async def get_products_async(self, product_set_id: int) -> List[ProductRead]:
+        """
+        Get list of products for a ProductSet (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            List of products in the product set
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/products"
+        )
+        
+        return [ProductRead(**item) for item in response_data]
+    
+    def create_product(self, product_set_id: int, payload: CreateProductRequest) -> ProductRead:
+        """
+        Creates a new product for a product set.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: The product data to create
+            
+        Returns:
+            The newly created product
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(exclude_none=True))
+        
+        response_data = self._client._make_request_sync(
+            "POST", 
+            f"/v2/product-set/{product_set_id}/products", 
+            json_data=prepared_payload
+        )
+        
+        return ProductRead(**response_data)
+    
+    async def create_product_async(self, product_set_id: int, payload: CreateProductRequest) -> ProductRead:
+        """
+        Creates a new product for a product set (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: The product data to create
+            
+        Returns:
+            The newly created product
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(exclude_none=True))
+        
+        response_data = await self._client._make_request_async(
+            "POST", 
+            f"/v2/product-set/{product_set_id}/products", 
+            json_data=prepared_payload
+        )
+        
+        return ProductRead(**response_data)
+        
+    def search_hybrid(self, params: SearchHybridRequest) -> List[HybridProduct]:
+        """
+        Search results of Hybrid Products from Shop.
+        
+        Args:
+            params: Search query parameters
+            
+        Returns:
+            List of hybrid products matching the search query
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            "/v2/product-set/search-hybrid", 
+            params=params.to_api_params()
+        )
+        
+        return [HybridProduct(**item) for item in response_data]
+    
+    async def search_hybrid_async(self, params: SearchHybridRequest) -> List[HybridProduct]:
+        """
+        Search results of Hybrid Products from Shop (async).
+        
+        Args:
+            params: Search query parameters
+            
+        Returns:
+            List of hybrid products matching the search query
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            "/v2/product-set/search-hybrid", 
+            params=params.to_api_params()
+        )
+        
+        return [HybridProduct(**item) for item in response_data]
+    
+    def create_product_by_sin(self, payload: CreateProductBySinRequest) -> Dict[str, int]:
+        """
+        Create Products by SIN in Shop's catalog.
+        
+        Args:
+            payload: The SIN data to use for product creation
+            
+        Returns:
+            Dictionary with the ID of the created product set
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(exclude_none=True))
+        
+        response_data = self._client._make_request_sync(
+            "POST", 
+            "/v2/product-set/products/create-by-sin", 
+            json_data=prepared_payload
+        )
+        
+        return response_data
+    
+    async def create_product_by_sin_async(self, payload: CreateProductBySinRequest) -> Dict[str, int]:
+        """
+        Create Products by SIN in Shop's catalog (async).
+        
+        Args:
+            payload: The SIN data to use for product creation
+            
+        Returns:
+            Dictionary with the ID of the created product set
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(exclude_none=True))
+        
+        response_data = await self._client._make_request_async(
+            "POST", 
+            "/v2/product-set/products/create-by-sin", 
+            json_data=prepared_payload
+        )
+        
+        return response_data
+        
+    def update_product_status(self, product_set_id: int, product_id: int, status: str) -> None:
+        """
+        Update Product status.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            product_id: Numeric ID of the Product
+            status: New status for the product (active, inactive, deleted)
+        """
+        params = {"status": status}
+        
+        self._client._make_request_sync(
+            "PUT", 
+            f"/v2/product-set/{product_set_id}/products/{product_id}/status", 
+            params=params
+        )
+    
+    async def update_product_status_async(self, product_set_id: int, product_id: int, status: str) -> None:
+        """
+        Update Product status (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            product_id: Numeric ID of the Product
+            status: New status for the product (active, inactive, deleted)
+        """
+        params = {"status": status}
+        
+        await self._client._make_request_async(
+            "PUT", 
+            f"/v2/product-set/{product_set_id}/products/{product_id}/status", 
+            params=params
+        )
+        
+    def get_product(self, product_set_id: int, product_id: int) -> ProductRead:
+        """
+        Get product by ID.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            product_id: Numeric ID of the Product
+            
+        Returns:
+            The requested product
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/products/{product_id}"
+        )
+        
+        return ProductRead(**response_data)
+    
+    async def get_product_async(self, product_set_id: int, product_id: int) -> ProductRead:
+        """
+        Get product by ID (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            product_id: Numeric ID of the Product
+            
+        Returns:
+            The requested product
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/products/{product_id}"
+        )
+        
+        return ProductRead(**response_data)
+    
+    def update_product(self, product_set_id: int, product_id: int, payload: UpdateProductRequest) -> ProductRead:
+        """
+        Update Product.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            product_id: Numeric ID of the Product
+            payload: The updated product data
+            
+        Returns:
+            The updated product
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(exclude_none=True))
+        
+        response_data = self._client._make_request_sync(
+            "PUT", 
+            f"/v2/product-set/{product_set_id}/products/{product_id}", 
+            json_data=prepared_payload
+        )
+        
+        return ProductRead(**response_data)
+    
+    async def update_product_async(self, product_set_id: int, product_id: int, payload: UpdateProductRequest) -> ProductRead:
+        """
+        Update Product (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            product_id: Numeric ID of the Product
+            payload: The updated product data
+            
+        Returns:
+            The updated product
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(exclude_none=True))
+        
+        response_data = await self._client._make_request_async(
+            "PUT", 
+            f"/v2/product-set/{product_set_id}/products/{product_id}", 
+            json_data=prepared_payload
+        )
+        
+        return ProductRead(**response_data)
+        
+    def get_product_group(self, product_set_id: int) -> Dict[str, str]:
+        """
+        Get group name of the product set.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            Dictionary with the group name
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/group"
+        )
+        
+        return response_data
+    
+    async def get_product_group_async(self, product_set_id: int) -> Dict[str, str]:
+        """
+        Get group name of the product set (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            Dictionary with the group name
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/group"
+        )
+        
+        return response_data
+    
+    def add_to_product_group(self, product_set_id: int, payload: ProductGroupRequest) -> Dict[str, str]:
+        """
+        Add product to group.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: The group data
+            
+        Returns:
+            Dictionary with the group name
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(exclude_none=True))
+        
+        response_data = self._client._make_request_sync(
+            "POST", 
+            f"/v2/product-set/{product_set_id}/group", 
+            json_data=prepared_payload
+        )
+        
+        return response_data
+    
+    async def add_to_product_group_async(self, product_set_id: int, payload: ProductGroupRequest) -> Dict[str, str]:
+        """
+        Add product to group (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: The group data
+            
+        Returns:
+            Dictionary with the group name
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(exclude_none=True))
+        
+        response_data = await self._client._make_request_async(
+            "POST", 
+            f"/v2/product-set/{product_set_id}/group", 
+            json_data=prepared_payload
+        )
+        
+        return response_data
+    
+    def remove_from_product_group(self, product_set_id: int) -> None:
+        """
+        Remove product set from group.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+        """
+        self._client._make_request_sync(
+            "DELETE", 
+            f"/v2/product-set/{product_set_id}/group"
+        )
+    
+    async def remove_from_product_group_async(self, product_set_id: int) -> None:
+        """
+        Remove product set from group (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+        """
+        await self._client._make_request_async(
+            "DELETE", 
+            f"/v2/product-set/{product_set_id}/group"
         )
     
     def get_product_sets_cover_images(self, product_set_ids: List[int]) -> List[ProductSetsCoverImage]:
