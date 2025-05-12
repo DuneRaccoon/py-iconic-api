@@ -2274,7 +2274,7 @@ class OrderStatus(Enum):
         """
         preceding_statuses = {
             OrderStatus.pending: None,
-            OrderStatus.shipped: OrderStatus.pending,
+            OrderStatus.shipped: OrderStatus.ready_to_ship,
             OrderStatus.canceled: OrderStatus.shipped,
             OrderStatus.returned: OrderStatus.shipped,
             OrderStatus.failed: OrderStatus.shipped,

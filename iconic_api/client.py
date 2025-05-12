@@ -10,7 +10,17 @@ from urllib.parse import urlparse, parse_qs, urlencode, quote
 from leakybucket import LeakyBucket, AsyncLeakyBucket
 from leakybucket.persistence import InMemoryLeakyBucketStorage, RedisLeakyBucketStorage
 
-from .exceptions import IconicAPIError, AuthenticationError, RateLimitError, MaintenanceModeError
+from .exceptions import (
+    IconicAPIError, 
+    AuthenticationError, 
+    AccessDeniedError,
+    ResourceNotFoundError,
+    ValidationError,
+    RateLimitError, 
+    MaintenanceModeError,
+    ServerError,
+    create_exception_from_response
+)
 from . import utils
 from .api import brands as brands_api, category as category_api, orders as orders_api # Import API modules
 
@@ -90,56 +100,13 @@ class BaseIconicClient:
             f"API Error: {response.status_code} on {method} {url}. "
             f"Response: {response.content[:500]}"
         )
-        retry_after_header = response.headers.get("Retry-After")
-        retry_after = int(retry_after_header) if retry_after_header and retry_after_header.isdigit() else None
-
+        
+        # When tokens expire, force a refresh
         if response.status_code == 401:
-            # Could be an expired token or invalid credentials
-            self._access_token = None # Force token refresh on next attempt if it was token-related
-            raise AuthenticationError(
-                message="Authentication failed. Token might be invalid or expired.",
-                status_code=response.status_code,
-                response_content=response.content,
-                request_url=str(response.request.url),
-                request_method=method,
-                response_headers=response.headers
-            )
-        if response.status_code == 429: # Too Many Requests
-             raise RateLimitError(
-                message="API rate limit exceeded.",
-                retry_after=retry_after,
-                status_code=response.status_code,
-                response_content=response.content,
-                request_url=str(response.request.url),
-                request_method=method,
-                response_headers=response.headers
-            )
-        if response.status_code == 503:
-            try:
-                content = response.json()
-                if content.get("caused_by") == "maintenance_mode":
-                    raise MaintenanceModeError(
-                        message="Service unavailable due to maintenance mode.",
-                        retry_after=retry_after,
-                        status_code=response.status_code,
-                        response_content=response.content,
-                        request_url=str(response.request.url),
-                        request_method=method,
-                        response_headers=response.headers
-                    )
-            except Exception: # Not JSON or key missing
-                pass # Fall through to generic IconicAPIError
-
-        raise IconicAPIError(
-            message=f"API request failed for {method} {url}",
-            status_code=response.status_code,
-            response_content=response.content,
-            request_url=str(response.request.url),
-            request_method=method,
-            request_params=kwargs.get('params'),
-            request_data=kwargs.get('json') or kwargs.get('data'),
-            response_headers=response.headers
-        )
+            self._access_token = None  # Force token refresh on next attempt
+            
+        # Use our generic exception creation helper
+        raise create_exception_from_response(response, method, url, **kwargs)
 
     def _prepare_signed_headers(
         self, http_method: str, full_url: str, body: Optional[bytes] = None
@@ -197,14 +164,17 @@ class IconicClient(BaseIconicClient):
             self._access_token = None # Ensure token is cleared on failure
             raise AuthenticationError(
                 message=f"Failed to fetch OAuth2 token: {e.response.text}",
-                status_code=e.response.status_code,
-                response_content=e.response.content,
-                request_url=self.token_url
-            ) from e
+                response=e.response
+            )
         except Exception as e:
             logger.error(f"An unexpected error occurred while fetching OAuth2 token: {e}")
             self._access_token = None
-            raise AuthenticationError(message=f"Unexpected error fetching token: {str(e)}") from e
+            # Create a dummy response for error creation
+            dummy_response = httpx.Response(500, request=httpx.Request("POST", self.token_url))
+            raise AuthenticationError(
+                message=f"Unexpected error fetching token: {str(e)}",
+                response=dummy_response
+            )
 
     def _ensure_token_valid_sync(self) -> None:
         if self._is_token_expired():
@@ -226,10 +196,6 @@ class IconicClient(BaseIconicClient):
             "Authorization": f"Bearer {self._access_token}",
             "Accept": "application/json",
         }
-        if json_data or form_data or files: # POST, PUT, PATCH
-             # Content-Type is often set by httpx automatically for json/form_data
-             # but can be explicit if needed, e.g. for multipart/form-data
-             pass
         
         request_body_bytes: Optional[bytes] = None
         if json_data:
@@ -237,7 +203,6 @@ class IconicClient(BaseIconicClient):
             # Create a temporary request to get the body.
             temp_req = httpx.Request(method, self.base_api_url + path.lstrip("/"), json=json_data)
             request_body_bytes = temp_req.content
-
 
         if requires_signing:
             # Construct full URL for signing
@@ -294,9 +259,14 @@ class IconicClient(BaseIconicClient):
                 if retries > 0:
                     logger.warning(f"Network error: {e}. Retrying in 3s. Retries left: {retries-1}")
                     time.sleep(3)
-                    retries -=1
+                    retries -= 1
                     continue
-                raise IconicAPIError(message=f"Network request failed: {str(e)}", request_url=path, request_method=method) from e
+                # Create a dummy response for network errors
+                dummy_response = httpx.Response(500, request=httpx.Request(method, self.base_api_url + path.lstrip("/")))
+                raise IconicAPIError(
+                    message=f"Network request failed: {str(e)}",
+                    response=dummy_response
+                )
 
     def close(self):
         self._client.close()
@@ -329,14 +299,17 @@ class IconicAsyncClient(BaseIconicClient):
             self._access_token = None
             raise AuthenticationError(
                 message=f"Failed to fetch OAuth2 token: {e.response.text}",
-                status_code=e.response.status_code,
-                response_content=e.response.content,
-                request_url=self.token_url
-            ) from e
+                response=e.response
+            )
         except Exception as e:
             logger.error(f"An unexpected error occurred while fetching OAuth2 token asynchronously: {e}")
             self._access_token = None
-            raise AuthenticationError(message=f"Unexpected error fetching token: {str(e)}") from e
+            # Create a dummy response for error creation
+            dummy_response = httpx.Response(500, request=httpx.Request("POST", self.token_url))
+            raise AuthenticationError(
+                message=f"Unexpected error fetching token: {str(e)}",
+                response=dummy_response
+            )
 
     async def _ensure_token_valid_async(self) -> None:
         if self._is_token_expired():
@@ -417,9 +390,14 @@ class IconicAsyncClient(BaseIconicClient):
                 if retries > 0:
                     logger.warning(f"Network error: {e}. Retrying in 3s. Retries left: {retries-1}")
                     await asyncio.sleep(3)
-                    retries -=1
+                    retries -= 1
                     continue
-                raise IconicAPIError(message=f"Network request failed: {str(e)}", request_url=path, request_method=method) from e
+                # Create a dummy response for network errors
+                dummy_response = httpx.Response(500, request=httpx.Request(method, self.base_api_url + path.lstrip("/")))
+                raise IconicAPIError(
+                    message=f"Network request failed: {str(e)}",
+                    response=dummy_response
+                )
                 
     async def close(self):
         await self._client.aclose()
