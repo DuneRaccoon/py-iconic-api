@@ -5,7 +5,11 @@ from ..models import (
     ProductSetRead,
     ProductSetCreated,
     ListProductSetsRequest,
-    CreateProductSetRequest
+    CreateProductSetRequest,
+    UpdateProductSetRequest,
+    AddProductSetImageRequest,
+    GetCountByAttributeSetRequest,
+    Image
 )
 
 T = TypeVar('T')
@@ -102,3 +106,323 @@ class ProductSetsAPI(BaseAPIModule):
         )
         
         return ProductSetCreated(**response_data)
+        
+    def get_product_set(self, product_set_id: int) -> ProductSetRead:
+        """
+        Get ProductSet entity by Id.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            The requested product set
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            f"/v2/product-set/{product_set_id}" 
+        )
+        
+        return ProductSetRead(**response_data)
+    
+    async def get_product_set_async(self, product_set_id: int) -> ProductSetRead:
+        """
+        Get ProductSet entity by Id (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            The requested product set
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            f"/v2/product-set/{product_set_id}" 
+        )
+        
+        return ProductSetRead(**response_data)
+    
+    def update_product_set(self, product_set_id: int, payload: UpdateProductSetRequest) -> ProductSetRead:
+        """
+        Update Product Set level attributes.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: The updated product set data
+            
+        Returns:
+            The updated product set
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(by_alias=True, exclude_none=True))
+        
+        response_data = self._client._make_request_sync(
+            "PUT", 
+            f"/v2/product-set/{product_set_id}", 
+            json_data=prepared_payload
+        )
+        
+        return ProductSetRead(**response_data)
+    
+    async def update_product_set_async(self, product_set_id: int, payload: UpdateProductSetRequest) -> ProductSetRead:
+        """
+        Update Product Set level attributes (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: The updated product set data
+            
+        Returns:
+            The updated product set
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(by_alias=True, exclude_none=True))
+        
+        response_data = await self._client._make_request_async(
+            "PUT", 
+            f"/v2/product-set/{product_set_id}", 
+            json_data=prepared_payload
+        )
+        
+        return ProductSetRead(**response_data)
+    
+    def get_product_set_by_parent_sku(self, parent_sku: str) -> ProductSetRead:
+        """
+        Get single ProductSet with parent sku.
+        
+        Args:
+            parent_sku: ParentSku of ProductSet
+            
+        Returns:
+            The requested product set
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            f"/v2/product-set/parent-sku/{parent_sku}" 
+        )
+        
+        return ProductSetRead(**response_data)
+    
+    async def get_product_set_by_parent_sku_async(self, parent_sku: str) -> ProductSetRead:
+        """
+        Get single ProductSet with parent sku (async).
+        
+        Args:
+            parent_sku: ParentSku of ProductSet
+            
+        Returns:
+            The requested product set
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            f"/v2/product-set/parent-sku/{parent_sku}" 
+        )
+        
+        return ProductSetRead(**response_data)
+    
+    def get_product_set_by_config_sku(self, config_sku: str) -> ProductSetRead:
+        """
+        Get ProductSet by its ConfigSku.
+        
+        Args:
+            config_sku: String ConfigSku of ProductSet
+            
+        Returns:
+            The requested product set
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            f"/v2/product-set/config-sku/{config_sku}" 
+        )
+        
+        return ProductSetRead(**response_data)
+    
+    async def get_product_set_by_config_sku_async(self, config_sku: str) -> ProductSetRead:
+        """
+        Get ProductSet by its ConfigSku (async).
+        
+        Args:
+            config_sku: String ConfigSku of ProductSet
+            
+        Returns:
+            The requested product set
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            f"/v2/product-set/config-sku/{config_sku}" 
+        )
+        
+        return ProductSetRead(**response_data)
+    
+    def get_count_by_attribute_set(self, params: GetCountByAttributeSetRequest) -> List[Dict[str, Any]]:
+        """
+        Get count of ProductSets grouped by AttributeSet.
+        
+        Args:
+            params: Filter parameters
+            
+        Returns:
+            List of attribute set IDs with counts
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            "/v2/product-set/count-by-attribute-set", 
+            params=params.to_api_params()
+        )
+        
+        return response_data
+    
+    async def get_count_by_attribute_set_async(self, params: GetCountByAttributeSetRequest) -> List[Dict[str, Any]]:
+        """
+        Get count of ProductSets grouped by AttributeSet (async).
+        
+        Args:
+            params: Filter parameters
+            
+        Returns:
+            List of attribute set IDs with counts
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            "/v2/product-set/count-by-attribute-set", 
+            params=params.to_api_params()
+        )
+        
+        return response_data
+    
+    def get_product_set_images(self, product_set_id: int) -> List[Image]:
+        """
+        Get a list of the product-set's images.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            List of product set images
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/images" 
+        )
+        
+        return [Image(**item) for item in response_data]
+    
+    async def get_product_set_images_async(self, product_set_id: int) -> List[Image]:
+        """
+        Get a list of the product-set's images (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            List of product set images
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/images" 
+        )
+        
+        return [Image(**item) for item in response_data]
+    
+    def add_product_set_image(self, product_set_id: int, payload: AddProductSetImageRequest) -> Image:
+        """
+        Add an image to the product-set using a URL.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: Image data including URL and optional position
+            
+        Returns:
+            The added image
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(by_alias=True, exclude_none=True))
+        
+        response_data = self._client._make_request_sync(
+            "POST", 
+            f"/v2/product-set/{product_set_id}/images", 
+            json_data=prepared_payload
+        )
+        
+        return Image(**response_data)
+    
+    async def add_product_set_image_async(self, product_set_id: int, payload: AddProductSetImageRequest) -> Image:
+        """
+        Add an image to the product-set using a URL (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: Image data including URL and optional position
+            
+        Returns:
+            The added image
+        """
+        prepared_payload = self._prepare_payload(payload.model_dump(by_alias=True, exclude_none=True))
+        
+        response_data = await self._client._make_request_async(
+            "POST", 
+            f"/v2/product-set/{product_set_id}/images", 
+            json_data=prepared_payload
+        )
+        
+        return Image(**response_data)
+    
+    def upload_product_set_image(self, product_set_id: int, image_file_path: str, position: Optional[int] = None, overwrite: bool = False) -> Image:
+        """
+        Add an image to the product-set by uploading a file.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            image_file_path: Path to the image file to upload
+            position: Optional position for the image
+            overwrite: Whether to overwrite an existing image at the position
+            
+        Returns:
+            The added image
+        """
+        with open(image_file_path, "rb") as f:
+            files = {"file1": (image_file_path.split('/')[-1], f)}
+            form_data = {}
+            
+            if position is not None:
+                form_data["position"] = str(position)
+                
+            if overwrite:
+                form_data["overwrite"] = "true"
+            
+            response_data = self._client._make_request_sync(
+                "POST", 
+                f"/v2/product-set/{product_set_id}/images", 
+                form_data=form_data,
+                files=files
+            )
+        
+        return Image(**response_data)
+    
+    async def upload_product_set_image_async(self, product_set_id: int, image_file_path: str, position: Optional[int] = None, overwrite: bool = False) -> Image:
+        """
+        Add an image to the product-set by uploading a file (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            image_file_path: Path to the image file to upload
+            position: Optional position for the image
+            overwrite: Whether to overwrite an existing image at the position
+            
+        Returns:
+            The added image
+        """
+        with open(image_file_path, "rb") as f:
+            files = {"file1": (image_file_path.split('/')[-1], f)}
+            form_data = {}
+            
+            if position is not None:
+                form_data["position"] = str(position)
+                
+            if overwrite:
+                form_data["overwrite"] = "true"
+            
+            response_data = await self._client._make_request_async(
+                "POST", 
+                f"/v2/product-set/{product_set_id}/images", 
+                form_data=form_data,
+                files=files
+            )
+        
+        return Image(**response_data)
