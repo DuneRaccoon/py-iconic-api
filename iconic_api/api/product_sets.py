@@ -22,7 +22,9 @@ from ..models import (
     UpdateProductRequest,
     SearchHybridRequest,
     CreateProductBySinRequest,
-    ProductGroupRequest
+    ProductGroupRequest,
+    PriceRead,
+    UpdateProductSetPriceRequest
 )
 
 T = TypeVar('T')
@@ -1053,3 +1055,95 @@ class ProductSetsAPI(BaseAPIModule):
         )
         
         return [ProductSetsTag(**item) for item in response_data]
+    
+    def get_product_set_prices(self, product_set_id: int) -> List[PriceRead]:
+        """
+        Get list of multi prices for all products within product set.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            List of prices for all products in the product set
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/prices"
+        )
+        
+        return [PriceRead(**item) for item in response_data]
+    
+    async def get_product_set_prices_async(self, product_set_id: int) -> List[PriceRead]:
+        """
+        Get list of multi prices for all products within product set (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            
+        Returns:
+            List of prices for all products in the product set
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            f"/v2/product-set/{product_set_id}/prices"
+        )
+        
+        return [PriceRead(**item) for item in response_data]
+    
+    def update_product_set_prices(self, product_set_id: int, payload: List[UpdateProductSetPriceRequest]) -> List[PriceRead]:
+        """
+        Update prices of a product set.
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: List of price updates for products in the set
+            
+        Returns:
+            List of updated prices
+        """
+        # Convert each item in the payload list to a dict and prepare it
+        prepared_payload = [
+            self._prepare_payload(item.model_dump(exclude_none=True))
+            for item in payload
+        ]
+        
+        response_data = self._client._make_request_sync(
+            "PUT", 
+            f"/v2/product-set/{product_set_id}/prices", 
+            json_data=prepared_payload
+        )
+        
+        # Handle both single object and list responses
+        if isinstance(response_data, list):
+            return [PriceRead(**item) for item in response_data]
+        else:
+            return [PriceRead(**response_data)]
+    
+    async def update_product_set_prices_async(self, product_set_id: int, payload: List[UpdateProductSetPriceRequest]) -> List[PriceRead]:
+        """
+        Update prices of a product set (async).
+        
+        Args:
+            product_set_id: Numeric ID of the ProductSet
+            payload: List of price updates for products in the set
+            
+        Returns:
+            List of updated prices
+        """
+        # Convert each item in the payload list to a dict and prepare it
+        prepared_payload = [
+            self._prepare_payload(item.model_dump(exclude_none=True))
+            for item in payload
+        ]
+        
+        response_data = await self._client._make_request_async(
+            "PUT", 
+            f"/v2/product-set/{product_set_id}/prices", 
+            json_data=prepared_payload
+        )
+        
+        # Handle both single object and list responses
+        if isinstance(response_data, list):
+            return [PriceRead(**item) for item in response_data]
+        else:
+            return [PriceRead(**response_data)]

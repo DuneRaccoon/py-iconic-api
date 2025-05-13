@@ -260,6 +260,19 @@ class UpdateProductRequest(BaseRequestParamsModel):
     product_identifier: Optional[str] = None
     name: Optional[str] = None
 
+class UpdateProductSetPriceRequest(BaseRequestParamsModel):
+    """
+    Request model for updating a product set price.
+    """
+    product_id: int
+    country: str
+    price: Optional[float] = None
+    sale_price: Optional[float] = None
+    sale_start_date: Optional[datetime_aliased] = None
+    sale_end_date: Optional[datetime_aliased] = None
+    status: Optional[Literal["active", "inactive"]] = "active"
+
+
 class SearchHybridRequest(BaseRequestParamsModel):
     """
     Request model for searching hybrid products.
@@ -277,3 +290,4 @@ class ProductGroupRequest(BaseRequestParamsModel):
     Request model for product group operations.
     """
     name: str
+
