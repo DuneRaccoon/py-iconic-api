@@ -4,8 +4,7 @@ import time
 import base64
 import logging
 from typing import Optional, Any, Dict, Union, Type, Tuple, List
-from importlib import import_module
-from urllib.parse import urlparse, parse_qs, urlencode, quote
+from urllib.parse import urlparse
 
 from leakybucket import LeakyBucket, AsyncLeakyBucket
 from leakybucket.persistence import InMemoryLeakyBucketStorage, RedisLeakyBucketStorage
@@ -13,16 +12,16 @@ from leakybucket.persistence import InMemoryLeakyBucketStorage, RedisLeakyBucket
 from .exceptions import (
     IconicAPIError, 
     AuthenticationError, 
-    AccessDeniedError,
-    ResourceNotFoundError,
-    ValidationError,
-    RateLimitError, 
-    MaintenanceModeError,
-    ServerError,
     create_exception_from_response
 )
 from . import utils
-from .api import brands as brands_api, category as category_api, orders as orders_api, product_sets as product_sets_api, product as product_api
+from .resources import (
+    Product,
+    ProductSet,
+    Brand,
+    Category,
+    Order
+)
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +49,8 @@ class BaseIconicClient:
         self.client_secret = client_secret
         self.instance_domain = instance_domain.replace("https://", "").replace("http://", "")
         
-        self.token_url = f"https://sellercenter.{self.instance_domain}/oauth/client-credentials"
-        self.base_api_url = f"https://sellercenter-api.{self.instance_domain}/"
+        self.token_url = f"https://{self.instance_domain}/oauth/client-credentials"
+        self.base_api_url = f"https://{self.instance_domain}"
         
         self.timeout = timeout
         self.token_buffer_seconds = token_buffer_seconds
@@ -60,14 +59,6 @@ class BaseIconicClient:
 
         self._access_token: Optional[str] = None
         self._token_expires_at: float = 0.0
-        
-        self.brands = brands_api.BrandsAPI(self) # type: ignore
-        self.category = category_api.CategoryAPI(self) # type: ignore
-        self.orders = orders_api.OrdersAPI(self) # type: ignore
-        self.product = product_api.ProductAPI(self) # type: ignore
-        self.product_sets = product_sets_api.ProductSetsAPI(self) # type: ignore
-        # Add other API modules here
-        # self.import_module = import_api.ImportAPI(self) # Example for 'Import' tag
 
         # Rate Limiter Setup
         if redis_url:
@@ -88,6 +79,17 @@ class BaseIconicClient:
         self.throttler_leak_rate = rate_limit_rps / 1.0 # rate / per_seconds
         
         self._client: Union[httpx.Client, httpx.AsyncClient] # To be defined in subclasses
+        
+        # Initialize resource classes
+        self._initialize_resources()
+
+    def _initialize_resources(self):
+        """Initialize resource classes."""
+        self.products = Product(client=self)
+        self.product_sets = ProductSet(client=self)
+        self.brands = Brand(client=self)
+        self.categories = Category(client=self)
+        self.orders = Order(client=self)
 
     def _get_basic_auth_header(self) -> str:
         auth_str = f"{self.client_id}:{self.client_secret}"
@@ -139,6 +141,7 @@ class BaseIconicClient:
 
 class IconicClient(BaseIconicClient):
     def __init__(self, *args, **kwargs):
+        self._client = None  # Initialize to avoid type checking errors before super().__init__
         super().__init__(*args, **kwargs)
         self._client = httpx.Client(base_url=self.base_api_url, timeout=self.timeout)
         self.throttler = LeakyBucket(
@@ -191,7 +194,7 @@ class IconicClient(BaseIconicClient):
         form_data: Optional[Dict[str, Any]] = None,
         files: Optional[Dict[str, Any]] = None,
         requires_signing: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> Any:
         self._ensure_token_valid_sync()
         
         headers = {
@@ -248,8 +251,8 @@ class IconicClient(BaseIconicClient):
                 self._handle_error_response(response, method, path, params=params, json=json_data, data=form_data)
                 return {} # Should not be reached due to raise in _handle_error_response
 
-            except (RateLimitError, MaintenanceModeError) as e:
-                if e.retry_after and retries > 0:
+            except (IconicAPIError) as e:
+                if hasattr(e, 'retry_after') and getattr(e, 'retry_after') and retries > 0:
                     logger.warning(f"Caught {type(e).__name__}, retrying after {e.retry_after}s. Retries left: {retries-1}")
                     time.sleep(e.retry_after)
                     retries -= 1
@@ -271,10 +274,13 @@ class IconicClient(BaseIconicClient):
                 )
 
     def close(self):
-        self._client.close()
+        if self._client:
+            self._client.close()
+
 
 class IconicAsyncClient(BaseIconicClient):
     def __init__(self, *args, **kwargs):
+        self._client = None  # Initialize to avoid type checking errors before super().__init__
         super().__init__(*args, **kwargs)
         self._client = httpx.AsyncClient(base_url=self.base_api_url, timeout=self.timeout)
         self.throttler = AsyncLeakyBucket(
@@ -326,7 +332,7 @@ class IconicAsyncClient(BaseIconicClient):
         form_data: Optional[Dict[str, Any]] = None,
         files: Optional[Dict[str, Any]] = None,
         requires_signing: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> Any:
         await self._ensure_token_valid_async()
         
         headers = {
@@ -379,8 +385,8 @@ class IconicAsyncClient(BaseIconicClient):
                 self._handle_error_response(response, method, path, params=params, json=json_data, data=form_data)
                 return {} # Should not be reached
 
-            except (RateLimitError, MaintenanceModeError) as e:
-                if e.retry_after and retries > 0:
+            except (IconicAPIError) as e:
+                if hasattr(e, 'retry_after') and getattr(e, 'retry_after') and retries > 0:
                     logger.warning(f"Caught {type(e).__name__}, retrying after {e.retry_after}s. Retries left: {retries-1}")
                     await asyncio.sleep(e.retry_after)
                     retries -= 1
@@ -402,4 +408,5 @@ class IconicAsyncClient(BaseIconicClient):
                 )
                 
     async def close(self):
-        await self._client.aclose()
+        if self._client:
+            await self._client.aclose()

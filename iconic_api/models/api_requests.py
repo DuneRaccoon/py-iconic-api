@@ -28,7 +28,7 @@ class BaseRequestParamsModel(BaseModel):
     """
     model_config = ConfigDict(
         allow_extra = "allow",
-        allow_population_by_field_name = True,
+        validate_by_name = True,
         use_enum_values = True,
         json_encoders = {
             datetime_aliased: lambda v: v.isoformat() if isinstance(v, datetime_aliased) else v,

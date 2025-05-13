@@ -9,7 +9,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, RootModel, ConfigDict, Field
 
 
 class StatementType(Enum):
@@ -990,19 +990,21 @@ class FormImagePosition(BaseModel):
     )
 
 
-class ImagePosition(BaseModel):
-    __root__: int = Field(
-        ...,
-        description='Contains information about desired order in which images should be displayed to end customer. May contain gaps in case if some image was deleted. Positions are usually recalculated starting from 1 during any update operation (adding new image, for example).',
-        example=2,
+class ImagePosition(RootModel[int]):
+    model_config = ConfigDict(
+        json_schema_extra = {
+            "description": "Contains information about desired order in which images should be displayed to end customer. May contain gaps in case if some image was deleted. Positions are usually recalculated starting from 1 during any update operation (adding new image, for example).",
+            "example": 2
+        }
     )
 
 
-class ImageOverwrite(BaseModel):
-    __root__: bool = Field(
-        ...,
-        description='Indicates if the existing image at the specified position should be replaced.  If set to true, the image currently at the provided position will be overwritten  with the new image. If false or not provided, the image will be added without  replacing any existing image. Default is false.\n',
-        example=False,
+class ImageOverwrite(RootModel[bool]):
+    model_config = ConfigDict(
+        json_schema_extra = {
+            "description": 'Indicates if the existing image at the specified position should be replaced.  If set to true, the image currently at the provided position will be overwritten  with the new image. If false or not provided, the image will be added without  replacing any existing image. Default is false.\n',
+            "example": False
+        }
     )
 
 
@@ -1014,11 +1016,12 @@ class OverwriteMultipart(BaseModel):
     )
 
 
-class ImageDisplayUrl(BaseModel):
-    __root__: str = Field(
-        ...,
-        description='Full public URL of image.',
-        example='https://some.domain/path/image.jpg',
+class ImageDisplayUrl(RootModel[str]):
+    model_config = ConfigDict(
+        json_schema_extra = {
+            "description": 'Full public URL of image.',
+            "example": 'https://some.domain/path/image.jpg'
+        }
     )
 
 
@@ -1266,8 +1269,8 @@ class Head(BaseModel):
 
 
 class WarningDetail(BaseModel):
-    Field: Optional[str] = Field(
-        None, description='The field associated with the warning.'
+    field: Optional[str] = Field(
+        None, description='The field associated with the warning.', alias='Field'
     )
     Message: Optional[str] = Field(
         None, description='A message explaining the warning.'
@@ -1304,8 +1307,8 @@ class Head1(BaseModel):
 
 
 class ErrorDetailItem(BaseModel):
-    Field: Optional[str] = Field(
-        None, description='The field where the error occurred.', example='field1'
+    field: Optional[str] = Field(
+        None, description='The field where the error occurred.', example='field1', alias='Field'
     )
     Message: Optional[str] = Field(
         None, description='A message describing the error detail.', example='message1'
@@ -1939,8 +1942,8 @@ class CategoryMapping(BaseModel):
     attributes: Optional[List[Attribute]] = None
 
 
-class CategoryMappings(BaseModel):
-    __root__: List[CategoryMapping]
+class CategoryMappings(RootModel[List[CategoryMapping]]):
+    pass
 
 
 class Type(Enum):
@@ -1978,8 +1981,8 @@ class CategorySetting(BaseModel):
     restrictions: Optional[List[Restriction]] = None
 
 
-class CategorySettings(BaseModel):
-    __root__: List[CategorySetting]
+class CategorySettings(RootModel[List[CategorySetting]]):
+    pass
 
 
 class Status6(Enum):
@@ -3234,15 +3237,15 @@ class OrderItemReturn(BaseModel):
     trackingCode: str = Field(..., description='Tracking code')
 
 
-class OrderItemReturns(BaseModel):
+class OrderItemReturns(RootModel[List[OrderItemReturn]]):
     """
     Collection of Return objects for given Order Items Ids
     """
-
-    __root__: List[OrderItemReturn] = Field(
-        ..., description='Collection of Return objects for given Order Items Ids'
+    model_config = ConfigDict(
+        json_schema_extra={
+            "description": "Collection of Return objects for given Order Items Ids"
+        }
     )
-
 
 class OrderItemProduct(BaseModel):
     name: str = Field(
@@ -3816,8 +3819,8 @@ class ProductSetsImage(BaseModel):
     images: Optional[List[Image2]] = None
 
 
-class ProductSetsImages(BaseModel):
-    __root__: List[ProductSetsImage]
+class ProductSetsImages(RootModel[List[ProductSetsImage]]):
+    pass
 
 
 class ProductSetsCoverImage(BaseModel):
@@ -3825,8 +3828,8 @@ class ProductSetsCoverImage(BaseModel):
     imageUrl: Optional[str] = Field(None, example='https://example.com/image-1.jpg')
 
 
-class ProductSetsCoverImages(BaseModel):
-    __root__: List[ProductSetsCoverImage]
+class ProductSetsCoverImages(RootModel[List[ProductSetsCoverImage]]):
+    pass
 
 
 class ProductSkusImage(BaseModel):
@@ -3844,8 +3847,8 @@ class ProductSkusImage(BaseModel):
     mainImageUrl: Optional[str] = Field(None, example='https://example.com/image-1.jpg')
 
 
-class ProductSkusImages(BaseModel):
-    __root__: List[ProductSkusImage]
+class ProductSkusImages(RootModel[List[ProductSkusImage]]):
+    pass
 
 
 class ProductSetsImage(BaseModel):
@@ -3853,8 +3856,8 @@ class ProductSetsImage(BaseModel):
     images: Optional[List[Image]] = None
 
 
-class ProductSetsImages(BaseModel):
-    __root__: List[ProductSetsImage]
+class ProductSetsImages(RootModel[List[ProductSetsImage]]):
+    pass
 
 
 class ProductSetsTag(BaseModel):
@@ -3863,11 +3866,8 @@ class ProductSetsTag(BaseModel):
     productSetId: Optional[int] = Field(None, example=5)
 
 
-class ProductSetsTags(BaseModel):
-    __root__: List[ProductSetsTag]
-
-
-
+class ProductSetsTags(RootModel[List[ProductSetsTag]]):
+    pass
 
 
 class Kpi(BaseModel):
