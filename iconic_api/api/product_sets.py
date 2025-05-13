@@ -11,6 +11,10 @@ from ..models import (
     GetCountByAttributeSetRequest,
     UpdateProductSetImageRequest,
     ProductSetIdsRequest,
+    GetQualityControlStatusRequest,
+    GetImagesBySKURequest,
+    QualityControlStatus,
+    ProductImageBySKU,
     Image,
     ProductSetsImage,
     ProductSetsCoverImage,
@@ -1147,3 +1151,75 @@ class ProductSetsAPI(BaseAPIModule):
             return [PriceRead(**item) for item in response_data]
         else:
             return [PriceRead(**response_data)]
+    
+    def get_quality_control_status(self, params: GetQualityControlStatusRequest) -> List[QualityControlStatus]:
+        """
+        Get information about quality control status of the ProductSet.
+        
+        Args:
+            params: Request parameters with product set IDs
+            
+        Returns:
+            List of quality control statuses for requested product sets
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            "/v2/product-set/quality-control-status", 
+            params=params.to_api_params()
+        )
+        
+        return [QualityControlStatus(**item) for item in response_data]
+
+    async def get_quality_control_status_async(self, params: GetQualityControlStatusRequest) -> List[QualityControlStatus]:
+        """
+        Get information about quality control status of the ProductSet (async).
+        
+        Args:
+            params: Request parameters with product set IDs
+            
+        Returns:
+            List of quality control statuses for requested product sets
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            "/v2/product-set/quality-control-status", 
+            params=params.to_api_params()
+        )
+        
+        return [QualityControlStatus(**item) for item in response_data]
+
+    def get_images_by_sku(self, params: GetImagesBySKURequest) -> List[ProductImageBySKU]:
+        """
+        Get the URL of main images by product shop SKU or Seller SKU.
+        
+        Args:
+            params: Request parameters with product SKUs
+            
+        Returns:
+            List of product images with their SKUs
+        """
+        response_data = self._client._make_request_sync(
+            "GET", 
+            "/v2/product-set/images-by-sku", 
+            params=params.to_api_params()
+        )
+        
+        return [ProductImageBySKU(**item) for item in response_data]
+
+    async def get_images_by_sku_async(self, params: GetImagesBySKURequest) -> List[ProductImageBySKU]:
+        """
+        Get the URL of main images by product shop SKU or Seller SKU (async).
+        
+        Args:
+            params: Request parameters with product SKUs
+            
+        Returns:
+            List of product images with their SKUs
+        """
+        response_data = await self._client._make_request_async(
+            "GET", 
+            "/v2/product-set/images-by-sku", 
+            params=params.to_api_params()
+        )
+        
+        return [ProductImageBySKU(**item) for item in response_data]

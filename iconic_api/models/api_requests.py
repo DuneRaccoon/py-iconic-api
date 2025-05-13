@@ -291,3 +291,14 @@ class ProductGroupRequest(BaseRequestParamsModel):
     """
     name: str
 
+class GetQualityControlStatusRequest(BaseRequestParamsModel):
+    """
+    Request model for getting quality control status of ProductSets.
+    """
+    product_set_ids: Optional[List[int]] = None
+
+class GetImagesBySKURequest(BaseRequestParamsModel):
+    """
+    Request model for getting images by product shop SKU or Seller SKU.
+    """
+    product_skus: List[str]

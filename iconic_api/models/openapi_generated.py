@@ -4476,6 +4476,24 @@ class ProductSetId(BaseModel):
         example=True,
     )
 
+class QualityControlStatus(BaseModel):
+    """
+    Model for quality control status information.
+    """
+    product_set_id: int = Field(alias="productSetId")
+    status: str  # enum: "approved", "rejected", "pending"
+    created_at: datetime_aliased = Field(alias="createdAt")
+
+
+class ProductImageBySKU(BaseModel):
+    """
+    Model for product image information by SKU.
+    """
+    product_set_id: int = Field(alias="productSetId")
+    shop_sku: str = Field(alias="shopSku")
+    seller_sku: str = Field(alias="sellerSku")
+    main_image_url: Optional[str] = Field(alias="mainImageUrl")
+
 
 class LastVersionUploaded(BaseModel):
     """
