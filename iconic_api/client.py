@@ -22,11 +22,13 @@ from .resources import (
     Category,
     Order
 )
+from .throttler import throttler, async_throttler
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_TOKEN_BUFFER_SECONDS = 300  # Refresh token 5 minutes before expiry
 DEFAULT_RATE_LIMIT_RPS = 25 # Default to 25 requests per second
+
 
 
 class BaseIconicClient:
@@ -60,24 +62,6 @@ class BaseIconicClient:
         self._access_token: Optional[str] = None
         self._token_expires_at: float = 0.0
 
-        # Rate Limiter Setup
-        if redis_url:
-            try:
-                from redis import Redis
-                redis_client = Redis.from_url(redis_url)
-                self.storage = RedisLeakyBucketStorage(redis_client, key_prefix=f"iconic_api_throttler:{client_id}")
-            except ImportError:
-                logger.warning("Redis not installed. Falling back to InMemoryStorage for rate limiting. "
-                               "Run 'pip install iconic-api-client[redis]' to use Redis.")
-                self.storage = InMemoryLeakyBucketStorage()
-        else:
-            self.storage = InMemoryLeakyBucketStorage()
-        
-        # LeakyBucket expects capacity and leak_rate.
-        # For N RPS, capacity can be N, leak_rate N over 1 second.
-        self.throttler_capacity = rate_limit_rps
-        self.throttler_leak_rate = rate_limit_rps / 1.0 # rate / per_seconds
-        
         self._client: Union[httpx.Client, httpx.AsyncClient] # To be defined in subclasses
         
         # Initialize resource classes
@@ -144,11 +128,6 @@ class IconicClient(BaseIconicClient):
         self._client = None  # Initialize to avoid type checking errors before super().__init__
         super().__init__(*args, **kwargs)
         self._client = httpx.Client(base_url=self.base_api_url, timeout=self.timeout)
-        self.throttler = LeakyBucket(
-            capacity=self.throttler_capacity,
-            leak_rate=self.throttler_leak_rate,
-            storage=self.storage
-        )
 
     def _fetch_new_token_sync(self) -> None:
         headers = {"Authorization": self._get_basic_auth_header()}
@@ -185,6 +164,8 @@ class IconicClient(BaseIconicClient):
         if self._is_token_expired():
             self._fetch_new_token_sync()
 
+    
+    @throttler.throttle()
     def _make_request_sync(
         self,
         method: str,
@@ -219,17 +200,16 @@ class IconicClient(BaseIconicClient):
         retries = self.max_retries
         while True:
             try:
-                with self.throttler:
-                    response = self._client.request(
-                        method,
-                        path,
-                        params=params,
-                        json=json_data,
-                        data=form_data,
-                        files=files,
-                        headers=headers,
-                    )
-                
+                response = self._client.request(
+                    method,
+                    path,
+                    params=params,
+                    json=json_data,
+                    data=form_data,
+                    files=files,
+                    headers=headers,
+                )
+            
                 if 200 <= response.status_code < 300:
                     if response.content:
                         return response.json()
@@ -283,11 +263,6 @@ class IconicAsyncClient(BaseIconicClient):
         self._client = None  # Initialize to avoid type checking errors before super().__init__
         super().__init__(*args, **kwargs)
         self._client = httpx.AsyncClient(base_url=self.base_api_url, timeout=self.timeout)
-        self.throttler = AsyncLeakyBucket(
-            capacity=self.throttler_capacity,
-            leak_rate=self.throttler_leak_rate,
-            storage=self.storage
-        )
 
     async def _fetch_new_token_async(self) -> None:
         headers = {"Authorization": self._get_basic_auth_header()}
@@ -323,6 +298,7 @@ class IconicAsyncClient(BaseIconicClient):
         if self._is_token_expired():
             await self._fetch_new_token_async()
 
+    @async_throttler.throttle()
     async def _make_request_async(
         self,
         method: str,
@@ -353,16 +329,15 @@ class IconicAsyncClient(BaseIconicClient):
         retries = self.max_retries
         while True:
             try:
-                async with self.throttler:
-                    response = await self._client.request(
-                        method,
-                        path,
-                        params=params,
-                        json=json_data,
-                        data=form_data,
-                        files=files,
-                        headers=headers,
-                    )
+                response = await self._client.request(
+                    method,
+                    path,
+                    params=params,
+                    json=json_data,
+                    data=form_data,
+                    files=files,
+                    headers=headers,
+                )
                 
                 if 200 <= response.status_code < 300:
                     if response.content:

@@ -2318,10 +2318,10 @@ class Type1(Enum):
 
 
 class FailureReason(BaseModel):
-    type: Type1 = Field(..., description='Failure reason type.\n')
-    name: str = Field(..., description='Reason name')
-    description: str = Field(..., description='Reason description')
-    details: str = Field(..., description='Reason details', example='')
+    type: Optional[Type1] = Field(None, description='Failure reason type.\n')
+    name: Optional[str] = Field(None, description='Reason name')
+    description: Optional[str] = Field(None, description='Reason description')
+    details: Optional[str] = Field(None, description='Reason details', example='')
 
 
 class Type2(Enum):
@@ -2353,6 +2353,7 @@ class Method(Enum):
     home = 'home'
     pickup = 'pickup'
     address = 'address'
+    work = 'work'
     none = 'none'
 
 
@@ -2380,15 +2381,15 @@ class Provider(BaseModel):
     """
 
     uuid: str = Field(..., example='f11a7fcb-53ea-45bf-aa54-f30a56a3a5gg')
-    name: str = Field(
-        ..., description='Shipment provider name', example='DafitiCarrier'
+    name: Optional[str] = Field(
+        None, description='Shipment provider name', example='DafitiCarrier'
     )
     default: Optional[bool] = Field(
         None, description='True if it is the default shipment provider', example=True
     )
-    digitalType: str = Field(..., description='Digital type')
-    trackingUrl: str = Field(
-        ..., description='Tracking URL', example='https://example.com/tracking/'
+    digitalType: Optional[str] = Field(None, description='Digital type')
+    trackingUrl: Optional[str] = Field(
+        None, description='Tracking URL', example='https://example.com/tracking/'
     )
 
 
@@ -2407,25 +2408,22 @@ class ProviderType(Enum):
 
 
 class Shipment(BaseModel):
-    type: Type2 = Field(..., description='Shipment type.', example='crossdocking')
-    crossdockingDeliveryType: CrossdockingDeliveryType = Field(
-        ..., description='Crossdocking delivery type'
+    type: Optional[Type2] = Field(None, description='Shipment type.', example='crossdocking')
+    crossdockingDeliveryType: Optional[CrossdockingDeliveryType] = Field(
+        None, description='Crossdocking delivery type'
     )
-    method: Method = Field(
-        ...,
-        description='Shipment method received from the Shop. It is intended to indicate where the order should be send to. Possible options are "home", "pickup", "address", "none"',
+    method: Optional[Union[Method, str]] = Field(
+        None, description='Shipment method received from the Shop. It is intended to indicate where the order should be send to. Possible options are "home", "pickup", "address", "none"',
         example='home',
     )
-    preProvider: PreProvider = Field(..., description='Pre-defined shipment provider')
-    provider: Provider = Field(..., description='Shipment provider')
-    providerPreselected: bool = Field(
-        ..., description='Is shipment provider preselected', example=False
-    )
-    providerProduct: str = Field(..., example='')
-    providerType: ProviderType = Field(..., description='Shipment provider type')
-    weight: float = Field(..., description='Weight', example=0.5)
-    trackingCode: str = Field(..., description='Tracking code', example='123')
-    preTrackingCode: str = Field(..., description='PRE tracking code')
+    preProvider: Optional[PreProvider] = Field(None, description='Pre-defined shipment provider')
+    provider: Optional[Provider] = Field(None, description='Shipment provider')
+    providerPreselected: Optional[bool] = Field(None, description='Is shipment provider preselected', example=False)
+    providerProduct: Optional[str] = Field(None, example='')
+    providerType: Optional[ProviderType] = Field(None, description='Shipment provider type')
+    weight: Optional[float] = Field(None, description='Weight', example=0.5)
+    trackingCode: Optional[str] = Field(None, description='Tracking code', example='123')
+    preTrackingCode: Optional[str] = Field(None, description='PRE tracking code')
 
 
 class Product4(BaseModel):
@@ -2436,15 +2434,13 @@ class Product4(BaseModel):
     variation: str = Field(
         ..., description='Variation value as received from the Shop', example='-'
     )
-    sellerSku: str = Field(..., description='Seller SKU', example='164097_L')
+    sellerSku: Optional[str] = Field(None, description='Seller SKU', example='164097_L')
 
 
 class Purchase(BaseModel):
-    orderSrcId: int = Field(..., description='Order src ID', example=555)
-    orderNumber: str = Field(
-        ..., description='Order number', example='MPDS-D1405061201'
-    )
-    deliveryInfo: str = Field(..., description='Delivery info')
+    orderSrcId: Optional[int] = Field(None, description='Order src ID', example=555)
+    orderNumber: Optional[str] = Field(None, description='Order number', example='MPDS-D1405061201')
+    deliveryInfo: Optional[str] = Field(None, description='Delivery info')
 
 
 class ExtraAttributes(BaseModel):
@@ -2489,6 +2485,7 @@ class Action(Enum):
     generate_manifest = 'generate_manifest'
     generate_carrier_manifest = 'generate_carrier_manifest'
     generate_credit_note = 'generate_credit_note'
+    generate_all_documents = 'generate_all_documents'
     set_invoice_number = 'set_invoice_number'
     set_invoice_access_key = 'set_invoice_access_key'
     set_tracking_code = 'set_tracking_code'
@@ -2569,18 +2566,25 @@ class OrderItem(BaseModel):
         description="It's true if order item shipment type is not `consignment` and src_status is not `awaiting_fulfillment`",
         example=True,
     )
-    failureReason: FailureReason
-    shipment: Shipment
-    invoiceNumber: str = Field(..., description='Invoice Number', example='123re')
-    invoiceAccesskey: str = Field(..., description='Invoice Access Key')
+    failureReason: Optional[FailureReason] = Field(
+        None, description='Reason for failure if applicable'
+    )
+    shipment: Optional[Shipment] = Field(
+        None,
+        description='Shipment information. It is not always available, for example, when order item is in `pending` status.',
+    )
+    invoiceNumber: Optional[str] = Field(None, description='Invoice Number', example='123re')
+    invoiceAccesskey: Optional[str] = Field(
+        None, description='Invoice Access Key'
+    )
     inTransit: bool = Field(..., description='Order item is in transit', example=False)
     premium: bool = Field(
         ...,
         description='The flag indicates if the order item is premium or not',
         example=False,
     )
-    targetToShipAt: str = Field(
-        ...,
+    targetToShipAt: Optional[datetime_aliased] = Field(
+        None,
         description='Promised shipment date. It works only if Promised Shipping Date Feature is Enabled. The dates returned will follow the same format as in the example',
         example='2022-12-23T05:36:23.123456Z',
     )
@@ -2593,15 +2597,11 @@ class OrderItem(BaseModel):
         ..., description='Tax percent for the order item', example=21
     )
     paidPrice: float = Field(..., description='Paid price', example=2499)
-    paidCommission: float = Field(..., description='Paid commission')
+    paidCommission: Optional[float] = Field(None, description='Paid commission')
     shippingFee: float = Field(..., description='Shipping fee', example=0)
-    shippingServiceCost: float = Field(..., description='Shipping service cost')
-    walletCredits: float = Field(
-        ...,
-        description='Indicated that the customer used wallet as payment aside from possible voucher',
-        example=0,
-    )
-    storeCredits: float = Field(..., description='Store credits', example=0)
+    shippingServiceCost: Optional[float] = Field(None, description='Shipping service cost')
+    walletCredits: Optional[float] = Field(None, description='Indicated that the customer used wallet as payment aside from possible voucher', example=0)
+    storeCredits: Optional[float] = Field(None, description='Store credits', example=0)
     shippingVoucherAmount: float = Field(
         ..., description='Shipping voucher amount', example=0
     )
@@ -2609,30 +2609,35 @@ class OrderItem(BaseModel):
         ..., description='Price after discount', example=0
     )
     salesDueAmount: float = Field(..., description='Sales due amount', example=245)
-    itemSerialNumber: str = Field(..., description='Serial number')
-    abatementRate: str = Field(..., description='Abatement rate')
-    exciseRate: str = Field(..., description='Excise rate')
-    hsnCode: str = Field(..., description='HSN code')
-    codCollectableAmount: str = Field(..., description='Cod collectable amount')
-    purchase: Purchase
-    createdAt: str = Field(
-        ...,
+    itemSerialNumber: Optional[str] = Field(None, description='Serial number')
+    abatementRate: Optional[str] = Field(None, description='Abatement rate')
+    exciseRate: Optional[str] = Field(None, description='Excise rate')
+    hsnCode: Optional[str] = Field(None, description='HSN code')
+    codCollectableAmount: Optional[str] = Field(None, description='Cod collectable amount')
+    purchase: Optional[Purchase] = Field(
+        None,
+        description='Purchase information. It is not always available, for example, when order item is in `pending` status.',
+    )
+    createdAt: Optional[datetime_aliased] = Field(
+        None,
         description='Date and time when the order item was created',
         example='2021-09-22T23:21:42.123456Z',
     )
-    updatedAt: str = Field(
-        ...,
+    updatedAt: Optional[datetime_aliased] = Field(
+        None,
         description='Date and time when the order item was updated. The dates returned will follow the same format as in the example',
         example='2021-09-22T23:21:42.123456Z',
     )
-    lastStatusChangedAt: str = Field(
-        ...,
+    lastStatusChangedAt: Optional[datetime_aliased] = Field(
+        None,
         description='Date when the order item status was updated.\nNot every Order Item update changes its status. This is the difference between this field and updated_at. The dates returned will follow the same format as in the example\n',
         example='2021-09-22T23:21:42.123456Z',
     )
-    warehouseName: str = Field(..., description='Warehouse name')
-    extraAttributes: ExtraAttributes = Field(
-        ...,
+    warehouseName: Optional[str] = Field(
+        None, description='Warehouse name'
+    )
+    extraAttributes: Optional[ExtraAttributes] = Field(
+        None,
         description='Extra attributes which were passed to SellerCenter on getMarketPlaceOrders call.',
     )
     isHybrid: bool = Field(
@@ -2685,8 +2690,8 @@ class Order(BaseModel):
     )
     customer: Customer = Field(..., description='Customer name')
     address: Address = Field(..., description='Order address')
-    nationalRegistrationNumber: str = Field(
-        ...,
+    nationalRegistrationNumber: Optional[str] = Field(
+        None,
         description='It is the registration number of the customer',
         example='11114389',
     )
@@ -2720,16 +2725,16 @@ class Order(BaseModel):
         description='Date and time when address was updated last time. The dates returned will follow the same format as in the example',
         example='2021-09-22T23:21:42.123456Z',
     )
-    exchangeByOrderId: str = Field(
-        ...,
+    exchangeByOrderId: Optional[str] = Field(
+        None,
         description='It indicates that current order is exchange order for other order. This field contains a new order ID',
     )
     exchangeForOrderId: Optional[str] = Field(
         None,
         description='It indicates that current order is exchange order for other order. This field contains an old order ID',
     )
-    extraAttributes: str = Field(
-        ..., description='Additional attributes set by the seller.'
+    extraAttributes: Optional[str] = Field(
+        None, description='Additional attributes set by the seller.'
     )
     statusList: Dict[str, Any] = Field(
         ...,
@@ -2752,7 +2757,7 @@ class Order(BaseModel):
         description='Promised shipment date. It works only if Promised Shipping Date Feature is Enabled. The dates returned will follow the same format as in the example',
         example='2022-12-23T05:36:23.123456Z',
     )
-    shipmentProviderType: Optional[ShipmentProviderType] = Field(
+    shipmentProviderType: Optional[Union[ShipmentProviderType, str]] = Field(
         None,
         description='Calculated shipment provider type across all order items',
         example='standard',
@@ -3116,117 +3121,6 @@ class Shipment1(BaseModel):
     weight: float = Field(..., description='Weight', example=0.5)
     trackingCode: str = Field(..., description='Tracking code', example='123')
     preTrackingCode: str = Field(..., description='PRE tracking code')
-
-
-class OrderItem(BaseModel):
-    id: int = Field(..., description='Unique numeric identifier', example=1111)
-    srcId: str = Field(..., description='Order item src ID', example='MY-32022990')
-    sellerId: int = Field(..., description='Seller ID', example=11112)
-    orderId: int = Field(..., description='Order ID', example=111134)
-    uuid: str = Field(
-        ...,
-        description='Unique string ID',
-        example='9d6ca7ce-4d71-46bf-aa5e-a0727eca880z',
-    )
-    status: OrderStatus = Field(..., description='Order Item status.\n', example='pending')
-    isProcessable: bool = Field(
-        ...,
-        description="It's true if order item shipment type is not `consignment` and src_status is not `awaiting_fulfillment`",
-        example=True,
-    )
-    failureReason: FailureReason1
-    shipment: Shipment1
-    invoiceNumber: str = Field(..., description='Invoice Number', example='123re')
-    invoiceAccesskey: str = Field(..., description='Invoice Access Key')
-    inTransit: bool = Field(..., description='Order item is in transit', example=False)
-    premium: bool = Field(
-        ...,
-        description='The flag indicates if the order item is premium or not',
-        example=False,
-    )
-    targetToShipAt: str = Field(
-        ...,
-        description='Promised shipment date. It works only if Promised Shipping Date Feature is Enabled. The dates returned will follow the same format as in the example',
-        example='2022-12-23T05:36:23.123456Z',
-    )
-    product: Product4
-    unitPrice: float = Field(..., description='Order item price', example=2499)
-    taxAmount: float = Field(
-        ..., description='Tax amount for the order item', example=433.71
-    )
-    taxPercent: float = Field(
-        ..., description='Tax percent for the order item', example=21
-    )
-    paidPrice: float = Field(..., description='Paid price', example=2499)
-    paidCommission: float = Field(..., description='Paid commission')
-    shippingFee: float = Field(..., description='Shipping fee', example=0)
-    shippingServiceCost: float = Field(..., description='Shipping service cost')
-    walletCredits: float = Field(
-        ...,
-        description='Indicated that the customer used wallet as payment aside from possible voucher',
-        example=0,
-    )
-    storeCredits: float = Field(..., description='Store credits', example=0)
-    shippingVoucherAmount: float = Field(
-        ..., description='Shipping voucher amount', example=0
-    )
-    priceAfterDiscount: float = Field(
-        ..., description='Price after discount', example=0
-    )
-    salesDueAmount: float = Field(..., description='Sales due amount', example=245)
-    itemSerialNumber: str = Field(..., description='Serial number')
-    abatementRate: str = Field(..., description='Abatement rate')
-    exciseRate: str = Field(..., description='Excise rate')
-    hsnCode: str = Field(..., description='HSN code')
-    codCollectableAmount: str = Field(..., description='Cod collectable amount')
-    purchase: Purchase
-    createdAt: str = Field(
-        ...,
-        description='Date and time when the order item was created',
-        example='2021-09-22T23:21:42.123456Z',
-    )
-    updatedAt: str = Field(
-        ...,
-        description='Date and time when the order item was updated. The dates returned will follow the same format as in the example',
-        example='2021-09-22T23:21:42.123456Z',
-    )
-    lastStatusChangedAt: str = Field(
-        ...,
-        description='Date when the order item status was updated.\nNot every Order Item update changes its status. This is the difference between this field and updated_at. The dates returned will follow the same format as in the example\n',
-        example='2021-09-22T23:21:42.123456Z',
-    )
-    warehouseName: str = Field(..., description='Warehouse name')
-    extraAttributes: ExtraAttributes = Field(
-        ...,
-        description='Extra attributes which were passed to SellerCenter on getMarketPlaceOrders call.',
-    )
-    isHybrid: bool = Field(
-        ...,
-        description='Indicates, whether the product is a hybrid product for the Hybrid Depth / Size Fill feature.',
-        example=False,
-    )
-    isOutlet: bool = Field(
-        ...,
-        description='Indicates, whether the order item has "outlet" flag.',
-        example=False,
-    )
-    actions: List[Action] = Field(
-        ...,
-        description='Possible next actions for order item',
-        example=['status_set_to_shipped', 'status_set_to_cancelled'],
-    )
-    vouchers: List[Voucher1] = Field(..., description='Discount list')
-    manifestStatus: Optional[ManifestStatus] = Field(
-        None, description='Manifest status', example='forward_ready_to_ship'
-    )
-    isPickupRequestSent: Optional[bool] = Field(
-        None,
-        description='The flag shows if Pickup Request has been sent for the item',
-        example=False,
-    )
-    discountAmount: Optional[float] = Field(
-        None, description='Discount value', example=0
-    )
 
 
 class OrderItemReturn(BaseModel):

@@ -148,25 +148,4 @@ def create_exception_from_response(
         except Exception:
             pass  # Fall through to generic handling
     
-    # Construct exception with appropriate parameters
-    if exception_class in (RateLimitError, MaintenanceModeError):
-        return exception_class(
-            message=message,
-            retry_after=retry_after,
-            status_code=status_code,
-            response_content=response.content,
-            request_url=str(response.request.url),
-            request_method=method,
-            response_headers=response.headers
-        )
-    
-    return exception_class(
-        message=message,
-        status_code=status_code,
-        response_content=response.content,
-        request_url=str(response.request.url),
-        request_method=method,
-        request_params=kwargs.get('params'),
-        request_data=kwargs.get('json') or kwargs.get('data'),
-        response_headers=response.headers
-    )
+    return exception_class(message=message, response=response)

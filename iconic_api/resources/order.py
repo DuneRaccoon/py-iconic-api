@@ -18,10 +18,12 @@ class Order(IconicResource):
     endpoint = "orders"
     model_class = Order
     
-    def list_orders(self, params: Union[Dict[str, Any], ListOrdersRequest]) -> List["Order"]:
+    def list_orders(self, **params: Union[Dict[str, Any], ListOrdersRequest]) -> List["Order"]:
         """List orders based on filter criteria."""
-        if isinstance(params, ListOrdersRequest):
-            params = params.to_api_params()
+        if not isinstance(params, ListOrdersRequest):
+            params = ListOrdersRequest(**params)
+            
+        params = params.to_api_params()
             
         url = "/v2/orders"
         
@@ -35,11 +37,13 @@ class Order(IconicResource):
         else:
             raise TypeError("This method requires a synchronous client")
             
-    async def list_orders_async(self, params: Union[Dict[str, Any], ListOrdersRequest]) -> List["Order"]:
+    async def list_orders_async(self, **params: Union[Dict[str, Any], ListOrdersRequest]) -> List["Order"]:
         """List orders based on filter criteria asynchronously."""
-        if isinstance(params, ListOrdersRequest):
-            params = params.to_api_params()
+        if not isinstance(params, ListOrdersRequest):
+            params = ListOrdersRequest(**params)
             
+        params = params.to_api_params()
+        
         url = "/v2/orders"
         
         if hasattr(self._client, '_make_request_async'):

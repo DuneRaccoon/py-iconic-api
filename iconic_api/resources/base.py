@@ -128,18 +128,18 @@ class IconicResource:
     def id(self) -> Optional[Union[int, str]]:
         """Return the ID of this resource, if it exists."""
         return self._data.get("id")
-        
+    
     @classmethod
-    def get_endpoint(cls) -> str:
+    def get_endpoint(cls, pluralised: bool = False) -> str:
         """Get the API endpoint for this resource."""
-        return cls.endpoint or to_snake_case(cls.__name__)
+        return (cls.endpoint or to_snake_case(cls.__name__)) + ("s" if pluralised else "")
         
-    def _build_url(self, resource_id: Optional[Any] = None, suffix: str = "") -> str:
+    def _build_url(self, resource_id: Optional[Any] = None, suffix: str = "", pluralised: bool = False) -> str:
         """Build a URL path for this resource."""
         if self._parent_path:
-            base = f"{self._parent_path}/{self.get_endpoint()}"
+            base = f"{self._parent_path}/{self.get_endpoint(pluralised)}"
         else:
-            base = f"/v2/{self.get_endpoint()}"
+            base = f"/v2/{self.get_endpoint(pluralised)}"
             
         url = base
         if resource_id is not None:
@@ -204,12 +204,12 @@ class IconicResource:
             return self.get(resource_id)
         return self.list(**params)
         
-    def get(self: T, resource_id: Any) -> T:
+    def get(self: T, resource_id: Any, pluralised: bool = False) -> T:
         """Get a single resource by ID."""
         if not hasattr(self._client, '_make_request_sync'):
             raise TypeError("This method requires a synchronous client")
         
-        url = self._build_url(resource_id)
+        url = self._build_url(resource_id, pluralised=pluralised)
         response = self._client._make_request_sync("GET", url)
         
         # Handle both single response and list response
@@ -220,12 +220,13 @@ class IconicResource:
             
         return self._create_instance(data)
         
-    def list(self: T, paginated: bool = False, **params) -> Union[List[T], PaginatedResponse[T]]:
+    def list(self: T, paginated: bool = False, pluralised: bool = False, **params) -> Union[List[T], PaginatedResponse[T]]:
         """
         List resources matching the given parameters.
         
         Args:
             paginated: If True, return a PaginatedResponse object instead of a list
+            pluralised: If True, use the pluralized endpoint
             **params: Filter parameters for the request
         
         Returns:
@@ -234,7 +235,7 @@ class IconicResource:
         if not hasattr(self._client, '_make_request_sync'):
             raise TypeError("This method requires a synchronous client")
             
-        url = self._build_url()
+        url = self._build_url(pluralised=pluralised)
         prepared_params = self._prepare_request_params(params)
         response = self._client._make_request_sync("GET", url, params=prepared_params)
         
@@ -253,34 +254,34 @@ class IconicResource:
         
         return instances
         
-    def create(self: T, data: Dict[str, Any]) -> T:
+    def create(self: T, data: Dict[str, Any], pluralised: bool = False) -> T:
         """Create a new resource."""
         if not hasattr(self._client, '_make_request_sync'):
             raise TypeError("This method requires a synchronous client")
             
-        url = self._build_url()
+        url = self._build_url(pluralised=pluralised)
         prepared_data = self._prepare_request_data(data)
         response = self._client._make_request_sync("POST", url, json_data=prepared_data)
         
         return self._create_instance(response)
         
-    def update(self: T, resource_id: Any, data: Dict[str, Any]) -> T:
+    def update(self: T, resource_id: Any, data: Dict[str, Any], pluralised: bool = False) -> T:
         """Update an existing resource."""
         if not hasattr(self._client, '_make_request_sync'):
             raise TypeError("This method requires a synchronous client")
             
-        url = self._build_url(resource_id)
+        url = self._build_url(resource_id, pluralised=pluralised)
         prepared_data = self._prepare_request_data(data)
         response = self._client._make_request_sync("PUT", url, json_data=prepared_data)
         
         return self._create_instance(response)
         
-    def delete(self, resource_id: Any) -> None:
+    def delete(self, resource_id: Any, pluralised: bool = False) -> None:
         """Delete a resource."""
         if not hasattr(self._client, '_make_request_sync'):
             raise TypeError("This method requires a synchronous client")
             
-        url = self._build_url(resource_id)
+        url = self._build_url(resource_id, pluralised=pluralised)
         self._client._make_request_sync("DELETE", url)
         
     def paginate(self: T, **params) -> PaginatedResponse[T]:
@@ -361,12 +362,12 @@ class IconicResource:
         
     # Asynchronous methods
     
-    async def get_async(self: T, resource_id: Any) -> T:
+    async def get_async(self: T, resource_id: Any, pluralised: bool = False) -> T:
         """Get a single resource by ID asynchronously."""
         if not hasattr(self._client, '_make_request_async'):
             raise TypeError("This method requires an asynchronous client")
         
-        url = self._build_url(resource_id)
+        url = self._build_url(resource_id, pluralised=pluralised)
         response = await self._client._make_request_async("GET", url)
         
         # Handle both single response and list response
@@ -377,7 +378,7 @@ class IconicResource:
             
         return self._create_instance(data)
         
-    async def list_async(self: T, paginated: bool = False, **params) -> Union[List[T], PaginatedResponse[T]]:
+    async def list_async(self: T, paginated: bool = False, pluralised: bool = False, **params) -> Union[List[T], PaginatedResponse[T]]:
         """
         List resources matching the given parameters asynchronously.
         
@@ -391,7 +392,7 @@ class IconicResource:
         if not hasattr(self._client, '_make_request_async'):
             raise TypeError("This method requires an asynchronous client")
             
-        url = self._build_url()
+        url = self._build_url(pluralised=pluralised)
         prepared_params = self._prepare_request_params(params)
         response = await self._client._make_request_async("GET", url, params=prepared_params)
         
@@ -410,34 +411,34 @@ class IconicResource:
         
         return instances
         
-    async def create_async(self: T, data: Dict[str, Any]) -> T:
+    async def create_async(self: T, data: Dict[str, Any], pluralised: bool = False) -> T:
         """Create a new resource asynchronously."""
         if not hasattr(self._client, '_make_request_async'):
             raise TypeError("This method requires an asynchronous client")
             
-        url = self._build_url()
+        url = self._build_url(pluralised=pluralised)
         prepared_data = self._prepare_request_data(data)
         response = await self._client._make_request_async("POST", url, json_data=prepared_data)
         
         return self._create_instance(response)
         
-    async def update_async(self: T, resource_id: Any, data: Dict[str, Any]) -> T:
+    async def update_async(self: T, resource_id: Any, data: Dict[str, Any], pluralised: bool = False) -> T:
         """Update an existing resource asynchronously."""
         if not hasattr(self._client, '_make_request_async'):
             raise TypeError("This method requires an asynchronous client")
             
-        url = self._build_url(resource_id)
+        url = self._build_url(resource_id, pluralised=pluralised)
         prepared_data = self._prepare_request_data(data)
         response = await self._client._make_request_async("PUT", url, json_data=prepared_data)
         
         return self._create_instance(response)
         
-    async def delete_async(self, resource_id: Any) -> None:
+    async def delete_async(self, resource_id: Any, pluralised: bool = False) -> None:
         """Delete a resource asynchronously."""
         if not hasattr(self._client, '_make_request_async'):
             raise TypeError("This method requires an asynchronous client")
             
-        url = self._build_url(resource_id)
+        url = self._build_url(resource_id, pluralised=pluralised)
         await self._client._make_request_async("DELETE", url)
         
     async def paginate_async(self: T, **params) -> PaginatedResponse[T]:

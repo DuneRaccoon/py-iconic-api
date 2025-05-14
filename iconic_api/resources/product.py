@@ -22,6 +22,9 @@ class Product(IconicResource):
     endpoint = "product"
     model_class = ProductRead
     
+    def list(self, paginated: bool = False, **params) -> List["Product"]:
+        return super().list(paginated=paginated, pluralised=True, **params)
+    
     def get_by_shop_sku(self, shop_sku: str) -> "Product":
         """Get a product by its shop SKU."""
         url = f"/v2/product/shop-sku/{shop_sku}"

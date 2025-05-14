@@ -29,7 +29,7 @@ class BaseRequestParamsModel(BaseModel):
     model_config = ConfigDict(
         allow_extra = "allow",
         validate_by_name = True,
-        use_enum_values = True,
+        use_enum_values = False,
         json_encoders = {
             datetime_aliased: lambda v: v.isoformat() if isinstance(v, datetime_aliased) else v,
             UUID: lambda v: str(v) if isinstance(v, UUID) else v,

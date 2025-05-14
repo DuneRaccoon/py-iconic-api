@@ -1,6 +1,6 @@
 # Iconic API Client for Python
 
-A Python client for interacting with the Iconic (SellerCenter) API.
+A Python client for efficiently interacting with the Iconic (SellerCenter) API.
 
 ## Features
 

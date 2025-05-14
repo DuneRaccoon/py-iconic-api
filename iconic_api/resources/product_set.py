@@ -32,6 +32,49 @@ class ProductSet(IconicResource):
     endpoint = "product-set"
     model_class = ProductSetRead
     
+    def list(self, paginated: bool = False, **params) -> List["ProductSet"]:
+        return super().list(paginated=paginated, pluralised=True, **params)
+    
+    def get_products(self) -> List["Product"]:
+        """Get products in this product set."""
+        if not self.id:
+            raise ValueError("Cannot get products without a product set ID")
+        
+        if not hasattr(self._client, '_make_request_sync'):
+            raise TypeError("This method requires a synchronous client")
+        
+        return [Product(**item) for item in self.products()]
+        
+    async def get_products_async(self) -> List["Product"]:
+        """Get products in this product set asynchronously."""
+        if not self.id:
+            raise ValueError("Cannot get products without a product set ID")
+            
+        if not hasattr(self._client, '_make_request_async'):
+            raise TypeError("This method requires an asynchronous client")
+        
+        return [Product(**item) for item in (await self.products())]
+    
+    def get_product(self, product_id: int) -> "Product":
+        """Get a specific product in this product set."""
+        if not self.id:
+            raise ValueError("Cannot get a product without a product set ID")
+        
+        if not hasattr(self._client, '_make_request_sync'):
+            raise TypeError("This method requires a synchronous client")
+        
+        return Product(client=self._client, data=self.products(product_id=product_id))
+        
+    async def get_product_async(self, product_id: int) -> "Product":
+        """Get a specific product in this product set asynchronously."""
+        if not self.id:
+            raise ValueError("Cannot get a product without a product set ID")
+        
+        if not hasattr(self._client, '_make_request_async'):
+            raise TypeError("This method requires an asynchronous client")
+        
+        return Product(client=self._client, data=await self.products(product_id=product_id))
+        
     def create_product_set(self, data: Union[Dict[str, Any], CreateProductSetRequest]) -> "ProductSet":
         """Create a new product set."""
         if isinstance(data, CreateProductSetRequest):
