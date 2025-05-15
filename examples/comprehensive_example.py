@@ -9,7 +9,6 @@ import asyncio
 import os
 import time
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
 
 from iconic_api.client import IconicClient, IconicAsyncClient
 from iconic_api.models import (
@@ -20,9 +19,6 @@ from iconic_api.models import (
     ListBrandsRequest,
     ListOrdersRequest
 )
-
-# Load environment variables
-load_dotenv('/Users/benjaminherro/github/py-iconic-api/.env')
 
 CLIENT_ID = os.getenv("ICONIC_CLIENT_ID")
 CLIENT_SECRET = os.getenv("ICONIC_CLIENT_SECRET")
