@@ -5291,11 +5291,14 @@ class FinanceStatement(BaseModel):
     )
     sellerId: int
     number: str
-    startDate: datetime_aliased
-    endDate: datetime_aliased
-    dueDate: datetime_aliased
-    paidAt: datetime_aliased
-    note: str
+    startDate: Optional[datetime_aliased]
+    endDate: Optional[datetime_aliased]
+    dueDate: Optional[datetime_aliased]
+    paidAt: Optional[datetime_aliased]
+    note: Optional[str] = Field(
+        None,
+        description='Optional note for the finance statement.',
+    )
     openingBalance: float
     closingBalance: float
     payoutAmount: float

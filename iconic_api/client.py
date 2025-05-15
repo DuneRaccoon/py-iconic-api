@@ -20,7 +20,9 @@ from .resources import (
     ProductSet,
     Brand,
     Category,
-    Order
+    Order,
+    Transaction,
+    Finance
 )
 from .throttler import throttler, async_throttler
 
@@ -74,6 +76,8 @@ class BaseIconicClient:
         self.brands = Brand(client=self)
         self.categories = Category(client=self)
         self.orders = Order(client=self)
+        self.transactions = Transaction(client=self)
+        self.finance = Finance(client=self)
 
     def _get_basic_auth_header(self) -> str:
         auth_str = f"{self.client_id}:{self.client_secret}"

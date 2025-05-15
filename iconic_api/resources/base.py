@@ -127,7 +127,7 @@ class IconicResource:
     @property
     def id(self) -> Optional[Union[int, str]]:
         """Return the ID of this resource, if it exists."""
-        return self._data.get("id")
+        return getattr(self._model, "id", self._data.get("id"))
     
     @classmethod
     def get_endpoint(cls, pluralised: bool = False) -> str:

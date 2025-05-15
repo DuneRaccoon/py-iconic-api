@@ -302,3 +302,18 @@ class GetImagesBySKURequest(BaseRequestParamsModel):
     Request model for getting images by product shop SKU or Seller SKU.
     """
     product_skus: List[str]
+
+class FinanceStatementListParamsModel(BaseRequestParamsModel):
+    """
+    Request model for listing finance statements.
+    """
+    seller_id: Optional[int] = None
+    start_date: Optional[datetime_aliased] = None
+    end_date: Optional[datetime_aliased] = None
+    paid: Optional[bool] = None
+    country: Optional[str] = None
+    currency: Optional[str] = None
+    type: Optional[Literal["marketplace", "consignment"]] = "marketplace"
+    sort: Optional[Literal["id", "createdAt", "startDate"]] = "id"
+    sort_dir: Optional[Literal["asc", "desc"]] = "desc"
+
