@@ -1,5 +1,8 @@
-from typing import Dict, Any, List, Optional, Union, Literal
+from typing import Dict, Any, List, Optional, Union, Literal, TYPE_CHECKING
 from datetime import datetime
+
+if TYPE_CHECKING:
+    from ..models.stock import StockData
 
 from .base import IconicResource
 from ..models import (
@@ -611,6 +614,38 @@ class ProductSet(IconicResource):
         else:
             raise TypeError("This method requires an asynchronous client")
             
+    # Stock related methods
+    
+    def get_product_stocks(self) -> List["StockData"]:
+        """
+        Get stock information for all products in this product set.
+        
+        Returns:
+            List of StockData objects containing product stock information
+        """
+        if not self.id:
+            raise ValueError("Cannot get stock without a product set ID")
+            
+        if hasattr(self._client, 'stock'):
+            return self._client.stock.get_product_set_stock(self.id)
+        else:
+            raise ValueError("Client does not have a stock resource")
+            
+    async def get_product_stocks_async(self) -> List["StockData"]:
+        """
+        Get stock information for all products in this product set asynchronously.
+        
+        Returns:
+            List of StockData objects containing product stock information
+        """
+        if not self.id:
+            raise ValueError("Cannot get stock without a product set ID")
+            
+        if hasattr(self._client, 'stock'):
+            return await self._client.stock.get_product_set_stock_async(self.id)
+        else:
+            raise ValueError("Client does not have a stock resource")
+    
     # Static methods for operating on multiple product sets
     
     @classmethod

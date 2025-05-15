@@ -8,8 +8,11 @@ from ..models import (
     RejectedProductSet
 )
 
+from ..models.stock import StockData, StockUpdateItem
+
 if TYPE_CHECKING:
     from .product_set import ProductSet
+    from ..models.stock import StockData, StockUpdateItem
 
 class Product(IconicResource):
     """
@@ -306,6 +309,80 @@ class Product(IconicResource):
         else:
             raise TypeError("This method requires an asynchronous client")
             
+    # Stock related methods
+    
+    def get_stock(self) -> "StockData":
+        """
+        Get stock information for this product.
+        
+        Returns:
+            StockData object containing product stock information
+        """
+        if not self.id:
+            raise ValueError("Cannot get stock without a product ID")
+            
+        if hasattr(self._client, 'stock'):
+            return self._client.stock.get_product_stock(self.id)
+        else:
+            raise ValueError("Client does not have a stock resource")
+            
+    async def get_stock_async(self) -> "StockData":
+        """
+        Get stock information for this product asynchronously.
+        
+        Returns:
+            StockData object containing product stock information
+        """
+        if not self.id:
+            raise ValueError("Cannot get stock without a product ID")
+            
+        if hasattr(self._client, 'stock'):
+            return await self._client.stock.get_product_stock_async(self.id)
+        else:
+            raise ValueError("Client does not have a stock resource")
+            
+    def update_stock(self, quantity: int) -> "StockUpdateItem":
+        """
+        Update the stock quantity for this product.
+        
+        Args:
+            quantity: The new stock quantity
+            
+        Returns:
+            StockUpdateItem containing the update confirmation
+        """
+        if not self.id:
+            raise ValueError("Cannot update stock without a product ID")
+            
+        if hasattr(self._client, 'stock'):
+            result = self._client.stock.update_stock([
+                {"productId": self.id, "quantity": quantity}
+            ])
+            return result[0] if result else None
+        else:
+            raise ValueError("Client does not have a stock resource")
+            
+    async def update_stock_async(self, quantity: int) -> "StockUpdateItem":
+        """
+        Update the stock quantity for this product asynchronously.
+        
+        Args:
+            quantity: The new stock quantity
+            
+        Returns:
+            StockUpdateItem containing the update confirmation
+        """
+        if not self.id:
+            raise ValueError("Cannot update stock without a product ID")
+            
+        if hasattr(self._client, 'stock'):
+            result = await self._client.stock.update_stock_async([
+                {"productId": self.id, "quantity": quantity}
+            ])
+            return result[0] if result else None
+        else:
+            raise ValueError("Client does not have a stock resource")
+    
     # Quality control related methods
     
     @classmethod

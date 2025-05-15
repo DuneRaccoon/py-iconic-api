@@ -25,7 +25,8 @@ from .resources import (
     Finance,
     Invoice,
     AttributeResource,
-    AttributeSetResource
+    AttributeSetResource,
+    Stock
 )
 from .throttler import throttler, async_throttler
 
@@ -84,6 +85,7 @@ class BaseIconicClient:
         self.invoices = Invoice(client=self)
         self.attributes = AttributeResource(client=self)
         self.attribute_sets = AttributeSetResource(client=self)
+        self.stock = Stock(client=self)
 
     def _get_basic_auth_header(self) -> str:
         auth_str = f"{self.client_id}:{self.client_secret}"
