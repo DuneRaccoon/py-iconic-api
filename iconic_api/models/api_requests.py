@@ -317,3 +317,11 @@ class FinanceStatementListParamsModel(BaseRequestParamsModel):
     sort: Optional[Literal["id", "createdAt", "startDate"]] = "id"
     sort_dir: Optional[Literal["asc", "desc"]] = "desc"
 
+class TransactionVariablesListParamsModel(BaseRequestParamsModel):
+    """
+    Request model for listing TRE variables.
+    """
+    seller_id: Optional[int] = None
+    seller_src_id: Optional[str] = None
+    variable_name: Optional[str] = None
+    variable_value: Optional[str] = None
