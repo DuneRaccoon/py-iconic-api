@@ -175,3 +175,5 @@ cython_debug/
 
 # Iconic ignore
 sc-api-schemas/
+
+.pypi-token
