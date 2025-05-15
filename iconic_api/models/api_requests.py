@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date as date_aliased, datetime as datetime_aliased
-from enum import Enum
+from enum import Enum, StrEnum
 from typing import Any, Dict, List, Optional, Union, Literal
 from uuid import UUID
 
@@ -325,3 +325,71 @@ class TransactionVariablesListParamsModel(BaseRequestParamsModel):
     seller_src_id: Optional[str] = None
     variable_name: Optional[str] = None
     variable_value: Optional[str] = None
+
+
+class InvoiceDocumentType(StrEnum):
+    """
+    Enumeration of invoice document types supported by the API.
+    """
+    # Inbound documents
+    INBOUND_COMPLEMENTARY_NOTE = "inbound-complementary-note"
+    INBOUND_CORRECTION_LETTER = "inbound-correction-letter"
+    INBOUND_NORMAL_ISSUE = "inbound-normal-issue"
+    INBOUND_CANCELED = "inbound-canceled"
+    INBOUND_UNUSED = "inbound-unused"
+    INBOUND_RETURN_COMPLEMENTARY_NOTE = "inbound-return-complementary-note"
+    INBOUND_RETURN_CORRECTION_LETTER = "inbound-return-correction-letter"
+    INBOUND_RETURN_NORMAL_ISSUE = "inbound-return-normal-issue"
+    INBOUND_RETURN_CANCELED = "inbound-return-canceled"
+    INBOUND_RETURN_UNUSED = "inbound-return-unused"
+    
+    # Sale documents
+    SALE_COMPLEMENTARY_NOTE = "sale-complementary-note"
+    SALE_CORRECTION_LETTER = "sale-correction-letter"
+    SALE_NORMAL_ISSUE = "sale-normal-issue"
+    SALE_SYMBOLIC_RETURN = "sale-symbolic-return"
+    SALE_CANCELED = "sale-canceled"
+    SALE_UNUSED = "sale-unused"
+    SALE_DEVOLUTION_COMPLEMENTARY_NOTE = "sale-devolution-complementary-note"
+    SALE_DEVOLUTION_CORRECTION_LETTER = "sale-devolution-correction-letter"
+    SALE_DEVOLUTION_NORMAL_ISSUE = "sale-devolution-normal-issue"
+    SALE_DEVOLUTION_SHIPPING_SYMBOLIC = "sale-devolution-shipping-symbolic"
+    SALE_DEVOLUTION_CANCELED = "sale-devolution-canceled"
+    SALE_DEVOLUTION_UNUSED = "sale-devolution-unused"
+    
+    # Stock decrease documents
+    STOCK_DECREASE_COMPLEMENTARY_NOTE = "stock-decrease-complementary-note"
+    STOCK_DECREASE_CORRECTION_LETTER = "stock-decrease-correction-letter"
+    STOCK_DECREASE_NORMAL_ISSUE = "stock-decrease-normal-issue"
+    STOCK_DECREASE_CANCELED = "stock-decrease-canceled"
+    STOCK_DECREASE_UNUSED = "stock-decrease-unused"
+
+
+class InvoiceRequest(BaseRequestParamsModel):
+    """
+    Request model for retrieving invoice files.
+    """
+    order_numbers: Optional[List[str]] = None
+    invoice_numbers: Optional[List[str]] = None
+    po_numbers: Optional[List[str]] = None
+    document_types: Optional[List[InvoiceDocumentType]] = None
+    start_date: Optional[date_aliased] = None
+    end_date: Optional[date_aliased] = None
+    
+    def to_api_params(self) -> Dict[str, Any]:
+        params = {}
+        
+        if self.order_numbers:
+            params["orderNumbers[]"] = self.order_numbers
+        if self.invoice_numbers:
+            params["invoiceNumbers[]"] = self.invoice_numbers
+        if self.po_numbers:
+            params["poNumbers[]"] = self.po_numbers
+        if self.document_types:
+            params["documentTypes[]"] = [dt.value for dt in self.document_types]
+        if self.start_date:
+            params["startDate"] = self.start_date.isoformat()
+        if self.end_date:
+            params["endDate"] = self.end_date.isoformat()
+            
+        return params

@@ -6,6 +6,7 @@ from .category import Category
 from .order import Order
 from .transaction import Transaction
 from .finance import Finance
+from .invoice import Invoice
 
 __all__ = [
     "IconicResource",
@@ -16,4 +17,5 @@ __all__ = [
     "Order",
     "Transaction",
     "Finance",
+    "Invoice",
 ]
