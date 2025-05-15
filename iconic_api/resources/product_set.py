@@ -75,13 +75,61 @@ class ProductSet(IconicResource):
         
         return Product(client=self._client, data=await self.products(product_id=product_id))
         
-    def create_product_set(self, data: Union[Dict[str, Any], CreateProductSetRequest]) -> "ProductSet":
-        """Create a new product set."""
+    def create_product_set(self, data: Union[Dict[str, Any], CreateProductSetRequest], use_attribute_helper: bool = True) -> "ProductSet":
+        """
+        Create a new product set.
+        
+        Args:
+            data: Data for creating the product set, either as a dictionary or a CreateProductSetRequest model
+            use_attribute_helper: Whether to process attribute values using the attribute helper
+                                 (which automatically converts attribute names to IDs and formats values)
+            
+        Returns:
+            New ProductSet resource
+        """
         if isinstance(data, CreateProductSetRequest):
-            data = data.model_dump(by_alias=True, exclude_none=True)
+            data_dict = data.model_dump(by_alias=True, exclude_none=True)
+        else:
+            data_dict = dict(data)
+            
+        # If attribute helper is enabled and primary_category_id is provided,
+        # process attributes using the helper
+        if use_attribute_helper and ('primary_category_id' in data_dict or 'primaryCategoryId' in data_dict):
+            try:
+                # Get the primary category ID
+                primary_category_id = data_dict.get('primary_category_id') or data_dict.get('primaryCategoryId')
+                
+                # Extract attribute_values if present
+                attribute_values = data_dict.pop('attribute_values', None)
+                if attribute_values:
+                    # Get the category to find its attribute set
+                    category = self._client.categories.get(primary_category_id)
+                    attribute_set_id = category._data.get('attributeSetId')
+                    
+                    if attribute_set_id:
+                        # Use the attribute set resource to process attributes
+                        attribute_set = self._client.attribute_sets.get_attribute_set(attribute_set_id)
+                        
+                        # Process attributes through the attribute helper
+                        from .attribute_helper import AttributeHelper
+                        helper = AttributeHelper(attribute_set)
+                        prepared_data = helper.prepare_attributes(attribute_values)
+                        
+                        # Merge the prepared data with the original data
+                        if 'attributes' in prepared_data:
+                            data_dict['attributes'] = prepared_data['attributes']
+                            
+                        # Add system attributes to the root level
+                        for key, value in prepared_data.items():
+                            if key != 'attributes':
+                                data_dict[key] = value
+            except Exception as e:
+                # Log the error but continue with normal processing
+                import logging
+                logging.getLogger(__name__).warning(f"Error using attribute helper: {e}")
             
         url = "/v2/product-set"  # Direct endpoint for product set creation
-        prepared_data = self._prepare_request_data(data)
+        prepared_data = self._prepare_request_data(data_dict)
         
         if hasattr(self._client, '_make_request_sync'):
             response = self._client._make_request_sync("POST", url, json_data=prepared_data)
@@ -89,13 +137,61 @@ class ProductSet(IconicResource):
         else:
             raise TypeError("This method requires a synchronous client")
             
-    async def create_product_set_async(self, data: Union[Dict[str, Any], CreateProductSetRequest]) -> "ProductSet":
-        """Create a new product set asynchronously."""
+    async def create_product_set_async(self, data: Union[Dict[str, Any], CreateProductSetRequest], use_attribute_helper: bool = True) -> "ProductSet":
+        """
+        Create a new product set asynchronously.
+        
+        Args:
+            data: Data for creating the product set, either as a dictionary or a CreateProductSetRequest model
+            use_attribute_helper: Whether to process attribute values using the attribute helper
+                                 (which automatically converts attribute names to IDs and formats values)
+            
+        Returns:
+            New ProductSet resource
+        """
         if isinstance(data, CreateProductSetRequest):
-            data = data.model_dump(by_alias=True, exclude_none=True)
+            data_dict = data.model_dump(by_alias=True, exclude_none=True)
+        else:
+            data_dict = dict(data)
+            
+        # If attribute helper is enabled and primary_category_id is provided,
+        # process attributes using the helper
+        if use_attribute_helper and ('primary_category_id' in data_dict or 'primaryCategoryId' in data_dict):
+            try:
+                # Get the primary category ID
+                primary_category_id = data_dict.get('primary_category_id') or data_dict.get('primaryCategoryId')
+                
+                # Extract attribute_values if present
+                attribute_values = data_dict.pop('attribute_values', None)
+                if attribute_values:
+                    # Get the category to find its attribute set
+                    category = await self._client.categories.get_async(primary_category_id)
+                    attribute_set_id = category._data.get('attributeSetId')
+                    
+                    if attribute_set_id:
+                        # Use the attribute set resource to process attributes
+                        attribute_set = await self._client.attribute_sets.get_attribute_set_async(attribute_set_id)
+                        
+                        # Process attributes through the attribute helper
+                        from .attribute_helper import AttributeHelper
+                        helper = AttributeHelper(attribute_set)
+                        prepared_data = helper.prepare_attributes(attribute_values)
+                        
+                        # Merge the prepared data with the original data
+                        if 'attributes' in prepared_data:
+                            data_dict['attributes'] = prepared_data['attributes']
+                            
+                        # Add system attributes to the root level
+                        for key, value in prepared_data.items():
+                            if key != 'attributes':
+                                data_dict[key] = value
+            except Exception as e:
+                # Log the error but continue with normal processing
+                import logging
+                logging.getLogger(__name__).warning(f"Error using attribute helper: {e}")
             
         url = "/v2/product-set"  # Direct endpoint for product set creation
-        prepared_data = self._prepare_request_data(data)
+        prepared_data = self._prepare_request_data(data_dict)
         
         if hasattr(self._client, '_make_request_async'):
             response = await self._client._make_request_async("POST", url, json_data=prepared_data)
@@ -103,16 +199,59 @@ class ProductSet(IconicResource):
         else:
             raise TypeError("This method requires an asynchronous client")
             
-    def update_product_set(self, data: Union[Dict[str, Any], UpdateProductSetRequest]) -> "ProductSet":
-        """Update this product set."""
+    def update_product_set(self, data: Union[Dict[str, Any], UpdateProductSetRequest], use_attribute_helper: bool = True) -> "ProductSet":
+        """
+        Update this product set.
+        
+        Args:
+            data: Data for updating the product set, either as a dictionary or an UpdateProductSetRequest model
+            use_attribute_helper: Whether to process attribute values using the attribute helper
+                                 (which automatically converts attribute names to IDs and formats values)
+            
+        Returns:
+            Updated ProductSet resource
+        """
         if not self.id:
             raise ValueError("Cannot update a product set without an ID")
             
         if isinstance(data, UpdateProductSetRequest):
-            data = data.model_dump(by_alias=True, exclude_none=True)
+            data_dict = data.model_dump(by_alias=True, exclude_none=True)
+        else:
+            data_dict = dict(data)
+            
+        # If attribute helper is enabled, process attributes using the helper
+        if use_attribute_helper:
+            try:
+                # Extract attribute_values if present
+                attribute_values = data_dict.pop('attribute_values', None)
+                if attribute_values:
+                    # Use the attribute set associated with this product set
+                    attribute_set_id = self._data.get('attributeSetId')
+                    
+                    if attribute_set_id:
+                        # Use the attribute set resource to process attributes
+                        attribute_set = self._client.attribute_sets.get_attribute_set(attribute_set_id)
+                        
+                        # Process attributes through the attribute helper
+                        from .attribute_helper import AttributeHelper
+                        helper = AttributeHelper(attribute_set)
+                        prepared_data = helper.prepare_attributes(attribute_values)
+                        
+                        # Merge the prepared data with the original data
+                        if 'attributes' in prepared_data:
+                            data_dict['attributes'] = prepared_data['attributes']
+                            
+                        # Add system attributes to the root level
+                        for key, value in prepared_data.items():
+                            if key != 'attributes':
+                                data_dict[key] = value
+            except Exception as e:
+                # Log the error but continue with normal processing
+                import logging
+                logging.getLogger(__name__).warning(f"Error using attribute helper: {e}")
             
         url = f"/v2/product-set/{self.id}"
-        prepared_data = self._prepare_request_data(data)
+        prepared_data = self._prepare_request_data(data_dict)
         
         if hasattr(self._client, '_make_request_sync'):
             response = self._client._make_request_sync("PUT", url, json_data=prepared_data)
@@ -124,16 +263,59 @@ class ProductSet(IconicResource):
         else:
             raise TypeError("This method requires a synchronous client")
     
-    async def update_product_set_async(self, data: Union[Dict[str, Any], UpdateProductSetRequest]) -> "ProductSet":
-        """Update this product set asynchronously."""
+    async def update_product_set_async(self, data: Union[Dict[str, Any], UpdateProductSetRequest], use_attribute_helper: bool = True) -> "ProductSet":
+        """
+        Update this product set asynchronously.
+        
+        Args:
+            data: Data for updating the product set, either as a dictionary or an UpdateProductSetRequest model
+            use_attribute_helper: Whether to process attribute values using the attribute helper
+                                 (which automatically converts attribute names to IDs and formats values)
+            
+        Returns:
+            Updated ProductSet resource
+        """
         if not self.id:
             raise ValueError("Cannot update a product set without an ID")
             
         if isinstance(data, UpdateProductSetRequest):
-            data = data.model_dump(by_alias=True, exclude_none=True)
+            data_dict = data.model_dump(by_alias=True, exclude_none=True)
+        else:
+            data_dict = dict(data)
             
+        # If attribute helper is enabled, process attributes using the helper
+        if use_attribute_helper:
+            try:
+                # Extract attribute_values if present
+                attribute_values = data_dict.pop('attribute_values', None)
+                if attribute_values:
+                    # Use the attribute set associated with this product set
+                    attribute_set_id = self._data.get('attributeSetId')
+                    
+                    if attribute_set_id:
+                        # Use the attribute set resource to process attributes
+                        attribute_set = await self._client.attribute_sets.get_attribute_set_async(attribute_set_id)
+                        
+                        # Process attributes through the attribute helper
+                        from .attribute_helper import AttributeHelper
+                        helper = AttributeHelper(attribute_set)
+                        prepared_data = helper.prepare_attributes(attribute_values)
+                        
+                        # Merge the prepared data with the original data
+                        if 'attributes' in prepared_data:
+                            data_dict['attributes'] = prepared_data['attributes']
+                            
+                        # Add system attributes to the root level
+                        for key, value in prepared_data.items():
+                            if key != 'attributes':
+                                data_dict[key] = value
+            except Exception as e:
+                # Log the error but continue with normal processing
+                import logging
+                logging.getLogger(__name__).warning(f"Error using attribute helper: {e}")
+        
         url = f"/v2/product-set/{self.id}"
-        prepared_data = self._prepare_request_data(data)
+        prepared_data = self._prepare_request_data(data_dict)
         
         if hasattr(self._client, '_make_request_async'):
             response = await self._client._make_request_async("PUT", url, json_data=prepared_data)

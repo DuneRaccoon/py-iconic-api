@@ -393,3 +393,27 @@ class InvoiceRequest(BaseRequestParamsModel):
             params["endDate"] = self.end_date.isoformat()
             
         return params
+    
+
+class ListAttributesRequest(BaseRequestParamsModel):
+    """Request model for listing attributes."""
+    attribute_ids: Optional[List[int]] = None
+    attribute_set_ids: Optional[List[int]] = None
+    only_visible: Optional[bool] = True
+    limit: int = 100
+    offset: int = 0
+
+    def to_api_params(self) -> Dict[str, Any]:
+        params = {}
+        
+        if self.attribute_ids:
+            params["attributeIds[]"] = self.attribute_ids
+        if self.attribute_set_ids:
+            params["attributeSetIds[]"] = self.attribute_set_ids
+        if self.only_visible is not None:
+            params["onlyVisible"] = self.only_visible
+        
+        params["limit"] = self.limit
+        params["offset"] = self.offset
+        
+        return clean_params(params)

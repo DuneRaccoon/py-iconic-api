@@ -7,6 +7,9 @@ from .order import Order
 from .transaction import Transaction
 from .finance import Finance
 from .invoice import Invoice
+from .attribute import AttributeResource
+from .attribute_set import AttributeSetResource
+from .attribute_helper import AttributeHelper
 
 __all__ = [
     "IconicResource",
@@ -18,4 +21,7 @@ __all__ = [
     "Transaction",
     "Finance",
     "Invoice",
+    "AttributeResource",
+    "AttributeSetResource",
+    "AttributeHelper",
 ]

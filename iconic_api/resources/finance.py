@@ -343,12 +343,23 @@ class Finance(IconicResource):
             offset: Offset for pagination
             
         Returns:
-            Dict containing transactions and pagination info
+            Dict containing transactions list with Transaction objects and pagination info
         """
         url = "/v2/finance/transactions"
         
         if hasattr(self._client, '_make_request_sync'):
-            return self._client._make_request_sync("GET", url, params=params)
+            response = self._client._make_request_sync("GET", url, params=params)
+            
+            # Convert transaction items to Transaction objects
+            if isinstance(response, dict) and "items" in response:
+                from .transaction import Transaction
+                
+                # Create Transaction objects but preserve pagination info
+                result = response.copy()
+                result["items"] = [Transaction(client=self._client, data=item) for item in response["items"]]
+                return result
+            
+            return response
         else:
             raise TypeError("This method requires a synchronous client")
             
@@ -360,12 +371,23 @@ class Finance(IconicResource):
             See list_transactions method for available parameters
             
         Returns:
-            Dict containing transactions and pagination info
+            Dict containing transactions list with Transaction objects and pagination info
         """
         url = "/v2/finance/transactions"
         
         if hasattr(self._client, '_make_request_async'):
-            return await self._client._make_request_async("GET", url, params=params)
+            response = await self._client._make_request_async("GET", url, params=params)
+            
+            # Convert transaction items to Transaction objects
+            if isinstance(response, dict) and "items" in response:
+                from .transaction import Transaction
+                
+                # Create Transaction objects but preserve pagination info
+                result = response.copy()
+                result["items"] = [Transaction(client=self._client, data=item) for item in response["items"]]
+                return result
+                
+            return response
         else:
             raise TypeError("This method requires an asynchronous client")
     
@@ -396,12 +418,23 @@ class Finance(IconicResource):
             offset: Offset for pagination
             
         Returns:
-            Dict containing transactions and pagination info
+            Dict containing transactions list with Transaction objects and pagination info
         """
         url = "/v2.1/finance/transactions"
         
         if hasattr(self._client, '_make_request_sync'):
-            return self._client._make_request_sync("GET", url, params=params)
+            response = self._client._make_request_sync("GET", url, params=params)
+            
+            # Convert transaction items to Transaction objects
+            if isinstance(response, dict) and "items" in response:
+                from .transaction import Transaction
+                
+                # Create Transaction objects but preserve pagination info
+                result = response.copy()
+                result["items"] = [Transaction(client=self._client, data=item) for item in response["items"]]
+                return result
+                
+            return response
         else:
             raise TypeError("This method requires a synchronous client")
     
@@ -413,12 +446,23 @@ class Finance(IconicResource):
             See list_transactions_v2 method for available parameters
             
         Returns:
-            Dict containing transactions and pagination info
+            Dict containing transactions list with Transaction objects and pagination info
         """
         url = "/v2.1/finance/transactions"
         
         if hasattr(self._client, '_make_request_async'):
-            return await self._client._make_request_async("GET", url, params=params)
+            response = await self._client._make_request_async("GET", url, params=params)
+            
+            # Convert transaction items to Transaction objects
+            if isinstance(response, dict) and "items" in response:
+                from .transaction import Transaction
+                
+                # Create Transaction objects but preserve pagination info
+                result = response.copy()
+                result["items"] = [Transaction(client=self._client, data=item) for item in response["items"]]
+                return result
+                
+            return response
         else:
             raise TypeError("This method requires an asynchronous client")
     
@@ -445,12 +489,23 @@ class Finance(IconicResource):
             sort_dir: Sort direction ('asc', 'desc')
             
         Returns:
-            Dict containing transactions and pagination info
+            Dict containing transactions list with Transaction objects and pagination info
         """
         url = "/v2/finance/order-item-transactions"
         
         if hasattr(self._client, '_make_request_sync'):
-            return self._client._make_request_sync("GET", url, params=params)
+            response = self._client._make_request_sync("GET", url, params=params)
+            
+            # Convert transaction items to Transaction objects
+            if isinstance(response, dict) and "items" in response:
+                from .transaction import Transaction
+                
+                # Create Transaction objects but preserve pagination info
+                result = response.copy()
+                result["items"] = [Transaction(client=self._client, data=item) for item in response["items"]]
+                return result
+                
+            return response
         else:
             raise TypeError("This method requires a synchronous client")
     
@@ -462,12 +517,23 @@ class Finance(IconicResource):
             See list_order_item_transactions method for available parameters
             
         Returns:
-            Dict containing transactions and pagination info
+            Dict containing transactions list with Transaction objects and pagination info
         """
         url = "/v2/finance/order-item-transactions"
         
         if hasattr(self._client, '_make_request_async'):
-            return await self._client._make_request_async("GET", url, params=params)
+            response = await self._client._make_request_async("GET", url, params=params)
+            
+            # Convert transaction items to Transaction objects
+            if isinstance(response, dict) and "items" in response:
+                from .transaction import Transaction
+                
+                # Create Transaction objects but preserve pagination info
+                result = response.copy()
+                result["items"] = [Transaction(client=self._client, data=item) for item in response["items"]]
+                return result
+                
+            return response
         else:
             raise TypeError("This method requires an asynchronous client")
     

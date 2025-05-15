@@ -11,6 +11,10 @@ from uuid import UUID
 
 from pydantic import BaseModel, RootModel, ConfigDict, Field
 
+from .attribute import (
+    Attribute, 
+    AttributeSet
+)
 
 class StatementType(Enum):
     """
@@ -288,16 +292,6 @@ class AclRole(BaseModel):
     groupName: Optional[str] = None
     editableByRoles: Optional[List[int]] = None
     description: Optional[str] = None
-
-
-class AttributeSet(BaseModel):
-    id: Optional[float] = Field(
-        None, description='Numeric unique identifier', example=5642
-    )
-    name: Optional[str] = Field(None, example='beauty')
-    label: Optional[str] = Field(None, example='Beauty')
-    createdAt: Optional[datetime_aliased] = None
-    updatedAt: Optional[datetime_aliased] = None
 
 
 class Status(Enum):
