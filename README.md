@@ -1,5 +1,8 @@
 # Python Iconic API Client
 
+[![PyPI version](https://badge.fury.io/py/py-iconic-api.svg)](https://badge.fury.io/py/py-iconic-api)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/license-CC--BY--NC--4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/deed.en)
+
 A comprehensive, resource-based Python client for interacting with [The Iconic SellerCenter API](https://sellercenter-api.theiconic.com.au/docs/).
 
 > **Disclaimer:** This is an **unofficial** package and is not affiliated with or endorsed by The Iconic. Use at your own risk.
@@ -802,7 +805,7 @@ client = IconicClient(
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the CC BY-NC 4.0 License - see the [LICENSE](./LICENSE) file for details.
 
 ## Contributing
 

@@ -1,11 +1,11 @@
 [project]
 name = "py-iconic-api"
-version = "0.1.1"
+version = "0.1.2"
 description = "Python package for interacting with the Iconic API"
 authors = [
     {name = "DuneRaccoon", email = "benjamincsherro@hotmail.com"}
 ]
-license = {text = "MIT"}
+license = {text = "CC BY-NC 4.0"}
 keywords = ["iconic", "theiconic", "sellercenter", "api", "client"]
 readme = "README.md"
 
