@@ -2,10 +2,10 @@ from typing import Dict, Any, List, Optional, Union, TYPE_CHECKING
 from datetime import datetime
 
 from .base import IconicResource, PaginatedResponse
+from ..models import ListAttributesRequest
 from ..models.attribute import (
     Attribute,
-    AttributeSet,
-    ListAttributesRequest
+    AttributeSet
 )
 
 class AttributeResource(IconicResource):

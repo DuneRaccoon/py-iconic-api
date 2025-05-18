@@ -193,6 +193,12 @@ class IconicResource:
         else:
             return [response] if response else []
         
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert the resource instance to a dictionary."""
+        if self._model:
+            return self._model.model_dump(by_alias=True, exclude_none=False)
+        return self._data.copy()
+        
     # Synchronous methods
     
     def __call__(self: T, resource_id: Optional[Any] = None, **params) -> Union[T, List[T], PaginatedResponse[T]]:

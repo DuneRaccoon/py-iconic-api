@@ -1,9 +1,9 @@
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional, Union, Generator
 from datetime import date, datetime
 
-from .base import IconicResource
+from .base import IconicResource, T
 from ..models import (
-    Order,
+    Order as OrderModel,
     ListOrdersRequest
 )
 
@@ -16,7 +16,16 @@ class Order(IconicResource):
     """
     
     endpoint = "orders"
-    model_class = Order
+    model_class = OrderModel
+    
+    def paginate_generator(self: T, **params: ListOrdersRequest) -> Generator["Order", None, None]:
+        """Generator to paginate through orders."""
+        if not isinstance(params, ListOrdersRequest):
+            params = ListOrdersRequest(**params)
+            
+        params = params.to_api_params()
+        
+        return super().paginate_generator(**params)
     
     def list_orders(self, **params: Union[Dict[str, Any], ListOrdersRequest]) -> List["Order"]:
         """List orders based on filter criteria."""
