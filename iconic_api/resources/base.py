@@ -1,3 +1,4 @@
+import json
 from typing import (
     Any, 
     Dict, 
@@ -9,7 +10,8 @@ from typing import (
     Generator,
     AsyncGenerator,
     cast,
-    Generic
+    Generic,
+    Literal
 )
 from pydantic import BaseModel
 
@@ -193,10 +195,10 @@ class IconicResource:
         else:
             return [response] if response else []
         
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, mode: Literal['json', 'python'] = 'python') -> Dict[str, Any]:
         """Convert the resource instance to a dictionary."""
         if self._model:
-            return self._model.model_dump(by_alias=True, exclude_none=False)
+            return self._model.model_dump(mode=mode, by_alias=True, exclude_none=False)
         return self._data.copy()
         
     # Synchronous methods
