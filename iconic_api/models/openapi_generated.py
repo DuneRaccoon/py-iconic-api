@@ -2704,17 +2704,17 @@ class Order(BaseModel):
     )
     currency: str = Field(..., description='Currency', example='ARS')
     remarks: str = Field(..., description='Additional info about order', example='')
-    createdAt: str = Field(
+    createdAt: Optional[datetime_aliased] = Field(
         ...,
         description='Date and time when the order was created',
         example='2021-09-22T23:21:42.123456Z',
     )
-    updatedAt: str = Field(
+    updatedAt: Optional[datetime_aliased] = Field(
         ...,
         description='Date and time when the order was updated. The dates returned will follow the same format as in the example',
         example='2021-09-22T23:21:42.123456Z',
     )
-    addressUpdatedAt: str = Field(
+    addressUpdatedAt: Optional[datetime_aliased] = Field(
         ...,
         description='Date and time when address was updated last time. The dates returned will follow the same format as in the example',
         example='2021-09-22T23:21:42.123456Z',
