@@ -4888,58 +4888,52 @@ class Transaction(BaseModel):
     Transaction info
     """
 
-    id: int = Field(..., description='Unique ID of transaction', example=1)
-    sellerId: int = Field(..., description='Seller Id', example=1)
-    transactionTypeId: int = Field(
-        ...,
+    id: Optional[int] = Field(None, description='Unique ID of transaction', example=1)
+    sellerId: Optional[int] = Field(None, description='Seller Id', example=1)
+    transactionTypeId: Optional[int] = Field(
+        None,
         description='Transaction type Id.\nList of types you can find In /v2/transaction/types\n',
         example=1,
     )
-    treStatementGroupId: int = Field(
-        ..., description='Transaction Rule Engine group Id', example=2
+    treStatementGroupId: Optional[int] = Field(
+        None, description='Transaction Rule Engine group Id', example=2
     )
     transactionGroupName: Optional[str] = Field(
         None, description='Transaction Rule Engine group name'
     )
-    transactionTriggerEventId: int = Field(
-        ...,
+    transactionTriggerEventId: Optional[int] = Field(
+        None,
         description='Transaction trigger event Id.\nList of events you can find In /v2/transaction/trigger-events\n',
         example=1,
     )
-    isUnique: bool = Field(..., description='Is unique transaction')
-    transactionSource: TransactionSource = Field(..., description='Transaction source')
-    userId: int = Field(..., description='User Id')
-    description: str = Field(..., description='Info about transaction')
-    value: float = Field(..., description='Value', example=65.3)
-    taxesVat: float = Field(..., description='Value-Added Tax', example=2.3)
-    taxesWht: float = Field(..., description='Withholding tax', example=1.3)
-    isWhtInAmount: bool = Field(
-        ..., description='Is Withholding tax in amount', example=True
-    )
-    ref: int = Field(
-        ...,
-        description='Reference to the transaction object. For example on Order Item Id.',
-        example=12,
-    )
-    refDate: int
-    number: str = Field(..., description='Transaction number')
-    transactionStatementId: int = Field(..., description='Transaction statement Id')
-    createdAt: datetime_aliased = Field(
-        ...,
+    isUnique: Optional[bool] = Field(None, description='Is unique transaction')
+    transactionSource: Optional[Union[TransactionSource, str]] = Field(None, description='Transaction source')
+    userId: Optional[int] = Field(None, description='User Id')
+    description: Optional[str] = Field(None, description='Info about transaction')
+    value: Optional[float] = Field(None, description='Value', example=65.3)
+    taxesVat: Optional[float] = Field(None, description='Value-Added Tax', example=2.3)
+    taxesWht: Optional[float] = Field(None, description='Withholding tax', example=1.3)
+    isWhtInAmount: Optional[bool] = Field(None, description='Is Withholding tax in amount', example=True)
+    ref: Optional[int] = Field(None, description='Reference to the transaction object. For example on Order Item Id.', example=12)
+    refDate: Optional[int] = Field(None, description='Reference date')
+    number: Optional[str] = Field(None, description='Transaction number')
+    transactionStatementId: Optional[int] = Field(None, description='Transaction statement Id')
+    createdAt: Optional[datetime_aliased] = Field(
+        None,
         description='Transaction create date-time',
         example='2021-09-22T23:21:42+02:00',
     )
-    updatedAt: datetime_aliased = Field(
-        ...,
+    updatedAt: Optional[datetime_aliased] = Field(
+        None,
         description='Transaction last update date-time',
         example='2021-09-22T23:21:42+02:00',
     )
-    qcUserId: int = Field(..., description='QC User Id', example=44)
-    hash: str = Field(..., description='Unique hash of transaction')
-    currency: str = Field(..., description='Currency', example='USD')
-    reference: int = Field(..., description='Identifier of the reference type.')
-    referenceType: str = Field(
-        ..., description='Reference type tels who was the creator of given transaction'
+    qcUserId: Optional[int] = Field(None, description='QC User Id', example=44)
+    hash: Optional[str] = Field(None, description='Unique hash of transaction')
+    currency: Optional[str] = Field(None, description='Currency', example='USD')
+    reference: Optional[int] = Field(None, description='Identifier of the reference type.')
+    referenceType: Optional[str] = Field(
+        None, description='Reference type tels who was the creator of given transaction'
     )
 
 
