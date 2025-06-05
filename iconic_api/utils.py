@@ -8,6 +8,20 @@ import string
 from urllib.parse import urlparse, parse_qs, urlencode, quote
 from typing import Optional, Any, Dict, Union, List
 
+def chunks(lst: List[Any], n: int) -> List[List[Any]]:
+    """
+    Splits a list into chunks of size n.
+    
+    Args:
+        lst: The list to split.
+        n: The size of each chunk.
+        
+    Returns:
+        A list of chunks, each containing up to n elements.
+    """
+    return [lst[i:i + n] for i in range(0, len(lst), n)]
+
+
 def generate_nonce(length: int = 32) -> str:
     """Generates a random nonce."""
     return "".join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
@@ -83,9 +97,12 @@ def clean_params(params: Dict[str, Any]) -> Dict[str, Any]:
             continue
         
         api_key = to_api_parameter_name(key)
-        if isinstance(value, list) and not key.endswith("[]"): # Heuristic for list params
-            api_key += "[]"
-        
+        if isinstance(value, list): 
+            if not key.endswith("[]"): # Heuristic for list params
+                api_key += "[]"
+            for val in value:
+                cleaned[api_key] = val
+
         if isinstance(value, bool):
             cleaned[api_key] = int(value)
         else:
@@ -99,3 +116,17 @@ def clean_params(params: Dict[str, Any]) -> Dict[str, Any]:
             cleaned[api_key] = clean_params(value)
             
     return cleaned
+
+def build_params(params: Dict[str, Any]) -> str:
+    """
+    Since array vals in params need to be split out (e.g. orderNumbers[]=[1,2,3] -> orderNumbers[]=1&orderNumbers[]=2&orderNumbers[]=3)
+    We can't use the httpx build_request method directly for signing. We need to construct the URL manually.
+    """
+    params_to_build = []
+    for key, value in params.items():
+        if isinstance(value, list):
+            for item in value:
+                params_to_build.append((f"{key}[]" if not key.endswith("[]") else key, item))
+        else:
+            params_to_build.append((key, value))
+    return "&".join(f"{quote(k)}={quote(str(v))}" for k, v in params_to_build)

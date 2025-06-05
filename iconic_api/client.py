@@ -195,6 +195,8 @@ class IconicClient(BaseIconicClient):
             "Accept": "application/json",
         }
         
+        params = utils.clean_params(params) if params else {}
+        
         request_body_bytes: Optional[bytes] = None
         if json_data:
             # httpx will serialize json_data to bytes. We need it for signing.
@@ -202,11 +204,15 @@ class IconicClient(BaseIconicClient):
             temp_req = httpx.Request(method, self.base_api_url + path.lstrip("/"), json=json_data)
             request_body_bytes = temp_req.content
 
+        # Since array vals in params need to be split out (e.g. orderNumbers[]=[1,2,3] -> orderNumbers[]=1&orderNumbers[]=2&orderNumbers[]=3)
+        # We can't use the httpx build_request method directly for signing. We need to construct the URL manually.
+        url = path + utils.build_params(params) if params else path
+        
         if requires_signing:
             # Construct full URL for signing
             # Note: params need to be encoded into the URL string before signing
-            url_for_signing = self._client.build_request(method, path, params=params).url
-            signed_headers = self._prepare_signed_headers(method, str(url_for_signing), request_body_bytes)
+            # url_for_signing = self._client.build_request(method, path, params=params).url
+            signed_headers = self._prepare_signed_headers(method, str(url), request_body_bytes)
             headers.update(signed_headers)
 
         retries = self.max_retries
@@ -322,6 +328,8 @@ class IconicAsyncClient(BaseIconicClient):
         requires_signing: bool = False,
     ) -> Any:
         await self._ensure_token_valid_async()
+        
+        params = utils.clean_params(params) if params else {}
         
         headers = {
             "Authorization": f"Bearer {self._access_token}",

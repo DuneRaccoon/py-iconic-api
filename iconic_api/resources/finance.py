@@ -1,8 +1,10 @@
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional, Union, Generator
 from datetime import datetime
 
-from .base import IconicResource
+from .base import IconicResource, T
+from .transaction import Transaction
 from ..models import (
+    # Transaction,
     FinanceStatement,
     FinanceStatementListParamsModel,
     FinanceStatementDetails,
@@ -390,6 +392,10 @@ class Finance(IconicResource):
             return response
         else:
             raise TypeError("This method requires an asynchronous client")
+    
+    def paginate_transactions(self: T, **params) -> Generator["Transaction", None, None]:
+        """Generator to paginate through transactions."""
+        return self.paginate_generator(url="/v2/finance/transactions", instance_cls=Transaction, **params)
     
     def list_transactions_v2(self, **params) -> Dict[str, Any]:
         """

@@ -1,7 +1,10 @@
-from typing import Dict, Any, List, Optional, Union, Generator
+from typing import Dict, Any, List, Optional, Union, Generator, Literal
 from datetime import date, datetime
 
 from .base import IconicResource, T
+from .finance import Finance
+from .transaction import Transaction
+from .. import utils
 from ..models import (
     Order as OrderModel,
     ListOrdersRequest
@@ -274,3 +277,32 @@ class Order(IconicResource):
             return self
         else:
             raise TypeError("This method requires an asynchronous client")
+
+    def list_finance_transactions(self) -> List["Transaction"]:
+        """List financial transactions associated with this order."""
+        if not self._data.get("number"):
+            raise ValueError("Cannot list transactions without an order number")
+        
+        finance_client: Finance = self._client.finance
+        
+        return finance_client.list_transactions(order_numbers=[self._data["number"]])
+    
+    def bulk_fetch_transactions(self, orders: List["Order"]) -> List[Dict[Literal['order', 'transactions'], Union["Order", List["Transaction"]]]]:
+        """Bulk fetch transactions for a list of orders and return a list of dictionaries with order and transactions."""
+        
+        finance_client: Finance = self._client.finance
+
+        all_transactions = []
+        for chunk in utils.chunks(orders, 100):
+            all_transactions.extend(finance_client.paginate_transactions(order_numbers=[order.number for order in chunk]))
+            
+        transactions_by_order = {}
+        for order in orders:
+            transactions_by_order[order] = [
+                transaction for transaction in all_transactions if transaction.orderNumber == order.number
+            ]
+            
+        return [
+            {"order": order, "transactions": transactions_by_order[order]}
+            for order in orders
+        ]

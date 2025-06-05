@@ -4,6 +4,7 @@ from datetime import datetime
 from .base import IconicResource
 from ..models import (
     Transaction,
+    FinanceTransaction,
     TransactionTriggerEvent,
     TransactionStatement
 )
@@ -17,7 +18,7 @@ class Transaction(IconicResource):
     """
     
     endpoint = "transaction"
-    model_class = Transaction
+    model_class = FinanceTransaction
     
     def list_by_order_items(self, order_item_ids: List[int]) -> List["Transaction"]:
         """
