@@ -11,6 +11,7 @@ from .attribute import AttributeResource
 from .attribute_set import AttributeSetResource
 from .attribute_helper import AttributeHelper
 from .stock import Stock
+from .webhook import Webhook
 
 __all__ = [
     "IconicResource",
@@ -26,4 +27,5 @@ __all__ = [
     "AttributeSetResource",
     "AttributeHelper",
     "Stock",
+    "Webhook",
 ]
