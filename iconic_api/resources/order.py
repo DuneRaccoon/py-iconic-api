@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from typing import Dict, Any, List, Optional, Union, Generator, Literal
 from datetime import date, datetime
+from pydantic import BaseModel, ConfigDict
 
 from .base import IconicResource, T
 from .finance import Finance
@@ -7,9 +10,32 @@ from .transaction import Transaction
 from .. import utils
 from ..models import (
     Order as OrderModel,
+    OrderItem,
     ListOrdersRequest
 )
 
+class BulkFetchTransactionsData(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    order: "Order"
+    transactions: List["Transaction"]
+    
+    def get_transactions_for_order_item(self, order_item: OrderItem, groupName: Optional[str] = None) -> Optional[List["Transaction"]]:
+        """Helper to get the transactions for a specific order item.
+
+        If groupName is provided, it will filter transactions by that group name. (e.g. 'Revenue AU (incl. GST)')
+        """
+        transactions = [
+            transaction for transaction in self.transactions
+            if transaction.orderItemId == order_item.id
+        ]
+        if groupName:
+            transactions = [
+                transaction for transaction in transactions
+                if transaction.groupName == groupName
+            ]
+        return transactions if transactions else None
+        
+    
 class Order(IconicResource):
     """
     Order resource representing a single order or a collection of orders.
@@ -21,14 +47,22 @@ class Order(IconicResource):
     endpoint = "orders"
     model_class = OrderModel
     
-    def paginate_generator(self: T, **params: ListOrdersRequest) -> Generator["Order", None, None]:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        if self._data:
+            self._model: OrderModel = self.model_class(**self._data)
+        else:
+            self._model = None
+    
+    def paginate(self: T, **params: ListOrdersRequest) -> Generator["Order", None, None]:
         """Generator to paginate through orders."""
         if not isinstance(params, ListOrdersRequest):
             params = ListOrdersRequest(**params)
             
         params = params.to_api_params()
         
-        return super().paginate_generator(**params)
+        return super().paginate(**params)
     
     def list_orders(self, **params: Union[Dict[str, Any], ListOrdersRequest]) -> List["Order"]:
         """List orders based on filter criteria."""
@@ -287,7 +321,7 @@ class Order(IconicResource):
         
         return finance_client.list_transactions(order_numbers=[self._data["number"]])
     
-    def bulk_fetch_transactions(self, orders: List["Order"]) -> List[Dict[Literal['order', 'transactions'], Union["Order", List["Transaction"]]]]:
+    def bulk_fetch_transactions(self, orders: List["Order"]) -> List["BulkFetchTransactionsData"]:
         """Bulk fetch transactions for a list of orders and return a list of dictionaries with order and transactions."""
         
         finance_client: Finance = self._client.finance
@@ -303,6 +337,6 @@ class Order(IconicResource):
             ]
             
         return [
-            {"order": order, "transactions": transactions_by_order[order]}
+            BulkFetchTransactionsData(order=order, transactions=transactions_by_order[order])
             for order in orders
         ]

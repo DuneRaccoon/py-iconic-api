@@ -69,7 +69,7 @@ def pagination_example():
     
     try:
         # Get a paginated response
-        paginated = client.product_sets.paginate(limit=10, status="active")
+        paginated = client.product_sets.list(paginated=True, limit=10, status="active")
         print(f"Paginated results: {len(paginated.items)} items (page 1 of {paginated.total_count // paginated.limit + 1})")
         print(f"Total available: {paginated.total_count}")
         
@@ -78,13 +78,13 @@ def pagination_example():
         print(f"Next page: {len(next_page.items)} items")
         
         # Get all results using automatic pagination
-        all_items = client.product_sets.paginate_all(status="active", limit=50)
+        all_items = list(client.product_sets.paginate(status="active", limit=50))
         print(f"All items: {len(all_items)}")
         
         # Use a generator to process items one by one
         print("Processing items one by one:")
         count = 0
-        for product_set in client.product_sets.paginate_generator(status="active", limit=10):
+        for product_set in client.product_sets.paginate(status="active", limit=10):
             count += 1
             print(f"  Processing product set: {product_set.name} ({count})")
             if count >= 5:  # Just to avoid printing too many
@@ -239,7 +239,7 @@ async def async_example():
         # Process items one by one asynchronously
         print("Processing items one by one asynchronously:")
         count = 0
-        async for product_set in client.product_sets.paginate_async_generator(status="active", limit=10):
+        async for product_set in client.product_sets.paginate_async(status="active", limit=10):
             count += 1
             print(f"  Processing product set: {product_set.name} ({count})")
             if count >= 5:  # Just to avoid printing too many

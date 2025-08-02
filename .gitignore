@@ -177,3 +177,5 @@ cython_debug/
 sc-api-schemas/
 
 .pypi-token
+
+test.py

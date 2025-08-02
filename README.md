@@ -431,9 +431,11 @@ filtered_orders = client.orders.list_orders(**request.model_dump())
 print(f"Found {len(filtered_orders)} orders matching complex criteria")
 
 # Get all orders using pagination
-all_orders = client.orders.paginate_all(
-    date_start=thirty_days_ago.date(),
-    date_end=datetime.now().date()
+all_orders = list(
+    client.orders.paginate(
+        date_start=thirty_days_ago.date(),
+        date_end=datetime.now().date()
+    )
 )
 print(f"Total orders in the last 30 days: {len(all_orders)}")
 

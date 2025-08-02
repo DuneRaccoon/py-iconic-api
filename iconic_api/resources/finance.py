@@ -395,7 +395,7 @@ class Finance(IconicResource):
     
     def paginate_transactions(self: T, **params) -> Generator["Transaction", None, None]:
         """Generator to paginate through transactions."""
-        return self.paginate_generator(url="/v2/finance/transactions", instance_cls=Transaction, **params)
+        return self.paginate(url="/v2/finance/transactions", instance_cls=Transaction, **params)
     
     def list_transactions_v2(self, **params) -> Dict[str, Any]:
         """

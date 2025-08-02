@@ -302,50 +302,7 @@ class IconicResource:
         url = self._build_url(resource_id, pluralised=pluralised)
         self._client._make_request_sync("DELETE", url)
 
-    def paginate(self: T, url: Optional[str] = None, instance_cls: Optional[Type[ModelT]] = None, **params) -> PaginatedResponse[T]:
-        """
-        Paginate through resources with automatic handling of pagination parameters.
-        
-        Args:
-            **params: Filter parameters for the request
-            
-        Returns:
-            A PaginatedResponse object containing the first page of results
-        """
-        return self.list(paginated=True, url=url, instance_cls=instance_cls, **params)
-
-    def paginate_all(self: T, url: Optional[str] = None, instance_cls: Optional[Type[ModelT]] = None, **params) -> List[T]:
-        """
-        Retrieve all resources matching the given parameters, handling pagination automatically.
-        
-        Args:
-            **params: Filter parameters for the request
-            
-        Returns:
-            A list of all matching resources
-        """
-        if not hasattr(self._client, '_make_request_sync'):
-            raise TypeError("This method requires a synchronous client")
-        
-        limit = params.get("limit", 100)
-        offset = params.get("offset", 0)
-        all_items: List[T] = []
-        
-        while True:
-            params["limit"] = limit
-            params["offset"] = offset
-            
-            page = self.list(paginated=True, url=url, instance_cls=instance_cls, **params)
-            all_items.extend(page.items)
-            
-            if len(page.items) < limit:
-                break
-                
-            offset += limit
-            
-        return all_items
-
-    def paginate_generator(self: T, url: Optional[str] = None, instance_cls: Optional[Type[ModelT]] = None, **params) -> Generator[T, None, None]:
+    def paginate(self: T, url: Optional[str] = None, instance_cls: Optional[Type[ModelT]] = None, **params) -> Generator[T, None, None]:
         """
         Generator that yields all resources matching the given parameters.
         
@@ -469,50 +426,7 @@ class IconicResource:
         url = self._build_url(resource_id, pluralised=pluralised)
         await self._client._make_request_async("DELETE", url)
 
-    async def paginate_async(self: T, url: Optional[str] = None, instance_cls: Optional[Type[ModelT]] = None, **params) -> PaginatedResponse[T]:
-        """
-        Paginate through resources with automatic handling of pagination parameters asynchronously.
-        
-        Args:
-            **params: Filter parameters for the request
-            
-        Returns:
-            A PaginatedResponse object containing the first page of results
-        """
-        return await self.list_async(paginated=True, url=url, instance_cls=instance_cls, **params)
-
-    async def paginate_all_async(self: T, url: Optional[str] = None, instance_cls: Optional[Type[ModelT]] = None, **params) -> List[T]:
-        """
-        Retrieve all resources matching the given parameters, handling pagination automatically, asynchronously.
-        
-        Args:
-            **params: Filter parameters for the request
-            
-        Returns:
-            A list of all matching resources
-        """
-        if not hasattr(self._client, '_make_request_async'):
-            raise TypeError("This method requires an asynchronous client")
-        
-        limit = params.get("limit", 100)
-        offset = params.get("offset", 0)
-        all_items: List[T] = []
-        
-        while True:
-            params["limit"] = limit
-            params["offset"] = offset
-
-            page = await self.list_async(paginated=True, url=url, instance_cls=instance_cls, **params)
-            all_items.extend(page.items)
-            
-            if len(page.items) < limit:
-                break
-                
-            offset += limit
-            
-        return all_items
-
-    async def paginate_async_generator(self: T, url: Optional[str] = None, instance_cls: Optional[Type[ModelT]] = None, **params) -> AsyncGenerator[T, None]:
+    async def paginate_async(self: T, url: Optional[str] = None, instance_cls: Optional[Type[ModelT]] = None, **params) -> AsyncGenerator[T, None]:
         """
         Async generator that yields all resources matching the given parameters.
         
