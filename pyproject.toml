@@ -1,6 +1,6 @@
 [project]
 name = "py-iconic-api"
-version = "0.1.21"
+version = "0.2.0"
 description = "Python package for interacting with the Iconic API"
 authors = [
     {name = "DuneRaccoon", email = "benjamincsherro@hotmail.com"}

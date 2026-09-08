@@ -65,7 +65,13 @@ class IconicResource:
     
     endpoint: str = ""
     model_class: Optional[Type[BaseModel]] = None
-    
+
+    #: Instance slots assigned by ``__init__``. ``__getattr__`` must answer these itself
+    #: rather than reading them back off ``self``, otherwise any probe that happens before
+    #: ``__init__`` finishes (``copy.deepcopy``, ``pickle``, pydantic's arbitrary-type
+    #: validation) recurses until RecursionError.
+    _RESERVED_ATTRIBUTES = frozenset({"_client", "_data", "_parent", "_parent_path", "_model"})
+
     def __init__(
         self,
         *,
@@ -85,42 +91,39 @@ class IconicResource:
             self._model = self.model_class(**data)
     
     def __getattr__(self, name: str) -> Any:
+        """
+        Resolve an attribute against the wrapped pydantic model, then the raw payload.
+
+        Anything else raises ``AttributeError``, exactly as normal Python does.
+
+        Up to 0.1.21 this method *fabricated* an HTTP call for every unknown attribute
+        on an instance that had an id: it returned a callable which issued
+        ``GET {resource_url}/{name.replace('_', '/')}``. A mistyped or non-existent
+        method name therefore became a silent bogus request that returned whatever the
+        server answered instead of raising, and ``hasattr()`` was unconditionally True
+        for any resource instance with an id. Four order write-back endpoints that do
+        not exist in the OpenAPI spec shipped for a whole release behind that hole.
+
+        Every endpoint must now be a real, declared method. If you need a new one, add
+        it to the resource class (and its ``*_async`` twin) after checking the path in
+        ``sc-api-schemas/iconic_api_full.json``.
+        """
+        # Answer the private slots and dunder probes without touching ``self`` again.
+        if name.startswith("__") or name in self._RESERVED_ATTRIBUTES:
+            raise AttributeError(f"'{self.__class__.__name__}' has no attribute '{name}'")
+
         # First try to get from the model
-        if self._model and hasattr(self._model, name):
-            return getattr(self._model, name)
-            
+        model = self.__dict__.get("_model")
+        if model is not None and hasattr(model, name):
+            return getattr(model, name)
+
         # Then try to get from the data dictionary
-        if name in self._data:
-            return self._data[name]
-            
-        # If we have an ID, try to treat it as a related resource or custom endpoint
-        if self.id:
-            # Try to load a related resource class
-            try:
-                from importlib import import_module
-                module = import_module(f"..resources.{name.lower()}", __name__)
-                resource_class = getattr(module, name.capitalize())
-                return resource_class(
-                    client=self._client, 
-                    parent=self, 
-                    parent_path=self._build_url(self.id)
-                )
-            except (ModuleNotFoundError, AttributeError):
-                # If no module exists, assume it's a custom endpoint
-                def dynamic_endpoint(*args, **kwargs):
-                    path = f"{self._build_url(self.id)}/{name.replace('_', '/')}"
-                    
-                    if hasattr(self._client, '_make_request_sync'):
-                        return self._client._make_request_sync("GET", path, params=kwargs)
-                    else:
-                        async def async_endpoint():
-                            return await self._client._make_request_async("GET", path, params=kwargs)
-                        return async_endpoint()
-                        
-                return dynamic_endpoint
-                
+        data = self.__dict__.get("_data") or {}
+        if name in data:
+            return data[name]
+
         raise AttributeError(f"'{self.__class__.__name__}' has no attribute '{name}'")
-        
+
     def __repr__(self) -> str:
         if self._data.get("id"):
             return f"<{self.__class__.__name__} id={self._data.get('id')}>"
@@ -212,6 +215,13 @@ class IconicResource:
         if resource_id is not None:
             return self.get(resource_id)
         return self.list(**params)
+    
+    def health(self) -> Dict[str, Any]:
+        """Get the health of the resource."""
+        if not hasattr(self._client, '_make_request_sync'):
+            raise TypeError("This method requires a synchronous client")
+        
+        return self._client._make_request_sync("GET", '/v2/health')
         
     def get(self: T, resource_id: Any, pluralised: bool = False) -> T:
         """Get a single resource by ID."""
@@ -336,6 +346,12 @@ class IconicResource:
             offset += limit
         
     # Asynchronous methods
+    async def health_async(self) -> Dict[str, Any]:
+        """Get the health of the resource."""
+        if not hasattr(self._client, '_make_request_async'):
+            raise TypeError("This method requires an asynchronous client")
+        
+        return await self._client._make_request_async("GET", '/v2/health')
     
     async def get_async(self: T, resource_id: Any, pluralised: bool = False) -> T:
         """Get a single resource by ID asynchronously."""

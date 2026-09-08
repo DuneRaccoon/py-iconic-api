@@ -3,10 +3,12 @@ from datetime import datetime
 
 if TYPE_CHECKING:
     from ..models.stock import StockData
+    # ``get_products`` / ``get_product`` / ``create_product`` return the *resource*,
+    # not the generated ``iconic_api.models.Product`` payload model.
+    from .product import Product
 
 from .base import IconicResource
 from ..models import (
-    Product,
     ProductSetRead,
     ProductSetCreated,
     ProductRead,
@@ -37,47 +39,7 @@ class ProductSet(IconicResource):
     
     def list(self, paginated: bool = False, **params) -> List["ProductSet"]:
         return super().list(paginated=paginated, pluralised=True, **params)
-    
-    def get_products(self) -> List["Product"]:
-        """Get products in this product set."""
-        if not self.id:
-            raise ValueError("Cannot get products without a product set ID")
-        
-        if not hasattr(self._client, '_make_request_sync'):
-            raise TypeError("This method requires a synchronous client")
-        
-        return [Product(**item) for item in self.products()]
-        
-    async def get_products_async(self) -> List["Product"]:
-        """Get products in this product set asynchronously."""
-        if not self.id:
-            raise ValueError("Cannot get products without a product set ID")
-            
-        if not hasattr(self._client, '_make_request_async'):
-            raise TypeError("This method requires an asynchronous client")
-        
-        return [Product(**item) for item in (await self.products())]
-    
-    def get_product(self, product_id: int) -> "Product":
-        """Get a specific product in this product set."""
-        if not self.id:
-            raise ValueError("Cannot get a product without a product set ID")
-        
-        if not hasattr(self._client, '_make_request_sync'):
-            raise TypeError("This method requires a synchronous client")
-        
-        return Product(client=self._client, data=self.products(product_id=product_id))
-        
-    async def get_product_async(self, product_id: int) -> "Product":
-        """Get a specific product in this product set asynchronously."""
-        if not self.id:
-            raise ValueError("Cannot get a product without a product set ID")
-        
-        if not hasattr(self._client, '_make_request_async'):
-            raise TypeError("This method requires an asynchronous client")
-        
-        return Product(client=self._client, data=await self.products(product_id=product_id))
-        
+
     def create_product_set(self, data: Union[Dict[str, Any], CreateProductSetRequest], use_attribute_helper: bool = True) -> "ProductSet":
         """
         Create a new product set.
@@ -330,33 +292,78 @@ class ProductSet(IconicResource):
         else:
             raise TypeError("This method requires an asynchronous client")
             
+    def get_by_parent_sku(self, parent_sku: str) -> "ProductSet":
+        """Get the product set carrying this parent SKU.
+
+        GET /v2/product-set/parent-sku/{parentSku} is the dedicated single
+        lookup. Do NOT reach for ``list(parentSku=...)`` instead: that hits
+        GET /v2/product-sets, where the spec marks ``limit`` and ``offset``
+        REQUIRED, so a filter-only call is rejected.
+        """
+        import urllib.parse
+        url = f"/v2/product-set/parent-sku/{urllib.parse.quote(str(parent_sku), safe='')}"
+
+        if hasattr(self._client, '_make_request_sync'):
+            response = self._client._make_request_sync("GET", url)
+            return ProductSet(client=self._client, data=response) if response else None
+        else:
+            raise TypeError("This method requires a synchronous client")
+
+    async def get_by_parent_sku_async(self, parent_sku: str) -> "ProductSet":
+        """Get the product set carrying this parent SKU asynchronously."""
+        import urllib.parse
+        url = f"/v2/product-set/parent-sku/{urllib.parse.quote(str(parent_sku), safe='')}"
+
+        if hasattr(self._client, '_make_request_async'):
+            response = await self._client._make_request_async("GET", url)
+            return ProductSet(client=self._client, data=response) if response else None
+        else:
+            raise TypeError("This method requires an asynchronous client")
+
     # Products related methods
     
     def get_products(self) -> List["Product"]:
-        """Get all products for this product set."""
+        """
+        Get all products (variations) for this product set.
+
+        ``GET /v2/product-set/{productSetId}/products`` returns a bare array. Each row's
+        ``id`` IS the ``productId`` every stock and price endpoint is keyed by — the
+        ``POST /v2/product-set`` 201 body does not contain it, so this is how you read
+        back the product id of a newly created variation.
+
+        Returns:
+            One Product resource per variation in the set
+        """
         if not self.id:
             raise ValueError("Cannot get products without a product set ID")
-            
+
         url = f"/v2/product-set/{self.id}/products"
-        
+
         if hasattr(self._client, '_make_request_sync'):
             response = self._client._make_request_sync("GET", url)
-            
+
             from .product import Product
             return [Product(client=self._client, data=item) for item in response]
         else:
             raise TypeError("This method requires a synchronous client")
-            
+
     async def get_products_async(self) -> List["Product"]:
-        """Get all products for this product set asynchronously."""
+        """
+        Get all products (variations) for this product set asynchronously.
+
+        Each row's ``id`` IS the ``productId`` used by the stock and price endpoints.
+
+        Returns:
+            One Product resource per variation in the set
+        """
         if not self.id:
             raise ValueError("Cannot get products without a product set ID")
-            
+
         url = f"/v2/product-set/{self.id}/products"
-        
+
         if hasattr(self._client, '_make_request_async'):
             response = await self._client._make_request_async("GET", url)
-            
+
             from .product import Product
             return [Product(client=self._client, data=item) for item in response]
         else:

@@ -21,6 +21,7 @@ from .resources import (
     Brand,
     Category,
     Order,
+    OrderItemResource,
     Transaction,
     Finance,
     Invoice,
@@ -81,6 +82,7 @@ class BaseIconicClient:
         self.brands = Brand(client=self)
         self.categories = Category(client=self)
         self.orders = Order(client=self)
+        self.order_items = OrderItemResource(client=self)
         self.transactions = Transaction(client=self)
         self.finance = Finance(client=self)
         self.invoices = Invoice(client=self)

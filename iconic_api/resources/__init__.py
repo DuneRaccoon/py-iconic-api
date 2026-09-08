@@ -4,6 +4,7 @@ from .product_set import ProductSet
 from .brand import Brand
 from .category import Category
 from .order import Order
+from .order_item import OrderItemResource
 from .transaction import Transaction
 from .finance import Finance
 from .invoice import Invoice
@@ -20,6 +21,7 @@ __all__ = [
     "Brand",
     "Category",
     "Order",
+    "OrderItemResource",
     "Transaction",
     "Finance",
     "Invoice",
