@@ -99,8 +99,11 @@ def test_webhook_models():
     )
     
     # Test CreateWebhookRequest
+    # The field is aliased to callbackUrl and the model does not enable population by
+    # field name, so the alias is the only accepted spelling - which is what the
+    # WebhookResource actually passes (resources/webhook.py).
     create_request = CreateWebhookRequest(
-        callback_url="https://example.com/webhook",
+        callbackUrl="https://example.com/webhook",
         events=["onOrderCreated", "onProductCreated"]
     )
     assert create_request.callback_url == "https://example.com/webhook"
@@ -115,14 +118,14 @@ def test_webhook_models():
     
     # Test UpdateWebhookRequest
     update_request = UpdateWebhookRequest(
-        callback_url="https://example.com/updated-webhook",
+        callbackUrl="https://example.com/updated-webhook",
         events=["onOrderCreated"]
     )
     assert update_request.callback_url == "https://example.com/updated-webhook"
     print("✓ UpdateWebhookRequest model works correctly")
     
     # Test WebhookStatusUpdateRequest
-    status_request = WebhookStatusUpdateRequest(is_enabled=True)
+    status_request = WebhookStatusUpdateRequest(isEnabled=True)
     assert status_request.is_enabled == True
     
     status_data = status_request.model_dump(by_alias=True)

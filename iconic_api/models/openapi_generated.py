@@ -26,14 +26,14 @@ class StatementType(Enum):
 
 
 class ExportSalesReport(BaseModel):
-    locale: str = Field(..., example='en_US')
+    locale: str = Field(..., json_schema_extra={'example': 'en_US'})
     statementType: Optional[StatementType] = Field(
         'marketplace', description='The statementType of the account statement.'
     )
     currency: str = Field(
         ...,
         description='The currency of the account statement. This filter will be ignored when a search with a statementId (> 0) is getting executed',
-        example='EUR',
+        json_schema_extra={'example': 'EUR'},
     )
     statementId: Optional[float] = Field(
         0,
@@ -59,7 +59,7 @@ class StatementType1(Enum):
 
 
 class ExportReportTransaction(BaseModel):
-    locale: str = Field(..., example='en_US')
+    locale: str = Field(..., json_schema_extra={'example': 'en_US'})
     transactionTypeIds: List[int] = Field(
         ...,
         description='Ids of all used transaction types of a selected account statement. Transaction Type Ids are mandatory if all transactions of an account statement should be exported or a sub area of the actually statement like (specific section or the sum of a section).',
@@ -71,7 +71,7 @@ class ExportReportTransaction(BaseModel):
     currency: str = Field(
         ...,
         description='The currency of the account statement. This filter will be ignored when a search with a statementId (> 0) is getting executed',
-        example='EUR',
+        json_schema_extra={'example': 'EUR'},
     )
     statementId: Optional[float] = Field(
         0,
@@ -80,7 +80,7 @@ class ExportReportTransaction(BaseModel):
     label: Optional[str] = Field(
         None,
         description='Defines the title of the export file name.',
-        example='Sales Revenue 15 Mar 2024 - 21 Mar 2024',
+        json_schema_extra={'example': 'Sales Revenue 15 Mar 2024 - 21 Mar 2024'},
     )
     startDate: Optional[str] = Field(
         None,
@@ -138,7 +138,7 @@ class StatementType2(Enum):
 
 class ExportOrderItemTransaction(BaseModel):
     currency: str = Field(
-        ..., description='The currency which an order item belongs to.', example='EUR'
+        ..., description='The currency which an order item belongs to.', json_schema_extra={'example': 'EUR'}
     )
     isHybrid: Optional[bool] = Field(
         None,
@@ -155,16 +155,16 @@ class ExportOrderItemTransaction(BaseModel):
     status: Optional[List[StatusEnum]] = Field(
         None, description='String of all possible order item statuses'
     )
-    locale: str = Field(..., example='en_US')
+    locale: str = Field(..., json_schema_extra={'example': 'en_US'})
     startDate: Optional[str] = Field(
         None,
         description="Filter by the transaction's association with a order creation date that is greater than or equal to the provided value.",
-        example='2024-01-01T22:00:00.000Z',
+        json_schema_extra={'example': '2024-01-01T22:00:00.000Z'},
     )
     endDate: Optional[str] = Field(
         None,
         description="Filter by the transaction's association with a order creation date that is lower than or equal to the provided value.",
-        example='2024-01-01T22:00:00.000Z',
+        json_schema_extra={'example': '2024-01-01T22:00:00.000Z'},
     )
     orderNumbers: Optional[List[str]] = Field(
         None, description='Search by order number'
@@ -181,13 +181,13 @@ class ExportOrderItemTransaction(BaseModel):
     statementId: Optional[float] = Field(
         None,
         description='The identifier of the account statement. The value 0 is representing the current statement.',
-        example=4,
+        json_schema_extra={'example': 4},
     )
 
 
 class ExportUnifiedTransactions(BaseModel):
     currency: str = Field(
-        ..., description='The currency which an order item belongs to.', example='EUR'
+        ..., description='The currency which an order item belongs to.', json_schema_extra={'example': 'EUR'}
     )
     isHybrid: Optional[bool] = Field(
         False,
@@ -201,16 +201,16 @@ class ExportUnifiedTransactions(BaseModel):
         'unpaid',
         description="Filter by the transaction's association with account statement is paid.",
     )
-    locale: str = Field(..., example='en_US')
+    locale: str = Field(..., json_schema_extra={'example': 'en_US'})
     startDate: Optional[str] = Field(
         None,
         description="Filter by the transaction's association with a order creation date that is greater than or equal to the provided value.",
-        example='2024-01-01T22:00:00.000Z',
+        json_schema_extra={'example': '2024-01-01T22:00:00.000Z'},
     )
     endDate: Optional[str] = Field(
         None,
         description="Filter by the transaction's association with a order creation date that is lower than or equal to the provided value.",
-        example='2024-01-01T22:00:00.000Z',
+        json_schema_extra={'example': '2024-01-01T22:00:00.000Z'},
     )
     orderNumbers: Optional[List[str]] = Field(
         None, description='Search by order number'
@@ -230,44 +230,44 @@ class ExportUnifiedTransactions(BaseModel):
     statementId: Optional[float] = Field(
         None,
         description='The identifier of the account statement. The value 0 is representing the current statement.',
-        example=4,
+        json_schema_extra={'example': 4},
     )
 
 
 class InvoiceTaxDocument(BaseModel):
-    locale: str = Field(..., example='en_US')
+    locale: str = Field(..., json_schema_extra={'example': 'en_US'})
     statementType: Optional[StatementType2] = Field(
         'marketplace', description='The statementType of the account statement.'
     )
     currency: str = Field(
         ...,
         description='The currency of the account statement. This filter will be ignored when a search with a statementId (> 0) is getting executed',
-        example='EUR',
+        json_schema_extra={'example': 'EUR'},
     )
     statementId: float = Field(
         ...,
         description='The identifier of the account statement. The value 0 should be used to get the current open statement. This filter will be ignored when a search with a statementId (> 0) is getting executed',
     )
     sellerId: Optional[int] = Field(
-        None, description='The identifier of the seller.', example=123456
+        None, description='The identifier of the seller.', json_schema_extra={'example': 123456}
     )
 
 
 class OauthApp(BaseModel):
     uuid: Optional[str] = Field(
-        None, description='App UUID', example='3f0c27aa-ca28-4526-88f0-a13e6c9a007b'
+        None, description='App UUID', json_schema_extra={'example': '3f0c27aa-ca28-4526-88f0-a13e6c9a007b'}
     )
     name: Optional[str] = Field(
-        None, description='App name', example='cb56deed3d91799f86e5'
+        None, description='App name', json_schema_extra={'example': 'cb56deed3d91799f86e5'}
     )
     appId: Optional[str] = Field(
-        None, description='App ID', example='cb56deed3d91799f86e5'
+        None, description='App ID', json_schema_extra={'example': 'cb56deed3d91799f86e5'}
     )
     identifier: Optional[int] = Field(None, description='Increment ID in database.')
-    createdAt: Optional[str] = Field(None, example='2022-09-01 16:35:42')
-    updatedAt: Optional[str] = Field(None, example='2022-09-01 16:35:42')
+    createdAt: Optional[str] = Field(None, json_schema_extra={'example': '2022-09-01 16:35:42'})
+    updatedAt: Optional[str] = Field(None, json_schema_extra={'example': '2022-09-01 16:35:42'})
     userId: Optional[int] = Field(
-        None, description='Identifier of a user.', example=1024
+        None, description='Identifier of a user.', json_schema_extra={'example': 1024}
     )
 
 
@@ -301,20 +301,20 @@ class Status(Enum):
 
 
 class Brand(BaseModel):
-    id: Optional[int] = Field(None, example=111555)
-    srcId: Optional[str] = Field(None, description='Internal id', example='ADI5341')
-    uuid: Optional[str] = Field(None, example='1af9fe46-77d2-4ab2-8b4a-8c7eeac8bbc9')
-    name: Optional[str] = Field(None, example='Adidas')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 111555})
+    srcId: Optional[str] = Field(None, description='Internal id', json_schema_extra={'example': 'ADI5341'})
+    uuid: Optional[str] = Field(None, json_schema_extra={'example': '1af9fe46-77d2-4ab2-8b4a-8c7eeac8bbc9'})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Adidas'})
     status: Optional[Status] = None
-    isActive: Optional[bool] = Field(None, example=True)
-    isApproved: Optional[bool] = Field(None, example=True)
-    isRestricted: Optional[bool] = Field(None, example=False)
-    countries: Optional[str] = Field(None, example='RU,KZ')
+    isActive: Optional[bool] = Field(None, json_schema_extra={'example': True})
+    isApproved: Optional[bool] = Field(None, json_schema_extra={'example': True})
+    isRestricted: Optional[bool] = Field(None, json_schema_extra={'example': False})
+    countries: Optional[str] = Field(None, json_schema_extra={'example': 'RU,KZ'})
     createdAt: Optional[datetime_aliased] = Field(
-        None, example='2021-09-22T23:21:42+02:00'
+        None, json_schema_extra={'example': '2021-09-22T23:21:42+02:00'}
     )
     updatedAt: Optional[datetime_aliased] = Field(
-        None, example='2021-09-22T23:21:42+02:00'
+        None, json_schema_extra={'example': '2021-09-22T23:21:42+02:00'}
     )
 
 
@@ -347,9 +347,9 @@ class ScoreReport(BaseModel):
     metric: Optional[str] = Field(
         None,
         description='Human readable and translated metric, can be displayed in UI\n',
-        example='Description words',
+        json_schema_extra={'example': 'Description words'},
     )
-    recommendation: Optional[str] = Field(None, example='more or equal than 3')
+    recommendation: Optional[str] = Field(None, json_schema_extra={'example': 'more or equal than 3'})
     ruleGroup: Optional[RuleGroup] = None
     ruleParameters: Optional[Dict[str, Any]] = Field(
         None,
@@ -361,12 +361,12 @@ class ContentScore(BaseModel):
     status: Optional[str] = Field(
         None,
         description='Always equals to "ok" when calculation completed successfully.',
-        example='ok',
+        json_schema_extra={'example': 'ok'},
     )
     score: Optional[float] = Field(
         None,
         description='Percentage of the score. For example "60.00" means that from 100% current data scores to\nonly 60 percents. Depending on category configuration there can be threshold and products\nwith score below that threshold will be auto rejected during product QC.\n',
-        example=50,
+        json_schema_extra={'example': 50},
         ge=0.01,
         le=100.0,
     )
@@ -397,259 +397,259 @@ class CalculateContentScore(BaseModel):
 
 
 class Option(BaseModel):
-    id: Optional[int] = Field(None, example=321)
-    name: Optional[str] = Field(None, example='Direct')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 321})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Direct'})
 
 
 class BrandAttribute(BaseModel):
-    id: Optional[int] = Field(None, example=123)
-    name: Optional[str] = Field(None, example='supplier_type')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 123})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'supplier_type'})
     options: Optional[List[Option]] = None
 
 
 class BrandAttributeOption(BaseModel):
-    id: Optional[int] = Field(None, example=321)
-    name: Optional[str] = Field(None, example='Direct')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 321})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Direct'})
 
 
 class Attributes(BaseModel):
-    field_74: Optional[int] = Field(None, alias='74', example=307)
+    field_74: Optional[int] = Field(None, alias='74', json_schema_extra={'example': 307})
     field_131: Optional[str] = Field(
         None,
         alias='131',
-        example='Best experience ever - super fast and easy navigation - better control',
+        json_schema_extra={'example': 'Best experience ever - super fast and easy navigation - better control'},
     )
     field__comment_74: Optional[str] = Field(
         None,
         alias='__comment_74',
-        example='Id of attribute (PackageType) with id of attribute option (eg Parcel)',
+        json_schema_extra={'example': 'Id of attribute (PackageType) with id of attribute option (eg Parcel)'},
     )
     field__comment_131: Optional[str] = Field(
         None,
         alias='__comment_131',
-        example='Id of attribute (ShortDescription) with some text area',
+        json_schema_extra={'example': 'Id of attribute (ShortDescription) with some text area'},
     )
 
 
 class ProductSetSample(BaseModel):
-    primaryCategoryId: Optional[int] = Field(None, example=2369)
+    primaryCategoryId: Optional[int] = Field(None, json_schema_extra={'example': 2369})
     field__comment_primaryCategoryId: Optional[str] = Field(
         None,
         alias='__comment_primaryCategoryId',
-        example='Id of primary category in our database',
+        json_schema_extra={'example': 'Id of primary category in our database'},
     )
-    name: Optional[str] = Field(None, example='Nikon Wide Angle Camera 10 MP black')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Nikon Wide Angle Camera 10 MP black'})
     field__comment_name: Optional[str] = Field(
-        None, alias='__comment_name', example='Some descriptive product name'
+        None, alias='__comment_name', json_schema_extra={'example': 'Some descriptive product name'}
     )
-    brandId: Optional[int] = Field(None, example=1)
+    brandId: Optional[int] = Field(None, json_schema_extra={'example': 1})
     field__comment_brandId: Optional[str] = Field(
-        None, alias='__comment_brandId', example='Id of a brand in our database'
+        None, alias='__comment_brandId', json_schema_extra={'example': 'Id of a brand in our database'}
     )
-    price: Optional[float] = Field(None, example=1.99)
+    price: Optional[float] = Field(None, json_schema_extra={'example': 1.99})
     field__comment_price: Optional[str] = Field(
-        None, alias='__comment_price', example='Some float value'
+        None, alias='__comment_price', json_schema_extra={'example': 'Some float value'}
     )
     description: Optional[str] = Field(
         None,
-        example="It's been the king of football games for years now. FIFA Soccer 12 delivers an authentic Match Day experience, faster and easier navigation, and over 500 officially licensed clubs.  FIFA Soccer 12 brings to the pitch the game-changing new Player Impact En",
+        json_schema_extra={'example': "It's been the king of football games for years now. FIFA Soccer 12 delivers an authentic Match Day experience, faster and easier navigation, and over 500 officially licensed clubs.  FIFA Soccer 12 brings to the pitch the game-changing new Player Impact En"},
     )
     field__comment_description: Optional[str] = Field(
-        None, alias='__comment_description', example='Some descriptive text'
+        None, alias='__comment_description', json_schema_extra={'example': 'Some descriptive text'}
     )
-    sellerSku: Optional[str] = Field(None, example='XMPL1')
+    sellerSku: Optional[str] = Field(None, json_schema_extra={'example': 'XMPL1'})
     field__comment_sellerSku: Optional[str] = Field(
-        None, alias='__comment_sellerSku', example='Unique text field in our database'
+        None, alias='__comment_sellerSku', json_schema_extra={'example': 'Unique text field in our database'}
     )
-    variation: Optional[str] = Field(None, example='M')
+    variation: Optional[str] = Field(None, json_schema_extra={'example': 'M'})
     field__comment_variation: Optional[str] = Field(
         None,
         alias='__comment_variation',
-        example='Depending on input type - value from our database or a user-defined value. Rarely can be null',
+        json_schema_extra={'example': 'Depending on input type - value from our database or a user-defined value. Rarely can be null'},
     )
     attributes: Optional[Attributes] = None
 
 
 class ProductSetRead(BaseModel):
-    id: Optional[int] = Field(None, example=7865)
-    uuid: Optional[str] = Field(None, example='5b29bccc-d8bb-4a5c-85f6-1109d12d8233')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 7865})
+    uuid: Optional[str] = Field(None, json_schema_extra={'example': '5b29bccc-d8bb-4a5c-85f6-1109d12d8233'})
     srcId: Optional[str] = Field(
         None,
         description='ID of image in Shop system. If empty means that image was not yet syncronized with Shop and is not visible to end customers.',
-        example='94345',
+        json_schema_extra={'example': '94345'},
     )
-    name: Optional[str] = Field(None, example='Block Shell Jacket')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Block Shell Jacket'})
     parentSku: Optional[str] = Field(
         None,
         description='SKU of product, which acts as "main" one for ProductSet. Using this value you can add new products to ProductSet using XLS files. If feature of "parentSku" is disabled, then you should use SKU of first product in ProductSet when you work with XLS import files.',
-        example='NHGB93523-12',
+        json_schema_extra={'example': 'NHGB93523-12'},
     )
     createdAt: Optional[datetime_aliased] = None
     updatedAt: Optional[datetime_aliased] = None
     description: Optional[str] = Field(
         None,
         description='Description which will be visible by end customers. Depending on settings of your seller and general configuration, there could be limit of minimum and maximum length of the description. Also, depending on configuration, description should be plain text or may contain HTML markup.',
-        example="Experience the ultimate expression of functionality at BrandName with the Women's Block Shell Jacket. Our model is wearing size *. She usually wears a size 8 and is 177cm tall.",
+        json_schema_extra={'example': "Experience the ultimate expression of functionality at BrandName with the Women's Block Shell Jacket. Our model is wearing size *. She usually wears a size 8 and is 177cm tall."},
     )
     brandId: Optional[int] = Field(
         None,
         description='Please, note that not every brand can be used without prior aproval. Also, there are some brand-specific limitation for variations (for example, for brand A it is possible to use only sizes 34, 35, 36, 37, 38, 39, 40, but size 35.5 or 33 will lead to validation error).',
-        example=78,
+        json_schema_extra={'example': 78},
     )
     primaryCategoryId: Optional[int] = Field(
         None,
         description='Please, note that there could limitation for certain sellers in which categories seller allowed to create ProductSets. Also, in cource of time categories can be marked as inactive (for example when category A is splitted to categories B and C).',
-        example=309,
+        json_schema_extra={'example': 309},
     )
     attributeSetId: Optional[int] = Field(
         None,
         description='Different categories has different AttributeSets. It means that for Shoes there is one set of attributes applied and for Hats another one. AttributeSet is defined by primary category of product set. In very rare cases attribute set of category can be changed to another one. In this case in order to successfully save ProductSet you will need to pass all required attributes for new AttributeSet. This value represent AttributeSet which was set for primary category of ProductSet during last save.',
-        example=2,
+        json_schema_extra={'example': 2},
     )
-    sellerId: Optional[int] = Field(None, example=5623)
+    sellerId: Optional[int] = Field(None, json_schema_extra={'example': 5623})
     categories: Optional[List[int]] = Field(
         None,
         description='ProductSet can be listed in multiple additional categories. There is a seller-specific limit regarding maximum count of additional categories',
-        example=[421, 567],
+        json_schema_extra={'example': [421, 567]},
     )
     attributes: Optional[Dict[str, Any]] = Field(
         None,
         description='Array of attributes\' values. Key is attribute ID and value depends on type of attribute. It can be one of: string (for "free text attributes" like "Warranty duration"), integer (for attributes with list of options, for example "Material" can have some set of fixed options), array of integers (for attributes with multiple choise of predefined options), null (when you didn\'t provide value for optional attribute), array of strings for attributes which allow multiple values with free text.',
-        example={
+        json_schema_extra={'example': {
             '421': 'string value',
             '533': [4, 5],
             '567': 123,
             '721': ['string1', 'string2'],
             '854': None,
-        },
+        }},
     )
     sizeSystem: Optional[int] = Field(
         None,
         description='Nullable field with same value as attribute that represents "size system". Please, read description of\n"GET /v2/brands/{brandId}/attributes" for more detailed explanation. This field will be removed in future\nversions of this endpoint and "size system" will be passed only in array of attributes.\n',
-        example=5,
+        json_schema_extra={'example': 5},
     )
-    browseNodes: Optional[List[int]] = Field(None, example=[421, 567])
+    browseNodes: Optional[List[int]] = Field(None, json_schema_extra={'example': [421, 567]})
 
 
 class ProductSetCreated(BaseModel):
-    id: Optional[int] = Field(None, example=7865)
-    uuid: Optional[str] = Field(None, example='5b29bccc-d8bb-4a5c-85f6-1109d12d8233')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 7865})
+    uuid: Optional[str] = Field(None, json_schema_extra={'example': '5b29bccc-d8bb-4a5c-85f6-1109d12d8233'})
     srcId: Optional[str] = Field(
         None,
         description='ID of image in Shop system. If empty means that image was not yet syncronized with Shop and is not visible to end customers.',
-        example='94345',
+        json_schema_extra={'example': '94345'},
     )
-    name: Optional[str] = Field(None, example='Block Shell Jacket')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Block Shell Jacket'})
     parentSku: Optional[str] = Field(
         None,
         description='SKU of product, which acts as "main" one for ProductSet. Using this value you can add new products to ProductSet using XLS files. If feature of "parentSku" is disabled, then you should use SKU of first product in ProductSet when you work with XLS import files.',
-        example='NHGB93523-12',
+        json_schema_extra={'example': 'NHGB93523-12'},
     )
     createdAt: Optional[datetime_aliased] = None
     updatedAt: Optional[datetime_aliased] = None
     description: Optional[str] = Field(
         None,
         description='Description which will be visible by end customers. Depending on settings of your seller and general configuration, there could be limit of minimum and maximum length of the description. Also, depending on configuration, description should be plain text or may contain HTML markup.',
-        example="Experience the ultimate expression of functionality at BrandName with the Women's Block Shell Jacket. Our model is wearing size *. She usually wears a size 8 and is 177cm tall.",
+        json_schema_extra={'example': "Experience the ultimate expression of functionality at BrandName with the Women's Block Shell Jacket. Our model is wearing size *. She usually wears a size 8 and is 177cm tall."},
     )
     brandId: Optional[int] = Field(
         None,
         description='Please, note that not every brand can be used without prior aproval. Also, there are some brand-specific limitation for variations (for example, for brand A it is possible to use only sizes 34, 35, 36, 37, 38, 39, 40, but size 35.5 or 33 will lead to validation error).',
-        example=78,
+        json_schema_extra={'example': 78},
     )
     primaryCategoryId: Optional[int] = Field(
         None,
         description='Please, note that there could limitation for certain sellers in which categories seller allowed to create ProductSets. Also, in cource of time categories can be marked as inactive (for example when category A is splitted to categories B and C).',
-        example=309,
+        json_schema_extra={'example': 309},
     )
     attributeSetId: Optional[int] = Field(
         None,
         description='Different categories has different AttributeSets. It means that for Shoes there is one set of attributes applied and for Hats another one. AttributeSet is defined by primary category of product set. In very rare cases attribute set of category can be changed to another one. In this case in order to successfully save ProductSet you will need to pass all required attributes for new AttributeSet. This value represent AttributeSet which was set for primary category of ProductSet during last save.',
-        example=2,
+        json_schema_extra={'example': 2},
     )
-    sellerId: Optional[int] = Field(None, example=5623)
+    sellerId: Optional[int] = Field(None, json_schema_extra={'example': 5623})
     categories: Optional[List[int]] = Field(
         None,
         description='ProductSet can be listed in multiple additional categories. There is a seller-specific limit regarding maximum count of additional categories',
-        example=[421, 567],
+        json_schema_extra={'example': [421, 567]},
     )
     attributes: Optional[Dict[str, Any]] = Field(
         None,
         description='Array of attributes\' values. Key is attribute ID and value depends on type of attribute. It can be one of: string (for "free text attributes" like "Warranty duration"), integer (for attributes with list of options, for example "Material" can have some set of fixed options), array of integers (for attributes with multiple choise of predefined options), null (when you didn\'t provide value for optional attribute), array of strings for attributes which allow multiple values with free text.',
-        example={
+        json_schema_extra={'example': {
             '421': 'string value',
             '533': [4, 5],
             '567': 123,
             '721': ['string1', 'string2'],
             '854': None,
-        },
+        }},
     )
     sizeSystem: Optional[int] = Field(
         None,
         description='Nullable field with same value as attribute that represents "size system". Please, read description of\n"GET /v2/brands/{brandId}/attributes" for more detailed explanation. This field will be removed in future\nversions of this endpoint and "size system" will be passed only in array of attributes.\n',
-        example=5,
+        json_schema_extra={'example': 5},
     )
-    browseNodes: Optional[List[int]] = Field(None, example=[421, 567])
+    browseNodes: Optional[List[int]] = Field(None, json_schema_extra={'example': [421, 567]})
     sellerSku: Optional[str] = Field(
         None,
         description="SKU from seller's side. Should be unique across products of seller.",
-        example='68040427550-1',
+        json_schema_extra={'example': '68040427550-1'},
     )
     status: Optional[Status] = None
     sin: Optional[str] = Field(
         None,
         description='if not null indicates that product set is Hybrid\n',
-        example='KMPWJ5',
+        json_schema_extra={'example': 'KMPWJ5'},
     )
 
 
 class ProductSetWrite(BaseModel):
-    name: Optional[str] = Field(None, example='Block Shell Jacket')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Block Shell Jacket'})
     description: Optional[str] = Field(
         None,
         description='Description which will be visible by end customers. Depending on settings of your seller and general configuration, there could be limit of minimum and maximum length of the description. Also, depending on configuration, description should be plain text or may contain HTML markup.',
-        example="Experience the ultimate expression of functionality at BrandName with the Women's Block Shell Jacket. Our model is wearing size *. She usually wears a size 8 and is 177cm tall.",
+        json_schema_extra={'example': "Experience the ultimate expression of functionality at BrandName with the Women's Block Shell Jacket. Our model is wearing size *. She usually wears a size 8 and is 177cm tall."},
     )
     parentSku: Optional[str] = Field(
         None,
         description='Parent SKU is text identifier for your product set used in exports and imports. When you want to add new size to existing product set through importing file, you will provide Parent SKU for that new size and  it will be added to product set with given Parent SKU. You may omit providing Parent SKU, in this  case it will be autogenerated: we will take Seller SKU of first product within product set and it will be used as Parent SKU.',
-        example='68040427550',
+        json_schema_extra={'example': '68040427550'},
     )
     brandId: Optional[int] = Field(
         None,
         description='Please, note that not every brand can be used without prior approval. Also, there are some brand-specific limitation for variations (for example, for brand A it is possible to use only sizes 34, 35, 36, 37, 38, 39, 40, but size 35.5 or 33 will lead to validation error).',
-        example=78,
+        json_schema_extra={'example': 78},
     )
     primaryCategoryId: Optional[int] = Field(
         None,
         description='Please, note that there could limitation for certain sellers in which categories seller allowed to create ProductSets. Also, in cource of time categories can be marked as inactive (for example when category A is splitted to categories B and C).',
-        example=309,
+        json_schema_extra={'example': 309},
     )
     categories: Optional[List[int]] = Field(
         None,
         description='ProductSet can be listed in multiple additional categories. There is a seller-specific limit regarding maximum count of additional categories. Those categories are within one branch of the category tree, where the primary category is located.',
-        example=[421, 567],
+        json_schema_extra={'example': [421, 567]},
     )
     attributes: Optional[Dict[str, Any]] = Field(
         None,
         description='Array of attributes\' values. Key is attribute ID and value depends on type of attribute. It can be one of: string (for "free text attributes" like "Warranty duration"), integer (for attributes with list of options, for example "Material" can have some set of fixed options), array of integers (for attributes with multiple choise of predefined options), null (when you didn\'t provide value for optional attribute), array of strings for attributes which allow multiple values with free text.',
-        example={
+        json_schema_extra={'example': {
             '421': 'string value',
             '533': [4, 5],
             '567': 123,
             '721': ['string1', 'string2'],
             '854': None,
-        },
+        }},
     )
     sizeSystem: Optional[int] = Field(
         None,
         description='Represents the id of the attribute option that can represent for ex a country (AU). The values depend on the\nattribute mappings for sizeSystem. When creating the productSet this field can be null.\n',
-        example=5,
+        json_schema_extra={'example': 5},
     )
     browseNodes: Optional[List[int]] = Field(
         [],
         description="-> Any other category of the category tree, where you think the product shall fit also besides main 'categories', so it gets listed in the catalog under those categories as well.",
-        example=[421, 567],
+        json_schema_extra={'example': [421, 567]},
     )
 
 
@@ -674,58 +674,58 @@ class Status2(Enum):
 
 
 class Product(BaseModel):
-    id: Optional[int] = Field(None, description='Product identifier', example=7865)
+    id: Optional[int] = Field(None, description='Product identifier', json_schema_extra={'example': 7865})
     uuid: Optional[str] = Field(
         None,
         description='Product UUID identifier',
-        example='060cef12-08ef-4ae6-b15e-79398fedc774',
+        json_schema_extra={'example': '060cef12-08ef-4ae6-b15e-79398fedc774'},
     )
     srcId: Optional[str] = Field(
         None,
         description='ID of product in Shop system. If empty means that product was not yet syncronized with Shop and is\nnot visible to end customers.\n',
-        example='94345',
+        json_schema_extra={'example': '94345'},
     )
     shopSku: Optional[str] = Field(
         None,
         description="SKU on the shop's side. Usually it is visible to end customer. If value is null, it means that product is not yet\nsyncronized with shop and SKU was not assigned.\n",
-        example='NI464AKLCEZ0',
+        json_schema_extra={'example': 'NI464AKLCEZ0'},
     )
     sellerSku: Optional[str] = Field(
         None,
         description="SKU from seller's side. Should be unique across products of seller.",
-        example='shoe-123',
+        json_schema_extra={'example': 'shoe-123'},
     )
     sin: Optional[str] = Field(
         None,
         description='Sometimes several sellers are selling same product. In this case products of different sellers can be displayed\nusing one single product card in shop. This parameter, if set, identifies to which product in shop system this\nproduct of seller belongs to.\n',
-        example='KMPWJ5',
+        json_schema_extra={'example': 'KMPWJ5'},
     )
-    sellerId: Optional[int] = Field(None, example=252)
-    productSetId: Optional[int] = Field(None, example=744)
+    sellerId: Optional[int] = Field(None, json_schema_extra={'example': 252})
+    productSetId: Optional[int] = Field(None, json_schema_extra={'example': 744})
     approvalStatus: Optional[ApprovalStatus] = Field(
-        None, description='Product approval status', example='approved'
+        None, description='Product approval status', json_schema_extra={'example': 'approved'}
     )
-    updatedByUserId: Optional[int] = Field(None, example=8732)
+    updatedByUserId: Optional[int] = Field(None, json_schema_extra={'example': 8732})
     status: Optional[Status2] = Field(
-        None, description='Product status', example='active'
+        None, description='Product status', json_schema_extra={'example': 'active'}
     )
     variation: Optional[str] = Field(
         None,
         description='name of variation, usually size like XL, 39, 62.',
-        example='38',
+        json_schema_extra={'example': '38'},
     )
     taxClassId: Optional[int] = Field(
-        None, description='Tax class Id specific for this particular size.', example=1
+        None, description='Tax class Id specific for this particular size.', json_schema_extra={'example': 1}
     )
     shipmentTypeId: Optional[int] = Field(
         None,
         description='Shipment type Id specific for this particular size. The Value include 1 - warehouse; 2 - dropshipping; 3 - crossdocking;  if the value is empty the variation will be created with the default value of this endpoint /v2/seller-settings with this parameter product_default_shipment_type',
-        example=1,
+        json_schema_extra={'example': 1},
     )
     productIdentifier: Optional[str] = Field(
-        None, description='Identifier like EAN, Code-39, etc', example='460232163234'
+        None, description='Identifier like EAN, Code-39, etc', json_schema_extra={'example': '460232163234'}
     )
-    duplicateGroupId: Optional[int] = Field(None, example=51)
+    duplicateGroupId: Optional[int] = Field(None, json_schema_extra={'example': 51})
     srcUpdatedAt: Optional[datetime_aliased] = Field(
         None,
         description='Datetime when product was last updated(synced) with shop system.',
@@ -733,63 +733,63 @@ class Product(BaseModel):
     createdAt: Optional[datetime_aliased] = None
     updatedAt: Optional[datetime_aliased] = None
     name: Optional[str] = Field(
-        None, description='name of the product', example='1600 Slim Brushed Chrome '
+        None, description='name of the product', json_schema_extra={'example': '1600 Slim Brushed Chrome '}
     )
 
 
 class ProductRead(BaseModel):
-    id: Optional[int] = Field(None, description='Product identifier', example=7865)
+    id: Optional[int] = Field(None, description='Product identifier', json_schema_extra={'example': 7865})
     uuid: Optional[str] = Field(
         None,
         description='Product UUID identifier',
-        example='060cef12-08ef-4ae6-b15e-79398fedc774',
+        json_schema_extra={'example': '060cef12-08ef-4ae6-b15e-79398fedc774'},
     )
     srcId: Optional[str] = Field(
         None,
         description='ID of product in Shop system. If empty means that product was not yet syncronized with Shop and is\nnot visible to end customers.\n',
-        example='94345',
+        json_schema_extra={'example': '94345'},
     )
     shopSku: Optional[str] = Field(
         None,
         description="SKU on the shop's side. Usually it is visible to end customer. If value is null, it means that product is not yet\nsyncronized with shop and SKU was not assigned.\n",
-        example='NI464AKLCEZ0',
+        json_schema_extra={'example': 'NI464AKLCEZ0'},
     )
     sellerSku: Optional[str] = Field(
         None,
         description="SKU from seller's side. Should be unique across products of seller.",
-        example='shoe-123',
+        json_schema_extra={'example': 'shoe-123'},
     )
     sin: Optional[str] = Field(
         None,
         description='Sometimes several sellers are selling same product. In this case products of different sellers can be displayed\nusing one single product card in shop. This parameter, if set, identifies to which product in shop system this\nproduct of seller belongs to.\n',
-        example='KMPWJ5',
+        json_schema_extra={'example': 'KMPWJ5'},
     )
-    sellerId: Optional[int] = Field(None, example=252)
-    productSetId: Optional[int] = Field(None, example=744)
+    sellerId: Optional[int] = Field(None, json_schema_extra={'example': 252})
+    productSetId: Optional[int] = Field(None, json_schema_extra={'example': 744})
     approvalStatus: Optional[ApprovalStatus] = Field(
-        None, description='Product approval status', example='approved'
+        None, description='Product approval status', json_schema_extra={'example': 'approved'}
     )
-    updatedByUserId: Optional[int] = Field(None, example=8732)
+    updatedByUserId: Optional[int] = Field(None, json_schema_extra={'example': 8732})
     status: Optional[Status2] = Field(
-        None, description='Product status', example='active'
+        None, description='Product status', json_schema_extra={'example': 'active'}
     )
     variation: Optional[str] = Field(
         None,
         description='name of variation, usually size like XL, 39, 62',
-        example='38',
+        json_schema_extra={'example': '38'},
     )
     taxClassId: Optional[int] = Field(
-        None, description='Tax class Id specific for this particular size.', example=1
+        None, description='Tax class Id specific for this particular size.', json_schema_extra={'example': 1}
     )
     shipmentTypeId: Optional[int] = Field(
         None,
         description='Shipment type Id specific for this particular size.',
-        example=1,
+        json_schema_extra={'example': 1},
     )
     productIdentifier: Optional[str] = Field(
-        None, description='Identifier like EAN, Code-39, etc', example='460232163234'
+        None, description='Identifier like EAN, Code-39, etc', json_schema_extra={'example': '460232163234'}
     )
-    duplicateGroupId: Optional[int] = Field(None, example=51)
+    duplicateGroupId: Optional[int] = Field(None, json_schema_extra={'example': 51})
     srcUpdatedAt: Optional[datetime_aliased] = Field(
         None,
         description='Datetime when product was last updated(synced) with shop system.',
@@ -799,34 +799,34 @@ class ProductRead(BaseModel):
 
 
 class Price(BaseModel):
-    price: Optional[float] = Field(None, example=123.56)
-    currency: Optional[str] = Field(None, example='HKD')
-    country: Optional[str] = Field(None, example='HK')
+    price: Optional[float] = Field(None, json_schema_extra={'example': 123.56})
+    currency: Optional[str] = Field(None, json_schema_extra={'example': 'HKD'})
+    country: Optional[str] = Field(None, json_schema_extra={'example': 'HK'})
 
 
 class Image(BaseModel):
-    imageId: Optional[int] = Field(None, example=11)
-    displayUrl: Optional[str] = Field(None, example='https://p/lamoda-nike-11111.jpg')
-    position: Optional[str] = Field(None, example=1)
+    imageId: Optional[int] = Field(None, json_schema_extra={'example': 11})
+    displayUrl: Optional[str] = Field(None, json_schema_extra={'example': 'https://p/lamoda-nike-11111.jpg'})
+    position: Optional[str] = Field(None, json_schema_extra={'example': 1})
 
 
 class HybridProduct(BaseModel):
     sin: Optional[str] = Field(
         None,
         description='Sometimes several sellers are selling same product. In this case products of different sellers can be displayed \nusing one single product card in shop. This parameter, if set, identifies to which product in shop system this \nproduct of seller belongs to.\n',
-        example='KMPWJ5',
+        json_schema_extra={'example': 'KMPWJ5'},
     )
     sku: Optional[str] = Field(
         None,
         description="SKU on the shop's side. Usually it is visible to end customer. If value is null, it means that product is not yet \nsyncronized with shop and SKU was not assigned.\n",
-        example='NI464AKLCEZ0',
+        json_schema_extra={'example': 'NI464AKLCEZ0'},
     )
-    name: Optional[str] = Field(None, example='Nike Shoes')
-    description: Optional[str] = Field(None, example="Men's shoes")
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Nike Shoes'})
+    description: Optional[str] = Field(None, json_schema_extra={'example': "Men's shoes"})
     productUrl: Optional[str] = Field(
         None,
         description='For seller to be able to see how product looks like for end user.\n',
-        example='https://absolute-product-url',
+        json_schema_extra={'example': 'https://absolute-product-url'},
     )
     prices: Optional[List[Price]] = Field(
         None,
@@ -836,21 +836,21 @@ class HybridProduct(BaseModel):
         None,
         description='Images of product, it is an array of object consisting of imageId , displayUrl and position.',
     )
-    brandName: Optional[str] = Field(None, description='Brand name', example='Nike')
+    brandName: Optional[str] = Field(None, description='Brand name', json_schema_extra={'example': 'Nike'})
 
 
 class PriceRead(BaseModel):
-    productSetId: Optional[float] = Field(None, example=672)
-    productId: Optional[float] = Field(None, example=2223)
+    productSetId: Optional[float] = Field(None, json_schema_extra={'example': 672})
+    productId: Optional[float] = Field(None, json_schema_extra={'example': 2223})
     price: Optional[float] = Field(
         None,
         description='Price of a product.\nMight be restricted by maximum or minimum allowed category price.\n',
-        example=7.89,
+        json_schema_extra={'example': 7.89},
     )
     salePrice: Optional[float] = Field(
         None,
         description='Sale price of a product. Can be added only if sale price feature is unlocked for the country.\nUser settings may forbid user from changing it.\nCountry settings may require minimum period of time product is active before sale price can be set.\nMust be lower than regular price.\nMight be restricted by maximum or minimum allowed category price and by allowed discount.\n',
-        example=6,
+        json_schema_extra={'example': 6},
     )
     saleStartDate: Optional[datetime_aliased] = Field(
         None,
@@ -860,11 +860,11 @@ class PriceRead(BaseModel):
         None,
         description='End date of a sale pricing. Can be added only if sale price feature is unlocked for the country.\nUser settings may forbid user from changing it.\nMust be set in the future and be further in time than saleStartDate.\n',
     )
-    country: Optional[str] = Field(None, example='ID')
+    country: Optional[str] = Field(None, json_schema_extra={'example': 'ID'})
     status: Optional[str] = Field(
         None,
         description='Indicates whether certain product should be sold in given country.',
-        example='active',
+        json_schema_extra={'example': 'active'},
     )
 
 
@@ -872,12 +872,12 @@ class PriceInGroup(BaseModel):
     price: Optional[float] = Field(
         None,
         description='Price of a product.\nMight be restricted by maximum or minimum allowed category price.\n',
-        example=7.89,
+        json_schema_extra={'example': 7.89},
     )
     salePrice: Optional[float] = Field(
         None,
         description='Sale price of a product. Can be added only if sale price feature is unlocked for the country.\nUser settings may forbid user from changing it.\nCountry settings may require minimum period of time product is active before sale price can be set.\nMust be lower than regular price.\nMight be restricted by maximum or minimum allowed category price and by allowed discount.\n',
-        example=6,
+        json_schema_extra={'example': 6},
     )
     saleStartDate: Optional[datetime_aliased] = Field(
         None,
@@ -887,11 +887,11 @@ class PriceInGroup(BaseModel):
         None,
         description='End date of a sale pricing. Can be added only if sale price feature is unlocked for the country.\nUser settings may forbid user from changing it.\nMust be set in the future and be further in time than saleStartDate.\n',
     )
-    country: Optional[str] = Field(None, example='ID')
+    country: Optional[str] = Field(None, json_schema_extra={'example': 'ID'})
     status: Optional[str] = Field(
         None,
         description='Indicates whether certain product should be sold in given country.',
-        example='active',
+        json_schema_extra={'example': 'active'},
     )
 
 
@@ -899,12 +899,12 @@ class Price1(BaseModel):
     price: Optional[float] = Field(
         None,
         description='Price of a product.\nMight be restricted by maximum or minimum allowed category price.\n',
-        example=7.89,
+        json_schema_extra={'example': 7.89},
     )
     salePrice: Optional[float] = Field(
         None,
         description='Sale price of a product. Can be added only if sale price feature is unlocked for the country.\nUser settings may forbid user from changing it.\nCountry settings may require minimum period of time product is active before sale price can be set.\nMust be lower than regular price.\nMight be restricted by maximum or minimum allowed category price and by allowed discount.\n',
-        example=6,
+        json_schema_extra={'example': 6},
     )
     saleStartDate: Optional[datetime_aliased] = Field(
         None,
@@ -914,45 +914,45 @@ class Price1(BaseModel):
         None,
         description='End date of a sale pricing. Can be added only if sale price feature is unlocked for the country.\nUser settings may forbid user from changing it.\nMust be set in the future and be further in time than saleStartDate.\n',
     )
-    country: Optional[str] = Field(None, example='ID')
+    country: Optional[str] = Field(None, json_schema_extra={'example': 'ID'})
     status: Optional[str] = Field(
         None,
         description='Indicates whether certain product should be sold in given country.',
-        example='active',
+        json_schema_extra={'example': 'active'},
     )
 
 
 class Item(BaseModel):
-    productId: Optional[int] = Field(None, example=3333)
+    productId: Optional[int] = Field(None, json_schema_extra={'example': 3333})
     prices: Optional[List[Price1]] = None
 
 
 class GroupedPriceRead(BaseModel):
-    productSetId: Optional[int] = Field(None, example=432)
+    productSetId: Optional[int] = Field(None, json_schema_extra={'example': 432})
     items: Optional[List[Item]] = None
 
 
 class GroupRead(BaseModel):
-    name: Optional[str] = Field(None, example='Super products')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Super products'})
 
 
 class Image1(BaseModel):
-    id: Optional[int] = Field(None, example=7865)
+    id: Optional[int] = Field(None, json_schema_extra={'example': 7865})
     srcId: Optional[str] = Field(
         None,
         description='ID of image in Shop system. If empty means that image was not yet synchronized with Shop and is not visible to end customers.',
-        example='94345',
+        json_schema_extra={'example': '94345'},
     )
-    productSetId: Optional[int] = Field(None, example=744)
+    productSetId: Optional[int] = Field(None, json_schema_extra={'example': 744})
     position: Optional[int] = Field(
         None,
         description='Contains information about desired order in which images should be displayed to end customer. May contain gaps in case if some image was deleted. Positions are usually recalculated starting from 1 during any update operation (adding new image, for example).',
-        example=2,
+        json_schema_extra={'example': 2},
     )
     displayUrl: Optional[str] = Field(
         None,
         description='Full public URL of image.',
-        example='https://some.domain/path/image.jpg',
+        json_schema_extra={'example': 'https://some.domain/path/image.jpg'},
     )
     createdAt: Optional[datetime_aliased] = None
     updatedAt: Optional[datetime_aliased] = None
@@ -962,17 +962,17 @@ class ImageWrite(BaseModel):
     position: Optional[int] = Field(
         None,
         description='Contains information about desired order in which images should be displayed to end customer. May contain gaps in case if some image was deleted. Positions are usually recalculated starting from 1 during any update operation (adding new image, for example).',
-        example=2,
+        json_schema_extra={'example': 2},
     )
     displayUrl: Optional[str] = Field(
         None,
         description='Full public URL of image.',
-        example='https://some.domain/path/image.jpg',
+        json_schema_extra={'example': 'https://some.domain/path/image.jpg'},
     )
     overwrite: Optional[bool] = Field(
         False,
         description='Indicates if the existing image at the specified position should be replaced.  If set to true, the image currently at the provided position will be overwritten  with the new image. If false or not provided, the image will be added without  replacing any existing image. Default is false.\n',
-        example=False,
+        json_schema_extra={'example': False},
     )
 
 
@@ -980,7 +980,7 @@ class FormImagePosition(BaseModel):
     position: Optional[int] = Field(
         None,
         description='Contains information about desired order in which images should be displayed to end customer. May contain gaps in case if some image was deleted. Positions are usually recalculated starting from 1 during any update operation (adding new image, for example).',
-        example=2,
+        json_schema_extra={'example': 2},
     )
 
 
@@ -1006,7 +1006,7 @@ class OverwriteMultipart(BaseModel):
     overwrite: Optional[bool] = Field(
         False,
         description='Indicates if the existing image at the specified position should be replaced.  If set to true, the image currently at the provided position will be overwritten  with the new image. If false or not provided, the image will be added without  replacing any existing image. Default is false.\n',
-        example=False,
+        json_schema_extra={'example': False},
     )
 
 
@@ -1051,10 +1051,10 @@ class ImportProductStockXml(BaseModel):
 
 
 class ProductDatum(BaseModel):
-    Megapixels: Optional[int] = Field(None, example=490)
-    OpticalZoom: Optional[int] = Field(None, example=7)
-    SystemMemory: Optional[int] = Field(None, example=4)
-    NumberCpus: Optional[int] = Field(None, example=7)
+    Megapixels: Optional[int] = Field(None, json_schema_extra={'example': 490})
+    OpticalZoom: Optional[int] = Field(None, json_schema_extra={'example': 7})
+    SystemMemory: Optional[int] = Field(None, json_schema_extra={'example': 4})
+    NumberCpus: Optional[int] = Field(None, json_schema_extra={'example': 7})
     Network: Optional[str] = None
 
 
@@ -1069,12 +1069,12 @@ class Product2(BaseModel):
     BrowseNodes: Optional[str] = None
     Description: Optional[str] = None
     Brand: Optional[str] = None
-    Price: Optional[float] = Field(None, example=123.56)
-    SalePrice: Optional[float] = Field(None, example=123.56)
+    Price: Optional[float] = Field(None, json_schema_extra={'example': 123.56})
+    SalePrice: Optional[float] = Field(None, json_schema_extra={'example': 123.56})
     SaleStartDate: Optional[datetime_aliased] = Field(
-        None, example='2023-11-01 03:33:47'
+        None, json_schema_extra={'example': '2023-11-01 03:33:47'}
     )
-    SaleEndDate: Optional[datetime_aliased] = Field(None, example='2023-11-12 03:33:47')
+    SaleEndDate: Optional[datetime_aliased] = Field(None, json_schema_extra={'example': '2023-11-12 03:33:47'})
     TaxClass: Optional[str] = None
     ShipmentType: Optional[str] = None
     ProductId: Optional[str] = Field(
@@ -1154,12 +1154,12 @@ class Product3(BaseModel):
     BrowseNodes: Optional[str] = None
     Description: Optional[str] = None
     Brand: Optional[str] = None
-    Price: Optional[float] = Field(None, example=123.56)
-    SalePrice: Optional[float] = Field(None, example=123.56)
+    Price: Optional[float] = Field(None, json_schema_extra={'example': 123.56})
+    SalePrice: Optional[float] = Field(None, json_schema_extra={'example': 123.56})
     SaleStartDate: Optional[datetime_aliased] = Field(
-        None, example='2023-11-02 03:33:47'
+        None, json_schema_extra={'example': '2023-11-02 03:33:47'}
     )
-    SaleEndDate: Optional[datetime_aliased] = Field(None, example='2023-11-12 03:33:47')
+    SaleEndDate: Optional[datetime_aliased] = Field(None, json_schema_extra={'example': '2023-11-12 03:33:47'})
     TaxClass: Optional[str] = None
     ShipmentType: Optional[str] = None
     ProductId: Optional[str] = None
@@ -1228,16 +1228,16 @@ class ImportProductUpdateXml(BaseModel):
 
 
 class ImportFileAccepted(BaseModel):
-    success: Optional[bool] = Field(None, example=True)
+    success: Optional[bool] = Field(None, json_schema_extra={'example': True})
     message: Optional[str] = Field(
         None,
-        example='<b>File has been successfully uploaded.</b> Please be patient while data is being processed.',
+        json_schema_extra={'example': '<b>File has been successfully uploaded.</b> Please be patient while data is being processed.'},
     )
     errorMessages: Optional[List[str]] = None
     warningMessages: Optional[List[str]] = None
-    feedId: Optional[int] = Field(None, example=7)
+    feedId: Optional[int] = Field(None, json_schema_extra={'example': 7})
     feedUuid: Optional[str] = Field(
-        None, example='060cef12-08ef-4ae6-b15e-79398fedc774'
+        None, json_schema_extra={'example': '060cef12-08ef-4ae6-b15e-79398fedc774'}
     )
 
 
@@ -1245,12 +1245,12 @@ class Head(BaseModel):
     RequestId: Optional[str] = Field(
         None,
         description='The unique identifier for the request.',
-        example='1adf8fc6-a08f-47d5-9613-e2af40243e2f',
+        json_schema_extra={'example': '1adf8fc6-a08f-47d5-9613-e2af40243e2f'},
     )
     RequestAction: Optional[str] = Field(
         None,
         description='The action that was successfully performed.',
-        example='ProductStockUpdate',
+        json_schema_extra={'example': 'ProductStockUpdate'},
     )
     ResponseType: Optional[str] = Field(
         None, description='The type of the response, if any.'
@@ -1258,7 +1258,7 @@ class Head(BaseModel):
     Timestamp: Optional[datetime_aliased] = Field(
         None,
         description='The timestamp of when the action was performed.',
-        example='2023-05-26T17:26:50+0200',
+        json_schema_extra={'example': '2023-05-26T17:26:50+0200'},
     )
 
 
@@ -1285,33 +1285,33 @@ class Head1(BaseModel):
     RequestAction: Optional[str] = Field(
         None,
         description='The action that was requested when the error occurred.',
-        example='ProductStockUpdate',
+        json_schema_extra={'example': 'ProductStockUpdate'},
     )
     ErrorType: Optional[str] = Field(
-        None, description='The type of the error.', example='Platform'
+        None, description='The type of the error.', json_schema_extra={'example': 'Platform'}
     )
     ErrorCode: Optional[int] = Field(
-        None, description='The code of the error.', example=30
+        None, description='The code of the error.', json_schema_extra={'example': 30}
     )
     ErrorMessage: Optional[str] = Field(
         None,
         description='A message describing the error.',
-        example='E030: Empty Request',
+        json_schema_extra={'example': 'E030: Empty Request'},
     )
 
 
 class ErrorDetailItem(BaseModel):
     field: Optional[str] = Field(
-        None, description='The field where the error occurred.', example='field1', alias='Field'
+        None, description='The field where the error occurred.', json_schema_extra={'example': 'field1'}, alias='Field'
     )
     Message: Optional[str] = Field(
-        None, description='A message describing the error detail.', example='message1'
+        None, description='A message describing the error detail.', json_schema_extra={'example': 'message1'}
     )
     Value: Optional[str] = Field(
-        None, description='The value that caused the error.', example='value1'
+        None, description='The value that caused the error.', json_schema_extra={'example': 'value1'}
     )
     SellerSku: Optional[str] = Field(
-        None, description='The seller SKU related to the error.', example='sku1'
+        None, description='The seller SKU related to the error.', json_schema_extra={'example': 'sku1'}
     )
 
 
@@ -1332,12 +1332,12 @@ class Head2(BaseModel):
     RequestId: Optional[str] = Field(
         None,
         description='The unique identifier for the request.',
-        example='cb106552-87f3-450b-aa8b-412246a24b34',
+        json_schema_extra={'example': 'cb106552-87f3-450b-aa8b-412246a24b34'},
     )
     RequestAction: Optional[str] = Field(
         None,
         description='The action that was successfully performed.',
-        example='ProductCreate',
+        json_schema_extra={'example': 'ProductCreate'},
     )
     ResponseType: Optional[str] = Field(
         None, description='The type of the response, if any.'
@@ -1345,7 +1345,7 @@ class Head2(BaseModel):
     Timestamp: Optional[datetime_aliased] = Field(
         None,
         description='The timestamp of when the action was performed.',
-        example='2016-06-22T04:40:14+0200',
+        json_schema_extra={'example': '2016-06-22T04:40:14+0200'},
     )
 
 
@@ -1362,18 +1362,18 @@ class Head3(BaseModel):
     RequestAction: Optional[str] = Field(
         None,
         description='The action that was requested when the error occurred.',
-        example='ProductCreate',
+        json_schema_extra={'example': 'ProductCreate'},
     )
     ErrorType: Optional[str] = Field(
-        None, description='The type of the error.', example='Platform'
+        None, description='The type of the error.', json_schema_extra={'example': 'Platform'}
     )
     ErrorCode: Optional[int] = Field(
-        None, description='The code of the error.', example=1000
+        None, description='The code of the error.', json_schema_extra={'example': 1000}
     )
     ErrorMessage: Optional[str] = Field(
         None,
         description='A message describing the error.',
-        example='Could not save product: An exact match of the document is being processed, cb106552-87f3-450b-aa8b-412246a24b34',
+        json_schema_extra={'example': 'Could not save product: An exact match of the document is being processed, cb106552-87f3-450b-aa8b-412246a24b34'},
     )
 
 
@@ -1397,26 +1397,26 @@ class Status4(Enum):
 
 
 class Brands(BaseModel):
-    id: Optional[int] = Field(None, example=111555)
-    srcId: Optional[str] = Field(None, description='Internal id', example='ADI5341')
-    uuid: Optional[str] = Field(None, example='1af9fe46-77d2-4ab2-8b4a-8c7eeac8bbc9')
-    name: Optional[str] = Field(None, example='Adidas')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 111555})
+    srcId: Optional[str] = Field(None, description='Internal id', json_schema_extra={'example': 'ADI5341'})
+    uuid: Optional[str] = Field(None, json_schema_extra={'example': '1af9fe46-77d2-4ab2-8b4a-8c7eeac8bbc9'})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Adidas'})
     status: Optional[Status4] = None
-    isActive: Optional[bool] = Field(None, example=True)
-    isApproved: Optional[bool] = Field(None, example=True)
-    isRestricted: Optional[bool] = Field(None, example=False)
-    countries: Optional[str] = Field(None, example='RU,KZ')
+    isActive: Optional[bool] = Field(None, json_schema_extra={'example': True})
+    isApproved: Optional[bool] = Field(None, json_schema_extra={'example': True})
+    isRestricted: Optional[bool] = Field(None, json_schema_extra={'example': False})
+    countries: Optional[str] = Field(None, json_schema_extra={'example': 'RU,KZ'})
     createdAt: Optional[datetime_aliased] = Field(
-        None, example='2021-09-22T23:21:42+02:00'
+        None, json_schema_extra={'example': '2021-09-22T23:21:42+02:00'}
     )
     updatedAt: Optional[datetime_aliased] = Field(
-        None, example='2021-09-22T23:21:42+02:00'
+        None, json_schema_extra={'example': '2021-09-22T23:21:42+02:00'}
     )
 
 
 class BrandAttributes(BaseModel):
-    id: Optional[int] = Field(None, example=123)
-    name: Optional[str] = Field(None, example='supplier_type')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 123})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'supplier_type'})
     options: Optional[List[Option]] = None
 
 
@@ -1437,43 +1437,43 @@ class Consignments(BaseModel):
 
 class Warehouse(BaseModel):
     name: Optional[str] = Field(
-        None, description='Warehouse Name', example='Central Warehouse'
+        None, description='Warehouse Name', json_schema_extra={'example': 'Central Warehouse'}
     )
-    stock: Optional[int] = Field(None, description='Warehouse stock', example=89)
-    warehouseId: Optional[int] = Field(None, description='Warehouse id', example=1)
+    stock: Optional[int] = Field(None, description='Warehouse stock', json_schema_extra={'example': 89})
+    warehouseId: Optional[int] = Field(None, description='Warehouse id', json_schema_extra={'example': 1})
 
 
 class StockRead(BaseModel):
     shopSku: Optional[str] = Field(
         None,
         description="SKU on the shop's side. Usually it is visible to end customer. If value is null, it means that product is not yet syncronized with shop and SKU was not assigned.",
-        example='NI464AKLCEZ0',
+        json_schema_extra={'example': 'NI464AKLCEZ0'},
     )
     sellerSku: Optional[str] = Field(
         None,
         description="SKU from seller's side. Should be unique across products of seller.",
-        example='shoe-123',
+        json_schema_extra={'example': 'shoe-123'},
     )
     name: Optional[str] = Field(
-        None, description="Product's name", example='Block Shell Jacket'
+        None, description="Product's name", json_schema_extra={'example': 'Block Shell Jacket'}
     )
     quantity: Optional[int] = Field(
         None,
         description='The sellable stock in the Seller warehouse. This is current quantity from catalog product table.',
-        example=63,
+        json_schema_extra={'example': 63},
     )
     reservedStock: Optional[int] = Field(
         None,
         description='The product stock from Pending or Ready to Ship order items where shipment type is drop-shipping or cross-docking.',
-        example=11,
+        json_schema_extra={'example': 11},
     )
     preVerificationStock: Optional[int] = Field(
-        None, description='The product stock in PreVerification', example=11
+        None, description='The product stock in PreVerification', json_schema_extra={'example': 11}
     )
     available: Optional[int] = Field(
         None,
         description='AvailableStock = (Quantity + ReceivedConsignment + CanceledConsignment + ReturnedConsignment + FailedConsignment - ReservedStock). If PreVerification stock is enabled and is higher than ReservedStock when the formula is: AvailableStock = (Quantity + ReceivedConsignment + CanceledConsignment + ReturnedConsignment + FailedConsignment - PreverificationStock)',
-        example=12,
+        json_schema_extra={'example': 12},
     )
     consignments: Optional[Consignments] = Field(
         None,
@@ -1482,10 +1482,10 @@ class StockRead(BaseModel):
     sellableStock: Optional[int] = Field(
         None,
         description='ReceivedConsignment + CanceledConsignment + ReturnedConsignment + FailedConsignment',
-        example=101,
+        json_schema_extra={'example': 101},
     )
     nonSellableStock: Optional[int] = Field(
-        None, description='QuarantinedConsignment + DefectiveConsignment', example=2
+        None, description='QuarantinedConsignment + DefectiveConsignment', json_schema_extra={'example': 2}
     )
     warehouses: Optional[List[Warehouse]] = Field(
         None,
@@ -1509,52 +1509,52 @@ class GeneralError(BaseModel):
     title: Optional[str] = Field(
         None,
         description='A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.\n',
-        example='Status Transition is not allowed',
+        json_schema_extra={'example': 'Status Transition is not allowed'},
     )
     status: Optional[int] = Field(
         None,
         description='The HTTP status code generated by the origin server for this occurrence of the problem.\n',
-        example=400,
+        json_schema_extra={'example': 400},
         ge=400,
         le=599,
     )
     detail: Optional[str] = Field(
         None,
         description='A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.\n',
-        example="Status 'InTransit2' is not valid status for order item.",
+        json_schema_extra={'example': "Status 'InTransit2' is not valid status for order item."},
     )
 
 
 class Paginator(BaseModel):
     limit: Optional[int] = Field(
-        None, description='Entity limit per request\n', example=20
+        None, description='Entity limit per request\n', json_schema_extra={'example': 20}
     )
     offset: Optional[int] = Field(
-        None, description='Offset for entities in repository\n', example=10
+        None, description='Offset for entities in repository\n', json_schema_extra={'example': 10}
     )
     totalCount: Optional[int] = Field(
-        None, description='Total count of entities for request\n', example=100
+        None, description='Total count of entities for request\n', json_schema_extra={'example': 100}
     )
 
 
 class PaginatorWithoutTotalCount(BaseModel):
     limit: Optional[int] = Field(
-        None, description='Entity limit per request\n', example=20
+        None, description='Entity limit per request\n', json_schema_extra={'example': 20}
     )
     offset: Optional[int] = Field(
-        None, description='Offset for entities in repository\n', example=10
+        None, description='Offset for entities in repository\n', json_schema_extra={'example': 10}
     )
     hasNext: Optional[bool] = Field(
         None,
         description='True if next page will have at least one result\n',
-        example=False,
+        json_schema_extra={'example': False},
     )
 
 
 class CustomKpiWrite(BaseModel):
-    externalKpiName: Optional[str] = Field(None, example='Operational Score')
-    sellerShortCode: Optional[str] = Field(None, example='NG1003C')
-    value: Optional[float] = Field(None, example=50, ge=0.01, le=100.0)
+    externalKpiName: Optional[str] = Field(None, json_schema_extra={'example': 'Operational Score'})
+    sellerShortCode: Optional[str] = Field(None, json_schema_extra={'example': 'NG1003C'})
+    value: Optional[float] = Field(None, json_schema_extra={'example': 50}, ge=0.01, le=100.0)
 
 
 class Status5(Enum):
@@ -1569,129 +1569,129 @@ class Status5(Enum):
 
 
 class Category(BaseModel):
-    id: Optional[int] = Field(None, description='Category identifier', example=7865)
+    id: Optional[int] = Field(None, description='Category identifier', json_schema_extra={'example': 7865})
     parentId: Optional[int] = Field(
-        None, description='Category parent identifier', example=1285
+        None, description='Category parent identifier', json_schema_extra={'example': 1285}
     )
     name: Optional[str] = Field(
-        None, description='Category name', example='Sample category name'
+        None, description='Category name', json_schema_extra={'example': 'Sample category name'}
     )
     attributeSetId: Optional[int] = Field(
-        None, description='Attribute set identifier', example=8757345
+        None, description='Attribute set identifier', json_schema_extra={'example': 8757345}
     )
     pathIds: Optional[List[int]] = Field(
-        None, description='Category path identifier list', example=[3461, 6783]
+        None, description='Category path identifier list', json_schema_extra={'example': [3461, 6783]}
     )
     path: Optional[List[str]] = Field(
         None,
         description='Category path',
-        example=['Back To School', 'For Kids', 'Books'],
+        json_schema_extra={'example': ['Back To School', 'For Kids', 'Books']},
     )
     childrenIds: Optional[List[int]] = Field(
-        None, description='Category children id list', example=[7834, 7835]
+        None, description='Category children id list', json_schema_extra={'example': [7834, 7835]}
     )
     visible: Optional[bool] = Field(
-        None, description='Whether or not the category is visible', example=True
+        None, description='Whether or not the category is visible', json_schema_extra={'example': True}
     )
     fulfillmentVisible: Optional[bool] = Field(
         None,
         description='Whether or not the category is visible in consignment',
-        example=True,
+        json_schema_extra={'example': True},
     )
     qcDisabled: Optional[bool] = Field(
         None,
         description='Whether or not the category is disabled in quality-control',
-        example=False,
+        json_schema_extra={'example': False},
     )
     serialNumberRequired: Optional[bool] = Field(
         None,
         description='Whether or not the category requires a serial number',
-        example=False,
+        json_schema_extra={'example': False},
     )
     status: Optional[Status5] = Field(None, description='Category status')
     uuid: Optional[str] = Field(
         None,
         description='Category UUID identifier',
-        example='060cef12-08ef-4ae6-b15e-79398fedc774',
+        json_schema_extra={'example': '060cef12-08ef-4ae6-b15e-79398fedc774'},
     )
 
 
 class CategoryBasicInfo(BaseModel):
-    id: Optional[int] = Field(None, description='Category identifier', example=7865)
+    id: Optional[int] = Field(None, description='Category identifier', json_schema_extra={'example': 7865})
     parentId: Optional[int] = Field(
-        None, description='Category parent identifier', example=1285
+        None, description='Category parent identifier', json_schema_extra={'example': 1285}
     )
     name: Optional[str] = Field(
-        None, description='Category name', example='Sample category name'
+        None, description='Category name', json_schema_extra={'example': 'Sample category name'}
     )
     attributeSetId: Optional[int] = Field(
-        None, description='Attribute set identifier', example=8757345
+        None, description='Attribute set identifier', json_schema_extra={'example': 8757345}
     )
     pathIds: Optional[List[int]] = Field(
-        None, description='Category path identifier list', example=[3461, 6783]
+        None, description='Category path identifier list', json_schema_extra={'example': [3461, 6783]}
     )
     path: Optional[List[str]] = Field(
         None,
         description='Category path',
-        example=['Back To School', 'For Kids', 'Books'],
+        json_schema_extra={'example': ['Back To School', 'For Kids', 'Books']},
     )
     uuid: Optional[str] = Field(
         None,
         description='Category UUID identifier',
-        example='060cef12-08ef-4ae6-b15e-79398fedc774',
+        json_schema_extra={'example': '060cef12-08ef-4ae6-b15e-79398fedc774'},
     )
 
 
 class Child(BaseModel):
-    id: Optional[int] = Field(None, description='Category identifier', example=7865)
+    id: Optional[int] = Field(None, description='Category identifier', json_schema_extra={'example': 7865})
     parentId: Optional[int] = Field(
-        None, description='Category parent identifier', example=1285
+        None, description='Category parent identifier', json_schema_extra={'example': 1285}
     )
     name: Optional[str] = Field(
-        None, description='Category name', example='Sample category name'
+        None, description='Category name', json_schema_extra={'example': 'Sample category name'}
     )
     attributeSetId: Optional[int] = Field(
-        None, description='Attribute set identifier', example=8757345
+        None, description='Attribute set identifier', json_schema_extra={'example': 8757345}
     )
     pathIds: Optional[List[int]] = Field(
-        None, description='Category path identifier list', example=[3461, 6783]
+        None, description='Category path identifier list', json_schema_extra={'example': [3461, 6783]}
     )
     path: Optional[List[str]] = Field(
         None,
         description='Category path',
-        example=['Back To School', 'For Kids', 'Books'],
+        json_schema_extra={'example': ['Back To School', 'For Kids', 'Books']},
     )
     uuid: Optional[str] = Field(
         None,
         description='Category UUID identifier',
-        example='060cef12-08ef-4ae6-b15e-79398fedc774',
+        json_schema_extra={'example': '060cef12-08ef-4ae6-b15e-79398fedc774'},
     )
-    children: Optional[List] = Field(None, description='Category children', example=[])
+    children: Optional[List] = Field(None, description='Category children', json_schema_extra={'example': []})
 
 
 class CategoryTree(BaseModel):
-    id: Optional[int] = Field(None, description='Category identifier', example=7865)
+    id: Optional[int] = Field(None, description='Category identifier', json_schema_extra={'example': 7865})
     parentId: Optional[int] = Field(
-        None, description='Category parent identifier', example=1285
+        None, description='Category parent identifier', json_schema_extra={'example': 1285}
     )
     name: Optional[str] = Field(
-        None, description='Category name', example='Sample category name'
+        None, description='Category name', json_schema_extra={'example': 'Sample category name'}
     )
     attributeSetId: Optional[int] = Field(
-        None, description='Attribute set identifier', example=8757345
+        None, description='Attribute set identifier', json_schema_extra={'example': 8757345}
     )
     pathIds: Optional[List[int]] = Field(
-        None, description='Category path identifier list', example=[3461, 6783]
+        None, description='Category path identifier list', json_schema_extra={'example': [3461, 6783]}
     )
     path: Optional[List[str]] = Field(
         None,
         description='Category path',
-        example=['Back To School', 'For Kids', 'Books'],
+        json_schema_extra={'example': ['Back To School', 'For Kids', 'Books']},
     )
     uuid: Optional[str] = Field(
         None,
         description='Category UUID identifier',
-        example='060cef12-08ef-4ae6-b15e-79398fedc774',
+        json_schema_extra={'example': '060cef12-08ef-4ae6-b15e-79398fedc774'},
     )
     children: Optional[List[Child]] = Field(None, description='Category children')
 
@@ -1783,17 +1783,17 @@ class Option2(BaseModel):
     id: Optional[int] = Field(
         None,
         description='Option identifier. Please note that several attrbiutes can have options with same name,\nbut with different IDs. You need to use right option ID for right attribute. For example,\nthere are attributes "Colour" (ID=1) and "Soil color" (ID=2). "Color" has option "Black"\nwith ID=1234 and "Soil color" has option "Black" with ID=9876. Even though name of options\nare the same, when you want to pass value for "Soil color" you can send only 9876,\n',
-        example=631,
+        json_schema_extra={'example': 631},
     )
     name: Optional[str] = Field(
         None,
         description='Option name. If you implement own UI for SellerCenter you can display this to user, also\nsame value end user in the shop will see. If you are generating XLS files for future\nupload to SellerCenter then you need also to use this value. Please, note that very rarely\nthis value can be changed (for example, one colour got splitted in two or more, renamed\nto be more understandable for end user)\n',
-        example='Black',
+        json_schema_extra={'example': 'Black'},
     )
     isDefault: Optional[bool] = Field(
         None,
         description='Is option default. Used as hint when this option is most commonly used. It may be useful\nif you implementing own UI for SellerCenter and this option should be displayed as\nselected by defaul when your user sees the screen of product set creation.\n',
-        example=False,
+        json_schema_extra={'example': False},
     )
 
 
@@ -1801,84 +1801,84 @@ class CategoryAttribute(BaseModel):
     id: Optional[int] = Field(
         None,
         description='Attribute identifier. Please, consider the fact that there could be several attributes with\nthe same name, but with different IDs. For example, there can be AttributeSets "Shoes", "Dresses"\nand "Jewelry". Shoes and Dresses has "color", but there is no such attribute for "Jewelry".\n\nSo when you want to create product in "Shoes" or "Dresses" you can (and if "color" is mandatory -\nshould) pass value of "color". But this attribute "color" will have different IDs, probably\ndifferent set of options, maybe different validation rules and so on.\n',
-        example=7865,
+        json_schema_extra={'example': 7865},
     )
     label: Optional[str] = Field(
         None,
         description='Attribute label, in general same as name, but can contain spaces and non-latin and/or non numeric\ncharacters. Subject to change. For example, there is attribute with label "Colour" but then new\nattribute "Second color" was added to make end users be able to shop for perfect colour combination.\nAfter that attribute with label "Colour" may change its label to "Main Colour". You can use this\nproperty if you are building your own UI for SellerCenter operations as label for attribute.\n',
-        example='Sample attribute label',
+        json_schema_extra={'example': 'Sample attribute label'},
     )
     name: Optional[str] = Field(
         None,
         description='Attribute name for internal usage. You can ignore this property.',
-        example='Attribute name',
+        json_schema_extra={'example': 'Attribute name'},
     )
     feedName: Optional[str] = Field(
         None,
         description='Feed name: this is how attribute is displayed in XLSX exports and expected to be in imports. When your\nintegration with SellerCenter will generate files for upload to SellerCenter, then you need to use this\nproperty as column name. Very rarely changed, but you need to consider that is can happen.\n',
-        example='Feed name',
+        json_schema_extra={'example': 'Feed name'},
     )
     groupName: Optional[str] = Field(
         None,
         description='Attribute\'s group name. If you implement own UI for SellerCenter it is useful to display attributes in\ngroups, for example "Delivery", "Product Additional Details". By using this field you can split\nattributes in groups and display accordingly.\n',
-        example='Content',
+        json_schema_extra={'example': 'Content'},
     )
     isMandatory: Optional[bool] = Field(
-        None, description='Attribute is mandatory.\n', example=False
+        None, description='Attribute is mandatory.\n', json_schema_extra={'example': False}
     )
     isGlobalAttribute: Optional[bool] = Field(
         None,
         description='Is true when attribute does not belong to certain AttributeSet and can be set for any product.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     description: Optional[str] = Field(
         None,
         description='Attribute description. Maybe useful to see more about meaning of attribute or when you develop\nown UI for SellerCenter operations.\n',
-        example='Some description of an attribute',
+        json_schema_extra={'example': 'Some description of an attribute'},
     )
     productType: Optional[str] = Field(
         None,
         description='Legacy field indicating whether attribute belongs to product ("simple"), product set ("config") or very-special\n("sellercenter"). Please, do not rely on this field as it is subject to change in near future. It is left\nfor compatibility reasons for some clients of previous versions of API.\n',
-        example='sellercenter',
+        json_schema_extra={'example': 'sellercenter'},
     )
     inputType: Optional[InputType] = Field(
         None,
         description='Type of input to display to user. See enum values for possible values. This may be\nuseful if you develop your own UI for SellerCenter.\n',
-        example='numberfield',
+        json_schema_extra={'example': 'numberfield'},
     )
     attributeType: Optional[AttributeType] = Field(
         None,
         description='Type of an attribute, see enum for possible values. It defines how SellerCenter stores value of certain\nattribute. For type of "value" - it is stored "as-is", for "option" - ID of option stored,\nfor "multi_option" - array or option IDs.\n\nThis is useful when you get information about product set and you want to understand whether\n123 is plain value or ID of option.\n\nThere is a special attribute type called "system". Attribute with those types returned for purposes\nof making aware about logic of those attributes. For example, you may see attribute "Brand" among them.\nFrom this attribute you will see useful information like "is it mandatory?", "what is example value of\nit?", "what description can I show to my users while I develop our own UI for SellerCenter".\n\nAttributes of this type should not be sent in array of "attributes" when you create or update your\nproduct sets. Continuing with example of Brand attribute: to pass this information you should use\nfield brandId in root of payload for creation of product set.\n',
-        example='system',
+        json_schema_extra={'example': 'system'},
     )
     exampleValue: Optional[str] = Field(None, description="Attribute's example value")
     maxLength: Optional[int] = Field(
         None,
         description="Attribute's max length, applicable for string attributes.\n",
-        example=23,
+        json_schema_extra={'example': 23},
     )
     isVisibleForHybrid: Optional[bool] = Field(
         None,
         description='This flag enables/disable if an attribute is visible or not for a hybrid product\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     attributeDefinitionType: Optional[AttributeDefinitionType] = Field(
-        None, description='Is used to define the attribute type\n', example='price'
+        None, description='Is used to define the attribute type\n', json_schema_extra={'example': 'price'}
     )
     attributeDefinitionCountry: Optional[AttributeDefinitionCountry] = Field(
         None,
         description="Is used to define the attribute's country/vendor\n",
-        example='MY',
+        json_schema_extra={'example': 'MY'},
     )
     inputMode: Optional[InputMode] = Field(
         None,
         description='Is used to disable, hide a field. See enum values for possible values.\n',
-        example='edit',
+        json_schema_extra={'example': 'edit'},
     )
     forbidEmpty: Optional[bool] = Field(
         None,
         description='If set to true an attribute can not be 0 or NULL.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     options: Optional[List[Option2]] = Field(
         None,
@@ -1887,12 +1887,12 @@ class CategoryAttribute(BaseModel):
     isEditionBySellerBlocked: Optional[bool] = Field(
         None,
         description='If set to true then the value of the attribute can not be changed after the product was synced with the shop.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     isUsedInConsignmentFormulas: Optional[bool] = Field(
         None,
         description='If set to true then the attribute is used in consignment formulas.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
 
 
@@ -1900,39 +1900,39 @@ class CategoryAttributeOption(BaseModel):
     id: Optional[int] = Field(
         None,
         description='Option identifier. Please note that several attrbiutes can have options with same name,\nbut with different IDs. You need to use right option ID for right attribute. For example,\nthere are attributes "Colour" (ID=1) and "Soil color" (ID=2). "Color" has option "Black"\nwith ID=1234 and "Soil color" has option "Black" with ID=9876. Even though name of options\nare the same, when you want to pass value for "Soil color" you can send only 9876,\n',
-        example=631,
+        json_schema_extra={'example': 631},
     )
     name: Optional[str] = Field(
         None,
         description='Option name. If you implement own UI for SellerCenter you can display this to user, also\nsame value end user in the shop will see. If you are generating XLS files for future\nupload to SellerCenter then you need also to use this value. Please, note that very rarely\nthis value can be changed (for example, one colour got splitted in two or more, renamed\nto be more understandable for end user)\n',
-        example='Black',
+        json_schema_extra={'example': 'Black'},
     )
     isDefault: Optional[bool] = Field(
         None,
         description='Is option default. Used as hint when this option is most commonly used. It may be useful\nif you implementing own UI for SellerCenter and this option should be displayed as\nselected by defaul when your user sees the screen of product set creation.\n',
-        example=False,
+        json_schema_extra={'example': False},
     )
 
 
 class CategoryAttributeValidator(BaseModel):
-    maxLength: Optional[int] = Field(None, description='Max length', example=255)
-    decimalPlaces: Optional[int] = Field(None, description='Decimal places', example=2)
+    maxLength: Optional[int] = Field(None, description='Max length', json_schema_extra={'example': 255})
+    decimalPlaces: Optional[int] = Field(None, description='Decimal places', json_schema_extra={'example': 2})
     type: Optional[str] = Field(None, description='Type')
-    notEmpty: Optional[bool] = Field(None, description='Not empty', example=True)
-    signed: Optional[bool] = Field(None, description='Is signed', example=False)
+    notEmpty: Optional[bool] = Field(None, description='Not empty', json_schema_extra={'example': True})
+    signed: Optional[bool] = Field(None, description='Is signed', json_schema_extra={'example': False})
     checkedInBlacklist: Optional[bool] = Field(
-        None, description='Is checked in blacklist', example=False
+        None, description='Is checked in blacklist', json_schema_extra={'example': False}
     )
 
 
 class Attribute(BaseModel):
-    attributeId: Optional[int] = Field(None, example=80)
+    attributeId: Optional[int] = Field(None, json_schema_extra={'example': 80})
     options: Optional[List[int]] = None
 
 
 class CategoryMapping(BaseModel):
-    categoryId: Optional[int] = Field(None, example=32)
-    categoryName: Optional[str] = Field(None, example='Health')
+    categoryId: Optional[int] = Field(None, json_schema_extra={'example': 32})
+    categoryName: Optional[str] = Field(None, json_schema_extra={'example': 'Health'})
     attributes: Optional[List[Attribute]] = None
 
 
@@ -1958,20 +1958,20 @@ class Name(Enum):
 
 
 class Restriction(BaseModel):
-    type: Optional[Type] = Field(None, example='price')
-    name: Optional[Name] = Field(None, example='min_price')
-    description: Optional[str] = Field(None, example='Min Price')
-    country: Optional[str] = Field(None, example='DE')
-    validationType: Optional[str] = Field(None, example='scalar')
-    value: Optional[str] = Field(None, example='10')
+    type: Optional[Type] = Field(None, json_schema_extra={'example': 'price'})
+    name: Optional[Name] = Field(None, json_schema_extra={'example': 'min_price'})
+    description: Optional[str] = Field(None, json_schema_extra={'example': 'Min Price'})
+    country: Optional[str] = Field(None, json_schema_extra={'example': 'DE'})
+    validationType: Optional[str] = Field(None, json_schema_extra={'example': 'scalar'})
+    value: Optional[str] = Field(None, json_schema_extra={'example': '10'})
 
 
 class CategorySetting(BaseModel):
-    id: Optional[int] = Field(None, example=32)
+    id: Optional[int] = Field(None, json_schema_extra={'example': 32})
     shopId: Optional[str] = Field(
-        None, description='Src ID of the category', example=139593
+        None, description='Src ID of the category', json_schema_extra={'example': 139593}
     )
-    name: Optional[str] = Field(None, example='Electronics')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Electronics'})
     restrictions: Optional[List[Restriction]] = None
 
 
@@ -1987,31 +1987,31 @@ class Status6(Enum):
 
 
 class CategoryById(BaseModel):
-    id: Optional[int] = Field(None, description='Category identifier', example=7865)
+    id: Optional[int] = Field(None, description='Category identifier', json_schema_extra={'example': 7865})
     srcId: Optional[str] = Field(
         None,
         description='ID of category in Shop system. If null means that category was not yet synchronized with Shop and is not visible to end customers.',
-        example='39487664',
+        json_schema_extra={'example': '39487664'},
     )
     uuid: Optional[str] = Field(
         None,
         description='Category UUID identifier',
-        example='060cef12-08ef-4ae6-b15e-79398fedc774',
+        json_schema_extra={'example': '060cef12-08ef-4ae6-b15e-79398fedc774'},
     )
     parentId: Optional[int] = Field(
-        None, description='Category parent identifier', example=1285
+        None, description='Category parent identifier', json_schema_extra={'example': 1285}
     )
     name: Optional[str] = Field(
-        None, description='Category name', example='Sample category name'
+        None, description='Category name', json_schema_extra={'example': 'Sample category name'}
     )
     visible: Optional[bool] = Field(
-        None, description='If the category is visible or not', example=True
+        None, description='If the category is visible or not', json_schema_extra={'example': True}
     )
     status: Optional[Status6] = None
     path: Optional[List[str]] = Field(
         None,
         description='Category path',
-        example=['Back To School', 'For Kids', 'Books'],
+        json_schema_extra={'example': ['Back To School', 'For Kids', 'Books']},
     )
 
 
@@ -2027,40 +2027,40 @@ class Status7(Enum):
 
 
 class ChildCategory(BaseModel):
-    id: Optional[int] = Field(None, description='Category identifier', example=7865)
+    id: Optional[int] = Field(None, description='Category identifier', json_schema_extra={'example': 7865})
     uuid: Optional[str] = Field(
         None,
         description='Category UUID identifier',
-        example='060cef12-08ef-4ae6-b15e-79398fedc774',
+        json_schema_extra={'example': '060cef12-08ef-4ae6-b15e-79398fedc774'},
     )
     srcId: Optional[str] = Field(
         None,
         description='ID of category in Shop system. If null means that category was not yet synchronized with Shop and is not visible to end customers.',
-        example='39487664',
+        json_schema_extra={'example': '39487664'},
     )
     status: Optional[Status7] = Field(None, description='Category status')
     visible: Optional[bool] = Field(
-        None, description='Whether or not the category is visible', example=True
+        None, description='Whether or not the category is visible', json_schema_extra={'example': True}
     )
     parentId: Optional[int] = Field(
-        None, description='Category parent identifier', example=1285
+        None, description='Category parent identifier', json_schema_extra={'example': 1285}
     )
     name: Optional[str] = Field(
-        None, description='Category name', example='Sample category name'
+        None, description='Category name', json_schema_extra={'example': 'Sample category name'}
     )
     attributeSetId: Optional[int] = Field(
-        None, description='Attribute set identifier', example=8757345
+        None, description='Attribute set identifier', json_schema_extra={'example': 8757345}
     )
     pathIds: Optional[List[int]] = Field(
-        None, description='Category path identifier list', example=[3461, 6783]
+        None, description='Category path identifier list', json_schema_extra={'example': [3461, 6783]}
     )
     path: Optional[List[str]] = Field(
         None,
         description='Category path',
-        example=['Back To School', 'For Kids', 'Books'],
+        json_schema_extra={'example': ['Back To School', 'For Kids', 'Books']},
     )
     hasChildren: Optional[bool] = Field(
-        None, description='Whether or not the category has children', example=True
+        None, description='Whether or not the category has children', json_schema_extra={'example': True}
     )
 
 
@@ -2069,8 +2069,8 @@ class Parent(BaseModel):
     parent
     """
 
-    attributeId: int = Field(..., description='attributeId', example=70)
-    optionId: int = Field(..., description='optionId', example=200)
+    attributeId: int = Field(..., description='attributeId', json_schema_extra={'example': 70})
+    optionId: int = Field(..., description='optionId', json_schema_extra={'example': 200})
 
 
 class Child1(BaseModel):
@@ -2078,8 +2078,8 @@ class Child1(BaseModel):
     child
     """
 
-    attributeId: int = Field(..., description='attributeId', example=75)
-    optionId: int = Field(..., description='optionId', example=208)
+    attributeId: int = Field(..., description='attributeId', json_schema_extra={'example': 75})
+    optionId: int = Field(..., description='optionId', json_schema_extra={'example': 208})
 
 
 class MappedAttribute(BaseModel):
@@ -2093,10 +2093,10 @@ class MappedAttribute(BaseModel):
 
 class ProductStock(BaseModel):
     productId: Optional[int] = Field(
-        None, description='Numeric ID of a product.', example=5283
+        None, description='Numeric ID of a product.', json_schema_extra={'example': 5283}
     )
     quantity: Optional[int] = Field(
-        None, description='The current level of inventory for this product.', example=12
+        None, description='The current level of inventory for this product.', json_schema_extra={'example': 12}
     )
 
 
@@ -2105,8 +2105,8 @@ class Tag(BaseModel):
     Tag
     """
 
-    id: int = Field(..., description='numeric ID of Tag', example=68)
-    name: str = Field(..., description='optionId', example='bestSellingProduct')
+    id: int = Field(..., description='numeric ID of Tag', json_schema_extra={'example': 68})
+    name: str = Field(..., description='optionId', json_schema_extra={'example': 'bestSellingProduct'})
 
 
 class TagSeller(BaseModel):
@@ -2115,10 +2115,10 @@ class TagSeller(BaseModel):
     """
 
     sellerId: Optional[int] = Field(
-        None, description='Numeric ID of a Seller', example=42
+        None, description='Numeric ID of a Seller', json_schema_extra={'example': 42}
     )
     tags: Optional[List[str]] = Field(
-        None, description='Tag names', example=['test1', 'test2']
+        None, description='Tag names', json_schema_extra={'example': ['test1', 'test2']}
     )
 
 
@@ -2127,16 +2127,16 @@ class RejectedProductSet(BaseModel):
     Rejected ProductSet
     """
 
-    productSetId: int = Field(..., description='numeric ID of ProductSet', example=68)
+    productSetId: int = Field(..., description='numeric ID of ProductSet', json_schema_extra={'example': 68})
     rejectedReasons: List[str] = Field(
         ...,
         description='list of human-readable reasons why ProductSet was rejected',
-        example=['Images missing', 'Wrong category'],
+        json_schema_extra={'example': ['Images missing', 'Wrong category']},
     )
     qcComment: Optional[str] = Field(
         None,
         description='It is possible, but not mandatory for the QC person to add a comment on the rejection.',
-        example='Some field was wrong',
+        json_schema_extra={'example': 'Some field was wrong'},
     )
 
 
@@ -2145,8 +2145,8 @@ class Customer(BaseModel):
     Customer name
     """
 
-    firstName: Optional[str] = Field(None, description='First name', example='John')
-    lastName: Optional[str] = Field(None, description='Last name', example='Doe')
+    firstName: Optional[str] = Field(None, description='First name', json_schema_extra={'example': 'John'})
+    lastName: Optional[str] = Field(None, description='Last name', json_schema_extra={'example': 'Doe'})
 
 
 class Billing(BaseModel):
@@ -2155,26 +2155,26 @@ class Billing(BaseModel):
     """
 
     firstName: Optional[str] = Field(
-        None, description='Customer first name', example='John'
+        None, description='Customer first name', json_schema_extra={'example': 'John'}
     )
     lastName: Optional[str] = Field(
-        None, description='Customer last name', example='Doe'
+        None, description='Customer last name', json_schema_extra={'example': 'Doe'}
     )
-    phone: Optional[List[str]] = Field(None, example=['#####'])
+    phone: Optional[List[str]] = Field(None, json_schema_extra={'example': ['#####']})
     address: Optional[List[str]] = Field(
         None,
         description='5 rows to show the address',
-        example=['Johannisstr. 20', '', '', '', ''],
+        json_schema_extra={'example': ['Johannisstr. 20', '', '', '', '']},
     )
-    email: Optional[str] = Field(None, description='Customer email', example='#####')
-    city: Optional[str] = Field(None, description='Customer city', example='Berlin')
-    ward: Optional[str] = Field(None, example='')
-    region: Optional[str] = Field(None, description='Customer region', example='')
+    email: Optional[str] = Field(None, description='Customer email', json_schema_extra={'example': '#####'})
+    city: Optional[str] = Field(None, description='Customer city', json_schema_extra={'example': 'Berlin'})
+    ward: Optional[str] = Field(None, json_schema_extra={'example': ''})
+    region: Optional[str] = Field(None, description='Customer region', json_schema_extra={'example': ''})
     postCode: Optional[str] = Field(
-        None, description='Customer post code', example='10117'
+        None, description='Customer post code', json_schema_extra={'example': '10117'}
     )
     country: Optional[str] = Field(
-        None, description='Customer country', example='Germany'
+        None, description='Customer country', json_schema_extra={'example': 'Germany'}
     )
 
 
@@ -2184,26 +2184,26 @@ class Shipping(BaseModel):
     """
 
     firstName: Optional[str] = Field(
-        None, description='Customer first name', example='John'
+        None, description='Customer first name', json_schema_extra={'example': 'John'}
     )
     lastName: Optional[str] = Field(
-        None, description='Customer last name', example='Doe'
+        None, description='Customer last name', json_schema_extra={'example': 'Doe'}
     )
-    phone: Optional[List[str]] = Field(None, example=['#####'])
+    phone: Optional[List[str]] = Field(None, json_schema_extra={'example': ['#####']})
     address: Optional[List[str]] = Field(
         None,
         description='5 rows to show the address',
-        example=['Johannisstr. 20', '', '', '', ''],
+        json_schema_extra={'example': ['Johannisstr. 20', '', '', '', '']},
     )
-    email: Optional[str] = Field(None, description='Customer email', example='#####')
-    city: Optional[str] = Field(None, description='Customer city', example='Berlin')
-    ward: Optional[str] = Field(None, example='')
-    region: Optional[str] = Field(None, description='Customer region', example='')
+    email: Optional[str] = Field(None, description='Customer email', json_schema_extra={'example': '#####'})
+    city: Optional[str] = Field(None, description='Customer city', json_schema_extra={'example': 'Berlin'})
+    ward: Optional[str] = Field(None, json_schema_extra={'example': ''})
+    region: Optional[str] = Field(None, description='Customer region', json_schema_extra={'example': ''})
     postCode: Optional[str] = Field(
-        None, description='Customer post code', example='10117'
+        None, description='Customer post code', json_schema_extra={'example': '10117'}
     )
     country: Optional[str] = Field(
-        None, description='Customer country', example='Germany'
+        None, description='Customer country', json_schema_extra={'example': 'Germany'}
     )
 
 
@@ -2223,13 +2223,13 @@ class Address(BaseModel):
 
 
 class Gift(BaseModel):
-    option: bool = Field(..., description='Gift option', example=False)
-    message: Any = Field(..., description='Gift message', example='msg')
+    option: bool = Field(..., description='Gift option', json_schema_extra={'example': False})
+    message: Any = Field(..., description='Gift message', json_schema_extra={'example': 'msg'})
 
 
 class Voucher(BaseModel):
-    code: str = Field(..., description='Voucher code', example='code')
-    type: str = Field(..., description='Voucher type', example='type')
+    code: str = Field(..., description='Voucher code', json_schema_extra={'example': 'code'})
+    type: str = Field(..., description='Voucher type', json_schema_extra={'example': 'type'})
 
 
 class ShipmentProviderType(Enum):
@@ -2315,7 +2315,7 @@ class FailureReason(BaseModel):
     type: Optional[Type1] = Field(None, description='Failure reason type.\n')
     name: Optional[str] = Field(None, description='Reason name')
     description: Optional[str] = Field(None, description='Reason description')
-    details: Optional[str] = Field(None, description='Reason details', example='')
+    details: Optional[str] = Field(None, description='Reason details', json_schema_extra={'example': ''})
 
 
 class Type2(Enum):
@@ -2356,16 +2356,16 @@ class PreProvider(BaseModel):
     Pre-defined shipment provider
     """
 
-    uuid: str = Field(..., example='f11a7fcb-53ea-45bf-aa54-f30a56a3a5gg')
+    uuid: str = Field(..., json_schema_extra={'example': 'f11a7fcb-53ea-45bf-aa54-f30a56a3a5gg'})
     name: str = Field(
-        ..., description='Shipment provider name', example='DafitiCarrier'
+        ..., description='Shipment provider name', json_schema_extra={'example': 'DafitiCarrier'}
     )
     default: Optional[bool] = Field(
-        None, description='True if it is the default shipment provider', example=True
+        None, description='True if it is the default shipment provider', json_schema_extra={'example': True}
     )
     digitalType: str = Field(..., description='Digital type')
     trackingUrl: str = Field(
-        ..., description='Tracking URL', example='https://example.com/tracking/'
+        ..., description='Tracking URL', json_schema_extra={'example': 'https://example.com/tracking/'}
     )
 
 
@@ -2374,16 +2374,16 @@ class Provider(BaseModel):
     Shipment provider
     """
 
-    uuid: str = Field(..., example='f11a7fcb-53ea-45bf-aa54-f30a56a3a5gg')
+    uuid: str = Field(..., json_schema_extra={'example': 'f11a7fcb-53ea-45bf-aa54-f30a56a3a5gg'})
     name: Optional[str] = Field(
-        None, description='Shipment provider name', example='DafitiCarrier'
+        None, description='Shipment provider name', json_schema_extra={'example': 'DafitiCarrier'}
     )
     default: Optional[bool] = Field(
-        None, description='True if it is the default shipment provider', example=True
+        None, description='True if it is the default shipment provider', json_schema_extra={'example': True}
     )
     digitalType: Optional[str] = Field(None, description='Digital type')
     trackingUrl: Optional[str] = Field(
-        None, description='Tracking URL', example='https://example.com/tracking/'
+        None, description='Tracking URL', json_schema_extra={'example': 'https://example.com/tracking/'}
     )
 
 
@@ -2402,38 +2402,38 @@ class ProviderType(Enum):
 
 
 class Shipment(BaseModel):
-    type: Optional[Type2] = Field(None, description='Shipment type.', example='crossdocking')
+    type: Optional[Type2] = Field(None, description='Shipment type.', json_schema_extra={'example': 'crossdocking'})
     crossdockingDeliveryType: Optional[CrossdockingDeliveryType] = Field(
         None, description='Crossdocking delivery type'
     )
     method: Optional[Union[Method, str]] = Field(
         None, description='Shipment method received from the Shop. It is intended to indicate where the order should be send to. Possible options are "home", "pickup", "address", "none"',
-        example='home',
+        json_schema_extra={'example': 'home'},
     )
     preProvider: Optional[PreProvider] = Field(None, description='Pre-defined shipment provider')
     provider: Optional[Provider] = Field(None, description='Shipment provider')
-    providerPreselected: Optional[bool] = Field(None, description='Is shipment provider preselected', example=False)
-    providerProduct: Optional[str] = Field(None, example='')
+    providerPreselected: Optional[bool] = Field(None, description='Is shipment provider preselected', json_schema_extra={'example': False})
+    providerProduct: Optional[str] = Field(None, json_schema_extra={'example': ''})
     providerType: Optional[ProviderType] = Field(None, description='Shipment provider type')
-    weight: Optional[float] = Field(None, description='Weight', example=0.5)
-    trackingCode: Optional[str] = Field(None, description='Tracking code', example='123')
+    weight: Optional[float] = Field(None, description='Weight', json_schema_extra={'example': 0.5})
+    trackingCode: Optional[str] = Field(None, description='Tracking code', json_schema_extra={'example': '123'})
     preTrackingCode: Optional[str] = Field(None, description='PRE tracking code')
 
 
 class Product4(BaseModel):
     name: str = Field(
-        ..., description='Product name.', example='Short de Baño Azul Topper Slim'
-    )
-    sku: str = Field(..., description='Product SKU', example='TO076AT24RKHAR-2474097')
+        ..., description='Product name.', json_schema_extra={'example': 'Short de Baño Azul Topper Slim'
+}    )
+    sku: str = Field(..., description='Product SKU', json_schema_extra={'example': 'TO076AT24RKHAR-2474097'})
     variation: str = Field(
-        ..., description='Variation value as received from the Shop', example='-'
+        ..., description='Variation value as received from the Shop', json_schema_extra={'example': '-'}
     )
-    sellerSku: Optional[str] = Field(None, description='Seller SKU', example='164097_L')
+    sellerSku: Optional[str] = Field(None, description='Seller SKU', json_schema_extra={'example': '164097_L'})
 
 
 class Purchase(BaseModel):
-    orderSrcId: Optional[int] = Field(None, description='Order src ID', example=555)
-    orderNumber: Optional[str] = Field(None, description='Order number', example='MPDS-D1405061201')
+    orderSrcId: Optional[int] = Field(None, description='Order src ID', json_schema_extra={'example': 555})
+    orderNumber: Optional[str] = Field(None, description='Order number', json_schema_extra={'example': 'MPDS-D1405061201'})
     deliveryInfo: Optional[str] = Field(None, description='Delivery info')
 
 
@@ -2443,27 +2443,27 @@ class ExtraAttributes(BaseModel):
     """
 
     installment_fee: Optional[float] = Field(
-        None, description='Installment fee', example=20.5
+        None, description='Installment fee', json_schema_extra={'example': 20.5}
     )
     delivery_type: Optional[str] = Field(
-        None, description='Delivery type', example='standard'
+        None, description='Delivery type', json_schema_extra={'example': 'standard'}
     )
     has_transfer_shipping_flat_fee: Optional[bool] = Field(
         None,
         description='Indicates, whether the order item has transfer shipping flat fee',
-        example=False,
+        json_schema_extra={'example': False},
     )
     price_excluded_tax: Optional[float] = Field(
-        None, description='Price excluded tax', example=24.99
+        None, description='Price excluded tax', json_schema_extra={'example': 24.99}
     )
     sales_service_tax: Optional[float] = Field(
-        None, description='Sales service tax', example=433.71
+        None, description='Sales service tax', json_schema_extra={'example': 433.71}
     )
     gst_free: Optional[str] = Field(
-        None, description='Indicates, whether the order item is GST free', example='0'
+        None, description='Indicates, whether the order item is GST free', json_schema_extra={'example': '0'}
     )
     shipping_fee_sst: Optional[float] = Field(
-        None, description='Shipping fee SST', example=10.5
+        None, description='Shipping fee SST', json_schema_extra={'example': 10.5}
     )
 
 
@@ -2504,30 +2504,30 @@ class Action(Enum):
 
 
 class Voucher1(BaseModel):
-    code: str = Field(..., description='Discount code', example='AAA')
-    amount: float = Field(..., description='Discount amount', example=14.5)
+    code: str = Field(..., description='Discount code', json_schema_extra={'example': 'AAA'})
+    amount: float = Field(..., description='Discount amount', json_schema_extra={'example': 14.5})
     cashbackPercentage: int = Field(
-        ..., description='Promotion defined percentage value for cashback', example=0
+        ..., description='Promotion defined percentage value for cashback', json_schema_extra={'example': 0}
     )
     voucherSellerShare: float = Field(
         ...,
         description='Promotion defined percentage value for the voucher, which is covered/funded by the seller',
-        example=0,
+        json_schema_extra={'example': 0},
     )
     cashbackSellerShare: float = Field(
         ...,
         description='Promotion defined percentage value for the cashback, which is covered/funded by the seller',
-        example=0,
+        json_schema_extra={'example': 0},
     )
     amountFundedBySeller: float = Field(
         ...,
         description='Actual calculated amount based on the voucher seller share percentage and the discount amount',
-        example=0,
+        json_schema_extra={'example': 0},
     )
     cashbackAmountFundedBySeller: str = Field(
         ...,
         description='Actual calculated amount based on the cashback seller share percentage and the discount amount',
-        example=0,
+        json_schema_extra={'example': 0},
     )
 
 
@@ -2545,20 +2545,20 @@ class ManifestStatus(Enum):
 
 
 class OrderItem(BaseModel):
-    id: int = Field(..., description='Unique numeric identifier', example=1111)
-    srcId: str = Field(..., description='Order item src ID', example='MY-32022990')
-    sellerId: int = Field(..., description='Seller ID', example=11112)
-    orderId: int = Field(..., description='Order ID', example=111134)
+    id: int = Field(..., description='Unique numeric identifier', json_schema_extra={'example': 1111})
+    srcId: str = Field(..., description='Order item src ID', json_schema_extra={'example': 'MY-32022990'})
+    sellerId: int = Field(..., description='Seller ID', json_schema_extra={'example': 11112})
+    orderId: int = Field(..., description='Order ID', json_schema_extra={'example': 111134})
     uuid: str = Field(
         ...,
         description='Unique string ID',
-        example='9d6ca7ce-4d71-46bf-aa5e-a0727eca880z',
+        json_schema_extra={'example': '9d6ca7ce-4d71-46bf-aa5e-a0727eca880z'},
     )
-    status: OrderStatus = Field(..., description='Order Item status.\n', example='pending')
+    status: OrderStatus = Field(..., description='Order Item status.\n', json_schema_extra={'example': 'pending'})
     isProcessable: bool = Field(
         ...,
         description="It's true if order item shipment type is not `consignment` and src_status is not `awaiting_fulfillment`",
-        example=True,
+        json_schema_extra={'example': True},
     )
     failureReason: Optional[FailureReason] = Field(
         None, description='Reason for failure if applicable'
@@ -2567,42 +2567,42 @@ class OrderItem(BaseModel):
         None,
         description='Shipment information. It is not always available, for example, when order item is in `pending` status.',
     )
-    invoiceNumber: Optional[str] = Field(None, description='Invoice Number', example='123re')
+    invoiceNumber: Optional[str] = Field(None, description='Invoice Number', json_schema_extra={'example': '123re'})
     invoiceAccesskey: Optional[str] = Field(
         None, description='Invoice Access Key'
     )
-    inTransit: bool = Field(..., description='Order item is in transit', example=False)
+    inTransit: bool = Field(..., description='Order item is in transit', json_schema_extra={'example': False})
     premium: bool = Field(
         ...,
         description='The flag indicates if the order item is premium or not',
-        example=False,
+        json_schema_extra={'example': False},
     )
     targetToShipAt: Optional[datetime_aliased] = Field(
         None,
         description='Promised shipment date. It works only if Promised Shipping Date Feature is Enabled. The dates returned will follow the same format as in the example',
-        example='2022-12-23T05:36:23.123456Z',
+        json_schema_extra={'example': '2022-12-23T05:36:23.123456Z'},
     )
     product: Product4
-    unitPrice: float = Field(..., description='Order item price', example=2499)
+    unitPrice: float = Field(..., description='Order item price', json_schema_extra={'example': 2499})
     taxAmount: float = Field(
-        ..., description='Tax amount for the order item', example=433.71
+        ..., description='Tax amount for the order item', json_schema_extra={'example': 433.71}
     )
     taxPercent: float = Field(
-        ..., description='Tax percent for the order item', example=21
+        ..., description='Tax percent for the order item', json_schema_extra={'example': 21}
     )
-    paidPrice: float = Field(..., description='Paid price', example=2499)
+    paidPrice: float = Field(..., description='Paid price', json_schema_extra={'example': 2499})
     paidCommission: Optional[float] = Field(None, description='Paid commission')
-    shippingFee: float = Field(..., description='Shipping fee', example=0)
+    shippingFee: float = Field(..., description='Shipping fee', json_schema_extra={'example': 0})
     shippingServiceCost: Optional[float] = Field(None, description='Shipping service cost')
-    walletCredits: Optional[float] = Field(None, description='Indicated that the customer used wallet as payment aside from possible voucher', example=0)
-    storeCredits: Optional[float] = Field(None, description='Store credits', example=0)
+    walletCredits: Optional[float] = Field(None, description='Indicated that the customer used wallet as payment aside from possible voucher', json_schema_extra={'example': 0})
+    storeCredits: Optional[float] = Field(None, description='Store credits', json_schema_extra={'example': 0})
     shippingVoucherAmount: float = Field(
-        ..., description='Shipping voucher amount', example=0
+        ..., description='Shipping voucher amount', json_schema_extra={'example': 0}
     )
     priceAfterDiscount: float = Field(
-        ..., description='Price after discount', example=0
+        ..., description='Price after discount', json_schema_extra={'example': 0}
     )
-    salesDueAmount: float = Field(..., description='Sales due amount', example=245)
+    salesDueAmount: float = Field(..., description='Sales due amount', json_schema_extra={'example': 245})
     itemSerialNumber: Optional[str] = Field(None, description='Serial number')
     abatementRate: Optional[str] = Field(None, description='Abatement rate')
     exciseRate: Optional[str] = Field(None, description='Excise rate')
@@ -2615,17 +2615,17 @@ class OrderItem(BaseModel):
     createdAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the order item was created',
-        example='2021-09-22T23:21:42.123456Z',
+        json_schema_extra={'example': '2021-09-22T23:21:42.123456Z'},
     )
     updatedAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the order item was updated. The dates returned will follow the same format as in the example',
-        example='2021-09-22T23:21:42.123456Z',
+        json_schema_extra={'example': '2021-09-22T23:21:42.123456Z'},
     )
     lastStatusChangedAt: Optional[datetime_aliased] = Field(
         None,
         description='Date when the order item status was updated.\nNot every Order Item update changes its status. This is the difference between this field and updated_at. The dates returned will follow the same format as in the example\n',
-        example='2021-09-22T23:21:42.123456Z',
+        json_schema_extra={'example': '2021-09-22T23:21:42.123456Z'},
     )
     warehouseName: Optional[str] = Field(
         None, description='Warehouse name'
@@ -2637,29 +2637,29 @@ class OrderItem(BaseModel):
     isHybrid: bool = Field(
         ...,
         description='Indicates, whether the product is a hybrid product for the Hybrid Depth / Size Fill feature.',
-        example=False,
+        json_schema_extra={'example': False},
     )
     isOutlet: bool = Field(
         ...,
         description='Indicates, whether the order item has "outlet" flag.',
-        example=False,
+        json_schema_extra={'example': False},
     )
     actions: List[Action] = Field(
         ...,
         description='Possible next actions for order item',
-        example=['status_set_to_shipped', 'status_set_to_cancelled'],
+        json_schema_extra={'example': ['status_set_to_shipped', 'status_set_to_cancelled']},
     )
     vouchers: List[Voucher1] = Field(..., description='Discount list')
     manifestStatus: Optional[ManifestStatus] = Field(
-        None, description='Manifest status', example='forward_ready_to_ship'
+        None, description='Manifest status', json_schema_extra={'example': 'forward_ready_to_ship'}
     )
     isPickupRequestSent: Optional[bool] = Field(
         None,
         description='The flag shows if Pickup Request has been sent for the item',
-        example=False,
+        json_schema_extra={'example': False},
     )
     discountAmount: Optional[float] = Field(
-        None, description='Discount value', example=0
+        None, description='Discount value', json_schema_extra={'example': 0}
     )
 
 
@@ -2667,57 +2667,57 @@ class Order(BaseModel):
     uuid: str = Field(
         ...,
         description='Unique order identifier',
-        example='9d6ca7ce-4b71-46bf-aa5e-a0727eca880z',
+        json_schema_extra={'example': '9d6ca7ce-4b71-46bf-aa5e-a0727eca880z'},
     )
     invoiceRequired: bool = Field(
         ...,
         description='This flag means that invoice is required for the Order',
-        example=False,
+        json_schema_extra={'example': False},
     )
-    id: int = Field(..., description='Unique numeric order identifier', example=1111)
+    id: int = Field(..., description='Unique numeric order identifier', json_schema_extra={'example': 1111})
     regionId: Optional[str] = Field(
-        None, description='Regions order identifier', example='2222-2'
+        None, description='Regions order identifier', json_schema_extra={'example': '2222-2'}
     )
-    sellerId: int = Field(..., description='Seller identifier', example=222)
+    sellerId: int = Field(..., description='Seller identifier', json_schema_extra={'example': 222})
     number: str = Field(
-        ..., description='Order number given by the seller', example='MY-111143'
+        ..., description='Order number given by the seller', json_schema_extra={'example': 'MY-111143'}
     )
     customer: Customer = Field(..., description='Customer name')
     address: Address = Field(..., description='Order address')
     nationalRegistrationNumber: Optional[str] = Field(
         None,
         description='It is the registration number of the customer',
-        example='11114389',
+        json_schema_extra={'example': '11114389'},
     )
     payoutPending: bool = Field(
         ...,
         description='Flag that specifies whether the order will generate transactions or put them on hold until other requirements are met',
-        example=False,
+        json_schema_extra={'example': False},
     )
     gift: Gift
     voucher: Voucher
     deliveryInfo: str = Field(
-        ..., description='Additional info about delivery', example='1 D'
+        ..., description='Additional info about delivery', json_schema_extra={'example': '1 D'}
     )
     paymentMethod: str = Field(
-        ..., description='Order payment method', example='NpsPayment'
+        ..., description='Order payment method', json_schema_extra={'example': 'NpsPayment'}
     )
-    currency: str = Field(..., description='Currency', example='ARS')
-    remarks: str = Field(..., description='Additional info about order', example='')
+    currency: str = Field(..., description='Currency', json_schema_extra={'example': 'ARS'})
+    remarks: str = Field(..., description='Additional info about order', json_schema_extra={'example': ''})
     createdAt: Optional[datetime_aliased] = Field(
         ...,
         description='Date and time when the order was created',
-        example='2021-09-22T23:21:42.123456Z',
+        json_schema_extra={'example': '2021-09-22T23:21:42.123456Z'},
     )
     updatedAt: Optional[datetime_aliased] = Field(
         ...,
         description='Date and time when the order was updated. The dates returned will follow the same format as in the example',
-        example='2021-09-22T23:21:42.123456Z',
+        json_schema_extra={'example': '2021-09-22T23:21:42.123456Z'},
     )
     addressUpdatedAt: Optional[datetime_aliased] = Field(
         ...,
         description='Date and time when address was updated last time. The dates returned will follow the same format as in the example',
-        example='2021-09-22T23:21:42.123456Z',
+        json_schema_extra={'example': '2021-09-22T23:21:42.123456Z'},
     )
     exchangeByOrderId: Optional[str] = Field(
         None,
@@ -2733,39 +2733,39 @@ class Order(BaseModel):
     statusList: Dict[str, Any] = Field(
         ...,
         description='Status list from order items as keys with count of items with particular status as a value',
-        example={'pending': 2, 'canceled': 1},
+        json_schema_extra={'example': {'pending': 2, 'canceled': 1}},
     )
-    source: str = Field(..., description='Order source', example='Zalora MY')
-    itemCount: int = Field(..., description='Amount of items in order', example=1)
+    source: str = Field(..., description='Order source', json_schema_extra={'example': 'Zalora MY'})
+    itemCount: int = Field(..., description='Amount of items in order', json_schema_extra={'example': 1})
     unitPriceSumWithFees: float = Field(
-        ..., description='Sum of unit prices from items with fees', example=10200.5
+        ..., description='Sum of unit prices from items with fees', json_schema_extra={'example': 10200.5}
     )
     shippingFeeSstSum: float = Field(
-        ..., description='Sum of shipping fee SST tax', example=10.5
+        ..., description='Sum of shipping fee SST tax', json_schema_extra={'example': 10.5}
     )
     grandTotal: Optional[float] = Field(
-        None, description='Sum of paid prices from items with fees', example=100.5
+        None, description='Sum of paid prices from items with fees', json_schema_extra={'example': 100.5}
     )
     targetToShip: str = Field(
         ...,
         description='Promised shipment date. It works only if Promised Shipping Date Feature is Enabled. The dates returned will follow the same format as in the example',
-        example='2022-12-23T05:36:23.123456Z',
+        json_schema_extra={'example': '2022-12-23T05:36:23.123456Z'},
     )
     shipmentProviderType: Optional[Union[ShipmentProviderType, str]] = Field(
         None,
         description='Calculated shipment provider type across all order items',
-        example='standard',
+        json_schema_extra={'example': 'standard'},
     )
     shipmentProviderPreSelected: bool = Field(
         ...,
         description='Information if the shipment provider has been pre-selected',
-        example=True,
+        json_schema_extra={'example': True},
     )
     packedItemsCount: int = Field(
-        ..., description='Amount of packed order items', example=3
+        ..., description='Amount of packed order items', json_schema_extra={'example': 3}
     )
     orderItemIds: List[int] = Field(
-        ..., description='Ids of the order items in the order', example=[1111]
+        ..., description='Ids of the order items in the order', json_schema_extra={'example': [1111]}
     )
     items: List[OrderItem] = Field(..., description='Order items')
 
@@ -3005,8 +3005,8 @@ class OrderCustomer(BaseModel):
     Customer name
     """
 
-    firstName: Optional[str] = Field(None, description='First name', example='John')
-    lastName: Optional[str] = Field(None, description='Last name', example='Doe')
+    firstName: Optional[str] = Field(None, description='First name', json_schema_extra={'example': 'John'})
+    lastName: Optional[str] = Field(None, description='Last name', json_schema_extra={'example': 'Doe'})
 
 
 class OrderAddress(BaseModel):
@@ -3030,37 +3030,37 @@ class OrderAddressItem(BaseModel):
     """
 
     firstName: Optional[str] = Field(
-        None, description='Customer first name', example='John'
+        None, description='Customer first name', json_schema_extra={'example': 'John'}
     )
     lastName: Optional[str] = Field(
-        None, description='Customer last name', example='Doe'
+        None, description='Customer last name', json_schema_extra={'example': 'Doe'}
     )
-    phone: Optional[List[str]] = Field(None, example=['#####'])
+    phone: Optional[List[str]] = Field(None, json_schema_extra={'example': ['#####']})
     address: Optional[List[str]] = Field(
         None,
         description='5 rows to show the address',
-        example=['Johannisstr. 20', '', '', '', ''],
+        json_schema_extra={'example': ['Johannisstr. 20', '', '', '', '']},
     )
-    email: Optional[str] = Field(None, description='Customer email', example='#####')
-    city: Optional[str] = Field(None, description='Customer city', example='Berlin')
-    ward: Optional[str] = Field(None, example='')
-    region: Optional[str] = Field(None, description='Customer region', example='')
+    email: Optional[str] = Field(None, description='Customer email', json_schema_extra={'example': '#####'})
+    city: Optional[str] = Field(None, description='Customer city', json_schema_extra={'example': 'Berlin'})
+    ward: Optional[str] = Field(None, json_schema_extra={'example': ''})
+    region: Optional[str] = Field(None, description='Customer region', json_schema_extra={'example': ''})
     postCode: Optional[str] = Field(
-        None, description='Customer post code', example='10117'
+        None, description='Customer post code', json_schema_extra={'example': '10117'}
     )
     country: Optional[str] = Field(
-        None, description='Customer country', example='Germany'
+        None, description='Customer country', json_schema_extra={'example': 'Germany'}
     )
 
 
 class OrderGift(BaseModel):
-    option: bool = Field(..., description='Gift option', example=False)
-    message: Any = Field(..., description='Gift message', example='msg')
+    option: bool = Field(..., description='Gift option', json_schema_extra={'example': False})
+    message: Any = Field(..., description='Gift message', json_schema_extra={'example': 'msg'})
 
 
 class OrderVoucher(BaseModel):
-    code: str = Field(..., description='Voucher code', example='code')
-    type: str = Field(..., description='Voucher type', example='type')
+    code: str = Field(..., description='Voucher code', json_schema_extra={'example': 'code'})
+    type: str = Field(..., description='Voucher type', json_schema_extra={'example': 'type'})
 
 
 class Type3(Enum):
@@ -3080,7 +3080,7 @@ class FailureReason1(BaseModel):
     type: Type3 = Field(..., description='Failure reason type.\n')
     name: str = Field(..., description='Reason name')
     description: str = Field(..., description='Reason description')
-    details: str = Field(..., description='Reason details', example='')
+    details: str = Field(..., description='Reason details', json_schema_extra={'example': ''})
 
 
 class Type4(Enum):
@@ -3096,24 +3096,24 @@ class Type4(Enum):
 
 
 class Shipment1(BaseModel):
-    type: Type4 = Field(..., description='Shipment type.', example='crossdocking')
+    type: Type4 = Field(..., description='Shipment type.', json_schema_extra={'example': 'crossdocking'})
     crossdockingDeliveryType: CrossdockingDeliveryType = Field(
         ..., description='Crossdocking delivery type'
     )
     method: Method = Field(
         ...,
         description='Shipment method received from the Shop. It is intended to indicate where the order should be send to. Possible options are "home", "pickup", "address", "none"',
-        example='home',
+        json_schema_extra={'example': 'home'},
     )
     preProvider: PreProvider = Field(..., description='Pre-defined shipment provider')
     provider: Provider = Field(..., description='Shipment provider')
     providerPreselected: bool = Field(
-        ..., description='Is shipment provider preselected', example=False
+        ..., description='Is shipment provider preselected', json_schema_extra={'example': False}
     )
-    providerProduct: str = Field(..., example='')
+    providerProduct: str = Field(..., json_schema_extra={'example': ''})
     providerType: ProviderType = Field(..., description='Shipment provider type')
-    weight: float = Field(..., description='Weight', example=0.5)
-    trackingCode: str = Field(..., description='Tracking code', example='123')
+    weight: float = Field(..., description='Weight', json_schema_extra={'example': 0.5})
+    trackingCode: str = Field(..., description='Tracking code', json_schema_extra={'example': '123'})
     preTrackingCode: str = Field(..., description='PRE tracking code')
 
 
@@ -3137,24 +3137,24 @@ class OrderItemReturns(RootModel[List[OrderItemReturn]]):
 
 class OrderItemProduct(BaseModel):
     name: str = Field(
-        ..., description='Product name.', example='Short de Baño Azul Topper Slim'
-    )
-    sku: str = Field(..., description='Product SKU', example='TO076AT24RKHAR-2474097')
+        ..., description='Product name.', json_schema_extra={'example': 'Short de Baño Azul Topper Slim'
+}    )
+    sku: str = Field(..., description='Product SKU', json_schema_extra={'example': 'TO076AT24RKHAR-2474097'})
     variation: str = Field(
-        ..., description='Variation value as received from the Shop', example='-'
+        ..., description='Variation value as received from the Shop', json_schema_extra={'example': '-'}
     )
-    sellerSku: str = Field(..., description='Seller SKU', example='164097_L')
+    sellerSku: str = Field(..., description='Seller SKU', json_schema_extra={'example': '164097_L'})
 
 
 class OrderItemDigital(BaseModel):
-    isDigital: Optional[bool] = Field(None, example=False)
+    isDigital: Optional[bool] = Field(None, json_schema_extra={'example': False})
     deliveryInfo: Optional[str] = None
 
 
 class OrderItemPurchase(BaseModel):
-    orderSrcId: int = Field(..., description='Order src ID', example=555)
+    orderSrcId: int = Field(..., description='Order src ID', json_schema_extra={'example': 555})
     orderNumber: str = Field(
-        ..., description='Order number', example='MPDS-D1405061201'
+        ..., description='Order number', json_schema_extra={'example': 'MPDS-D1405061201'}
     )
     deliveryInfo: str = Field(..., description='Delivery info')
 
@@ -3176,7 +3176,7 @@ class OrderItemFailureReason(BaseModel):
     type: Type5 = Field(..., description='Failure reason type.\n')
     name: str = Field(..., description='Reason name')
     description: str = Field(..., description='Reason description')
-    details: str = Field(..., description='Reason details', example='')
+    details: str = Field(..., description='Reason details', json_schema_extra={'example': ''})
 
 
 class Type6(Enum):
@@ -3192,111 +3192,111 @@ class Type6(Enum):
 
 
 class OrderItemShipment(BaseModel):
-    type: Type6 = Field(..., description='Shipment type.', example='crossdocking')
+    type: Type6 = Field(..., description='Shipment type.', json_schema_extra={'example': 'crossdocking'})
     crossdockingDeliveryType: CrossdockingDeliveryType = Field(
         ..., description='Crossdocking delivery type'
     )
     method: Method = Field(
         ...,
         description='Shipment method received from the Shop. It is intended to indicate where the order should be send to. Possible options are "home", "pickup", "address", "none"',
-        example='home',
+        json_schema_extra={'example': 'home'},
     )
     preProvider: PreProvider = Field(..., description='Pre-defined shipment provider')
     provider: Provider = Field(..., description='Shipment provider')
     providerPreselected: bool = Field(
-        ..., description='Is shipment provider preselected', example=False
+        ..., description='Is shipment provider preselected', json_schema_extra={'example': False}
     )
-    providerProduct: str = Field(..., example='')
+    providerProduct: str = Field(..., json_schema_extra={'example': ''})
     providerType: ProviderType = Field(..., description='Shipment provider type')
-    weight: float = Field(..., description='Weight', example=0.5)
-    trackingCode: str = Field(..., description='Tracking code', example='123')
+    weight: float = Field(..., description='Weight', json_schema_extra={'example': 0.5})
+    trackingCode: str = Field(..., description='Tracking code', json_schema_extra={'example': '123'})
     preTrackingCode: str = Field(..., description='PRE tracking code')
 
 
 class OrderItemShipmentProvider(BaseModel):
-    uuid: str = Field(..., example='f11a7fcb-53ea-45bf-aa54-f30a56a3a5gg')
+    uuid: str = Field(..., json_schema_extra={'example': 'f11a7fcb-53ea-45bf-aa54-f30a56a3a5gg'})
     name: str = Field(
-        ..., description='Shipment provider name', example='DafitiCarrier'
+        ..., description='Shipment provider name', json_schema_extra={'example': 'DafitiCarrier'}
     )
     default: Optional[bool] = Field(
-        None, description='True if it is the default shipment provider', example=True
+        None, description='True if it is the default shipment provider', json_schema_extra={'example': True}
     )
     digitalType: str = Field(..., description='Digital type')
     trackingUrl: str = Field(
-        ..., description='Tracking URL', example='https://example.com/tracking/'
+        ..., description='Tracking URL', json_schema_extra={'example': 'https://example.com/tracking/'}
     )
 
 
 class OrderItemPackage(BaseModel):
-    id: int = Field(..., example=123)
+    id: int = Field(..., json_schema_extra={'example': 123})
     srcId: Optional[str] = Field(
-        None, description='Package src ID', example='MY-32022990'
+        None, description='Package src ID', json_schema_extra={'example': 'MY-32022990'}
     )
     orderItemIds: List[int] = Field(
-        ..., description='Order items ids within package', example=[144, 152]
+        ..., description='Order items ids within package', json_schema_extra={'example': [144, 152]}
     )
 
 
 class OrderItemInputFailureReason(BaseModel):
-    reason: Optional[str] = Field(None, example='Changed mind')
+    reason: Optional[str] = Field(None, json_schema_extra={'example': 'Changed mind'})
 
 
 class OrderItemInputFailureReasonAndDetails(BaseModel):
     reason: str = Field(
         ...,
         description='Failure reason. The list of reasons you can find /v2/orders-failure-reasons.',
-        example='Not reachable',
+        json_schema_extra={'example': 'Not reachable'},
     )
     reasonDetail: Optional[str] = Field(
-        None, description='Additional information', example='Details'
+        None, description='Additional information', json_schema_extra={'example': 'Details'}
     )
 
 
 class TransactionSummaryItem(BaseModel):
-    transactionTypeId: int = Field(..., description='Transaction Type Id', example=22)
+    transactionTypeId: int = Field(..., description='Transaction Type Id', json_schema_extra={'example': 22})
     description: str = Field(
         ...,
         description='The description is taken from the TRE group or from the description of the transaction type.',
-        example='Commission',
+        json_schema_extra={'example': 'Commission'},
     )
-    amount: float = Field(..., description='Amount', example=54.43)
-    currency: str = Field(..., description='Currency', example='USD')
+    amount: float = Field(..., description='Amount', json_schema_extra={'example': 54.43})
+    currency: str = Field(..., description='Currency', json_schema_extra={'example': 'USD'})
 
 
 class OrderFinance(BaseModel):
-    orderId: int = Field(..., description='Order Id', example=1)
-    currency: str = Field(..., description='Order currency', example='USD')
+    orderId: int = Field(..., description='Order Id', json_schema_extra={'example': 1})
+    currency: str = Field(..., description='Order currency', json_schema_extra={'example': 'USD'})
     shippingFeeItems: float = Field(
-        ..., description='Sum of Order Item shipping fee.', example=23.43
+        ..., description='Sum of Order Item shipping fee.', json_schema_extra={'example': 23.43}
     )
     shippingServiceCostItems: float = Field(
-        ..., description='Sum of Order Item shipping service cost.', example=43.43
+        ..., description='Sum of Order Item shipping service cost.', json_schema_extra={'example': 43.43}
     )
     voucherTotal: float = Field(
-        ..., description='Sum of Order Item vouchers.', example=150.3
+        ..., description='Sum of Order Item vouchers.', json_schema_extra={'example': 150.3}
     )
-    grandTotal: float = Field(..., description='Total price', example=250.23)
-    unitPrice: float = Field(..., description='Order price', example=2499)
-    taxAmount: float = Field(..., description='Tax amount', example=433.71)
-    paidPrice: float = Field(..., description='Paid price', example=2499)
+    grandTotal: float = Field(..., description='Total price', json_schema_extra={'example': 250.23})
+    unitPrice: float = Field(..., description='Order price', json_schema_extra={'example': 2499})
+    taxAmount: float = Field(..., description='Tax amount', json_schema_extra={'example': 433.71})
+    paidPrice: float = Field(..., description='Paid price', json_schema_extra={'example': 2499})
     walletCredits: float = Field(
         ...,
         description='Indicated that the customer used wallet as payment aside from possible voucher',
-        example=0,
+        json_schema_extra={'example': 0},
     )
-    storeCredits: float = Field(..., description='Store credits', example=0)
+    storeCredits: float = Field(..., description='Store credits', json_schema_extra={'example': 0})
     shippingVoucherAmount: float = Field(
-        ..., description='Shipping voucher amount', example=0
+        ..., description='Shipping voucher amount', json_schema_extra={'example': 0}
     )
     transactionSummary: List[TransactionSummaryItem] = Field(
         ..., description='Calculated transaction data for Order'
     )
-    installmentFee: float = Field(..., description='Installment fee', example=20.5)
+    installmentFee: float = Field(..., description='Installment fee', json_schema_extra={'example': 20.5})
     numberOfInstallments: int = Field(
-        ..., description='Number of installments', example=3
+        ..., description='Number of installments', json_schema_extra={'example': 3}
     )
     shippingFeeSstSum: float = Field(
-        ..., description='Sum of shipping fee SST tax', example=10.5
+        ..., description='Sum of shipping fee SST tax', json_schema_extra={'example': 10.5}
     )
 
 
@@ -3304,19 +3304,19 @@ class InvoiceNumber(BaseModel):
     generationType: Optional[str] = Field(
         None,
         description='Generation type',
-        example='autoincrement_number | order_number | show_dialog',
+        json_schema_extra={'example': 'autoincrement_number | order_number | show_dialog'},
     )
     prefix: Optional[str] = Field(
-        None, description='Prefix for the credit note number', example='ABC'
+        None, description='Prefix for the credit note number', json_schema_extra={'example': 'ABC'}
     )
-    nextNumber: Optional[int] = Field(None, description='The next number', example=123)
+    nextNumber: Optional[int] = Field(None, description='The next number', json_schema_extra={'example': 123})
     nextFormatedValue: Optional[str] = Field(
-        None, description='The next formated value', example='ABC123'
+        None, description='The next formated value', json_schema_extra={'example': 'ABC123'}
     )
 
 
 class ReuploadAccepted(BaseModel):
-    success: Optional[bool] = Field(None, example=True)
+    success: Optional[bool] = Field(None, json_schema_extra={'example': True})
 
 
 class Status10(Enum):
@@ -3338,115 +3338,115 @@ class Reason(Enum):
 
 
 class DelistReason(BaseModel):
-    reasonIdentifier: Optional[int] = Field(None, example=1)
+    reasonIdentifier: Optional[int] = Field(None, json_schema_extra={'example': 1})
     reason: Optional[Reason] = Field(
         None,
         description='Reason for why the seller was delisted',
-        example='DAILY_ORDER_LIMIT',
+        json_schema_extra={'example': 'DAILY_ORDER_LIMIT'},
     )
     message: Optional[str] = Field(
         None,
         description='Message for why the seller was delisted. This text might be shown to the seller but will not be translated.',
-        example='Daily Order Limit reached',
+        json_schema_extra={'example': 'Daily Order Limit reached'},
     )
     reasonLimit: Optional[int] = Field(
         None,
         description='Optional limit for the delisted reason. E.g., the reason DAILY_ORDER_LIMIT might have a limit of 100 orders per day.\n',
-        example=100,
+        json_schema_extra={'example': 100},
     )
 
 
 class ProfileField(BaseModel):
-    name: Optional[str] = Field(None, example='shop_name')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'shop_name'})
     displayValue: Optional[str] = Field(
         None,
         description='Some fields, like dropdowns, have different internal values and "human readable" value. For example,\nfield "country" can have internal value "CL" and display value "Chile". In most cases, however, \ndisplayValue is equal to value.\n',
-        example='some name',
+        json_schema_extra={'example': 'some name'},
     )
-    value: Optional[str] = Field(None, example='some name')
+    value: Optional[str] = Field(None, json_schema_extra={'example': 'some name'})
 
 
 class SellerRead(BaseModel):
-    id: Optional[int] = Field(None, example=32)
-    uuid: Optional[str] = Field(None, example='093a9e34-xxxx-xxxx-xxxx-53766e338abf')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 32})
+    uuid: Optional[str] = Field(None, json_schema_extra={'example': '093a9e34-xxxx-xxxx-xxxx-53766e338abf'})
     srcId: Optional[str] = Field(
         None,
         description='ID of the seller in the shop system. It is intentionally a string as in some systems this ID may be not numeric.',
-        example='131',
+        json_schema_extra={'example': '131'},
     )
-    shortCode: Optional[str] = Field(None, example='CI100AA')
-    status: Optional[Status10] = Field(None, example='active')
-    name: Optional[str] = Field(None, example='GFG eCommerce Technologies GmbH')
-    companyName: Optional[str] = Field(None, example='GFG eCommerce Technologies GmbH')
-    email: Optional[str] = Field(None, example='seller@example.com')
-    taxClass: Optional[str] = Field(None, example='national')
+    shortCode: Optional[str] = Field(None, json_schema_extra={'example': 'CI100AA'})
+    status: Optional[Status10] = Field(None, json_schema_extra={'example': 'active'})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'GFG eCommerce Technologies GmbH'})
+    companyName: Optional[str] = Field(None, json_schema_extra={'example': 'GFG eCommerce Technologies GmbH'})
+    email: Optional[str] = Field(None, json_schema_extra={'example': 'seller@example.com'})
+    taxClass: Optional[str] = Field(None, json_schema_extra={'example': 'national'})
     createdAt: Optional[datetime_aliased] = None
     updatedAt: Optional[datetime_aliased] = None
     verified: Optional[bool] = None
-    listed: Optional[bool] = Field(None, example=False)
+    listed: Optional[bool] = Field(None, json_schema_extra={'example': False})
     delistReasons: Optional[List[DelistReason]] = None
     profileFields: Optional[List[ProfileField]] = None
-    agreementsAccepted: Optional[bool] = Field(None, example=True)
+    agreementsAccepted: Optional[bool] = Field(None, json_schema_extra={'example': True})
 
 
 class Address1(BaseModel):
-    address1: Optional[str] = Field(None, example='Main Street nr.1')
-    address2: Optional[str] = Field(None, example='Building A')
-    city: Optional[str] = Field(None, example='Berlin')
-    postalCode: Optional[str] = Field(None, example='10993')
-    country: Optional[str] = Field(None, example='DE')
+    address1: Optional[str] = Field(None, json_schema_extra={'example': 'Main Street nr.1'})
+    address2: Optional[str] = Field(None, json_schema_extra={'example': 'Building A'})
+    city: Optional[str] = Field(None, json_schema_extra={'example': 'Berlin'})
+    postalCode: Optional[str] = Field(None, json_schema_extra={'example': '10993'})
+    country: Optional[str] = Field(None, json_schema_extra={'example': 'DE'})
 
 
 class Vat(BaseModel):
-    number: Optional[str] = Field(None, example='303030303')
-    registered: Optional[bool] = Field(None, example=True)
+    number: Optional[str] = Field(None, json_schema_extra={'example': '303030303'})
+    registered: Optional[bool] = Field(None, json_schema_extra={'example': True})
 
 
 class BankAccount(BaseModel):
-    name: Optional[str] = Field(None, example='John Smith')
-    iban: Optional[str] = Field(None, example='DE20020289283838')
-    swift: Optional[str] = Field(None, example='DE20020289283838')
-    number: Optional[str] = Field(None, example='DE20020289283838')
-    bank: Optional[str] = Field(None, example='Deutsche Bank')
-    bankCode: Optional[str] = Field(None, example='DEB222')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'John Smith'})
+    iban: Optional[str] = Field(None, json_schema_extra={'example': 'DE20020289283838'})
+    swift: Optional[str] = Field(None, json_schema_extra={'example': 'DE20020289283838'})
+    number: Optional[str] = Field(None, json_schema_extra={'example': 'DE20020289283838'})
+    bank: Optional[str] = Field(None, json_schema_extra={'example': 'Deutsche Bank'})
+    bankCode: Optional[str] = Field(None, json_schema_extra={'example': 'DEB222'})
 
 
 class Contact(BaseModel):
-    name: Optional[str] = Field(None, example='CS Support')
-    email: Optional[str] = Field(None, example='support@mycompany.com')
-    phone: Optional[str] = Field(None, example='+4920200239737')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'CS Support'})
+    email: Optional[str] = Field(None, json_schema_extra={'example': 'support@mycompany.com'})
+    phone: Optional[str] = Field(None, json_schema_extra={'example': '+4920200239737'})
     address: Optional[Address1] = None
 
 
 class CustomField(BaseModel):
-    name: Optional[str] = Field(None, example='sap_identifier')
-    value: Optional[str] = Field(None, example='SAP_1234')
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'sap_identifier'})
+    value: Optional[str] = Field(None, json_schema_extra={'example': 'SAP_1234'})
 
 
 class SellerCreate(BaseModel):
-    email: str = Field(..., example='seller@abc.com')
-    shopName: str = Field(..., example='Amazing Shop')
-    companyName: Optional[str] = Field(None, example='Shop LLC')
-    sellerName: str = Field(..., example='John Smith')
-    phone: Optional[str] = Field(None, example='+4920200239737')
+    email: str = Field(..., json_schema_extra={'example': 'seller@abc.com'})
+    shopName: str = Field(..., json_schema_extra={'example': 'Amazing Shop'})
+    companyName: Optional[str] = Field(None, json_schema_extra={'example': 'Shop LLC'})
+    sellerName: str = Field(..., json_schema_extra={'example': 'John Smith'})
+    phone: Optional[str] = Field(None, json_schema_extra={'example': '+4920200239737'})
     address: Optional[Address1] = None
-    legalForm: Optional[str] = Field(None, example='GmbH')
-    personInCharge: Optional[str] = Field(None, example='John Smith')
-    businessRegNumber: Optional[str] = Field(None, example='DE029CSJ')
+    legalForm: Optional[str] = Field(None, json_schema_extra={'example': 'GmbH'})
+    personInCharge: Optional[str] = Field(None, json_schema_extra={'example': 'John Smith'})
+    businessRegNumber: Optional[str] = Field(None, json_schema_extra={'example': 'DE029CSJ'})
     vat: Optional[Vat] = None
-    hasValidLicense: Optional[bool] = Field(None, example=True)
+    hasValidLicense: Optional[bool] = Field(None, json_schema_extra={'example': True})
     bankAccount: Optional[BankAccount] = None
     contact: Optional[Contact] = None
     customFields: Optional[List[CustomField]] = None
-    verified: Optional[bool] = Field(None, example=True)
-    registrationSource: Optional[str] = Field(None, example='api')
+    verified: Optional[bool] = Field(None, json_schema_extra={'example': True})
+    registrationSource: Optional[str] = Field(None, json_schema_extra={'example': 'api'})
 
 
 class SellerCreated(BaseModel):
-    id: Optional[int] = Field(None, example=32)
-    uuid: Optional[str] = Field(None, example='093a9e34-xxxx-xxxx-xxxx-53766e338abf')
-    shortCode: Optional[str] = Field(None, example='CI100AA')
-    userId: Optional[int] = Field(None, example=32)
+    id: Optional[int] = Field(None, json_schema_extra={'example': 32})
+    uuid: Optional[str] = Field(None, json_schema_extra={'example': '093a9e34-xxxx-xxxx-xxxx-53766e338abf'})
+    shortCode: Optional[str] = Field(None, json_schema_extra={'example': 'CI100AA'})
+    userId: Optional[int] = Field(None, json_schema_extra={'example': 32})
     verified: Optional[bool] = None
 
 
@@ -3461,67 +3461,67 @@ class ProfileFields1(BaseModel):
 
 
 class SellerPartialUpdate(BaseModel):
-    email: Optional[str] = Field(None, example='seller@abc.com')
+    email: Optional[str] = Field(None, json_schema_extra={'example': 'seller@abc.com'})
     profileFields: Optional[List[Union[ProfileFields, ProfileFields1]]] = None
 
 
 class SellerProfileGeneralRead(BaseModel):
-    id: Optional[int] = Field(None, example=123)
+    id: Optional[int] = Field(None, json_schema_extra={'example': 123})
     value: Optional[str] = Field(
         None,
         description='If type=file then value is json string with two fields: "originalName" and "url". url - is a temporal link Example: {"originalName": "file1.pdf", "url": "https://some-s3-bucket.s3.amazonaws.com/path/to/your/object?Expires=EXPIRATION_TIMESTAMP&Signature=SIGNATURE"} If type<>file then value is plain value that can be presented in the UI\n',
-        example='000-111-222-33345',
+        json_schema_extra={'example': '000-111-222-33345'},
     )
 
 
 class SellerProfileGeneralWrite(BaseModel):
-    id: Optional[int] = Field(None, example=123)
-    value: Optional[str] = Field(None, example='000-111-222-33345')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 123})
+    value: Optional[str] = Field(None, json_schema_extra={'example': '000-111-222-33345'})
 
 
 class SellerContractIds(BaseModel):
-    contractIds: List[int] = Field(..., example=[123456, 654321])
+    contractIds: List[int] = Field(..., json_schema_extra={'example': [123456, 654321]})
 
 
 class SellerAgreement(BaseModel):
-    id: Optional[int] = Field(None, example=32)
-    cmsPageId: Optional[int] = Field(None, example=32)
-    content: Optional[str] = Field(None, example='example content')
-    linkUrl: Optional[str] = Field(None, example='https://example.com/agreement.pdf')
-    linkText: Optional[str] = Field(None, example='Agreement')
-    date: Optional[datetime_aliased] = Field(None, example='2022-11-01 03:33:47')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 32})
+    cmsPageId: Optional[int] = Field(None, json_schema_extra={'example': 32})
+    content: Optional[str] = Field(None, json_schema_extra={'example': 'example content'})
+    linkUrl: Optional[str] = Field(None, json_schema_extra={'example': 'https://example.com/agreement.pdf'})
+    linkText: Optional[str] = Field(None, json_schema_extra={'example': 'Agreement'})
+    date: Optional[datetime_aliased] = Field(None, json_schema_extra={'example': '2022-11-01 03:33:47'})
 
 
 class Version(BaseModel):
-    id: Optional[int] = Field(None, example=32)
-    cmsPageId: Optional[int] = Field(None, example=32)
-    content: Optional[str] = Field(None, example='example content')
-    linkUrl: Optional[str] = Field(None, example='https://example.com/agreement.pdf')
-    linkText: Optional[str] = Field(None, example='Agreement')
-    date: Optional[datetime_aliased] = Field(None, example='2022-11-01 03:33:47')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 32})
+    cmsPageId: Optional[int] = Field(None, json_schema_extra={'example': 32})
+    content: Optional[str] = Field(None, json_schema_extra={'example': 'example content'})
+    linkUrl: Optional[str] = Field(None, json_schema_extra={'example': 'https://example.com/agreement.pdf'})
+    linkText: Optional[str] = Field(None, json_schema_extra={'example': 'Agreement'})
+    date: Optional[datetime_aliased] = Field(None, json_schema_extra={'example': '2022-11-01 03:33:47'})
 
 
 class SellerAgreementVersion(BaseModel):
-    cmsPageId: Optional[int] = Field(None, example=32)
+    cmsPageId: Optional[int] = Field(None, json_schema_extra={'example': 32})
     versions: Optional[List[Version]] = None
 
 
 class SellerAgreementApproval(BaseModel):
     username: Optional[str] = Field(
-        None, description='user name of approver', example='maintenance'
+        None, description='user name of approver', json_schema_extra={'example': 'maintenance'}
     )
     createdAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the contract was created',
-        example='2022-11-01 03:33:47',
+        json_schema_extra={'example': '2022-11-01 03:33:47'},
     )
     acceptedAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the contract was last updated',
-        example='2022-11-01 03:33:47',
+        json_schema_extra={'example': '2022-11-01 03:33:47'},
     )
     email: Optional[str] = Field(
-        None, description='email of approver', example='maintenance@sellercenter.net'
+        None, description='email of approver', json_schema_extra={'example': 'maintenance@sellercenter.net'}
     )
 
 
@@ -3535,8 +3535,8 @@ class OrderItem1(BaseModel):
     OrderItem
     """
 
-    orderItemId: Optional[int] = Field(None, example=1)
-    returnReason: Optional[str] = Field(None, example='Product not available')
+    orderItemId: Optional[int] = Field(None, json_schema_extra={'example': 1})
+    returnReason: Optional[str] = Field(None, json_schema_extra={'example': 'Product not available'})
 
 
 class Action2(Enum):
@@ -3559,17 +3559,17 @@ class Manifest(BaseModel):
     Manifest
     """
 
-    manifestId: Optional[int] = Field(None, example=68)
-    shipmentProvider: Optional[str] = Field(None, example='DHL')
-    trackingCode: Optional[str] = Field(None, example='123ABC456EFG')
-    type: Optional[Type7] = Field(None, example='forward')
-    manifestCode: Optional[str] = Field(None, example='123ABC456EFG')
+    manifestId: Optional[int] = Field(None, json_schema_extra={'example': 68})
+    shipmentProvider: Optional[str] = Field(None, json_schema_extra={'example': 'DHL'})
+    trackingCode: Optional[str] = Field(None, json_schema_extra={'example': '123ABC456EFG'})
+    type: Optional[Type7] = Field(None, json_schema_extra={'example': 'forward'})
+    manifestCode: Optional[str] = Field(None, json_schema_extra={'example': '123ABC456EFG'})
     orderItems: Optional[List[OrderItem1]] = None
     actions: Optional[List[Action2]] = None
-    status: Optional[Status11] = Field(None, example='forward_ready_to_ship')
-    packagesCount: Optional[int] = Field(None, example=1)
+    status: Optional[Status11] = Field(None, json_schema_extra={'example': 'forward_ready_to_ship'})
+    packagesCount: Optional[int] = Field(None, json_schema_extra={'example': 1})
     createdAt: Optional[datetime_aliased] = Field(
-        None, description='Created At', example='2022-05-04T12:39:13+00:00'
+        None, description='Created At', json_schema_extra={'example': '2022-05-04T12:39:13+00:00'}
     )
 
 
@@ -3600,30 +3600,30 @@ class ManifestDetail(BaseModel):
     Manifest
     """
 
-    manifestId: Optional[int] = Field(None, description='Manifest Id', example=68)
+    manifestId: Optional[int] = Field(None, description='Manifest Id', json_schema_extra={'example': 68})
     manifestCode: Optional[str] = Field(
-        None, description='Manifest code', example='my-4231'
+        None, description='Manifest code', json_schema_extra={'example': 'my-4231'}
     )
-    trackingCode: str = Field(..., description='Tracking Code', example='123ABC456EFG')
+    trackingCode: str = Field(..., description='Tracking Code', json_schema_extra={'example': '123ABC456EFG'})
     orderItems: Optional[List[OrderItem1]] = None
     status: Status12 = Field(
-        ..., description='Manifest status', example='forward_ready_to_ship'
+        ..., description='Manifest status', json_schema_extra={'example': 'forward_ready_to_ship'}
     )
-    type: Type8 = Field(..., description='Manifest type', example='forward')
-    shipmentProviderId: int = Field(..., description='Shipment Provider Id', example=1)
+    type: Type8 = Field(..., description='Manifest type', json_schema_extra={'example': 'forward'})
+    shipmentProviderId: int = Field(..., description='Shipment Provider Id', json_schema_extra={'example': 1})
     createdAt: datetime_aliased = Field(
-        ..., description='Created At', example='2022-05-04T12:39:13+00:00'
+        ..., description='Created At', json_schema_extra={'example': '2022-05-04T12:39:13+00:00'}
     )
-    sellerId: int = Field(..., description='Seller Id', example=1)
+    sellerId: int = Field(..., description='Seller Id', json_schema_extra={'example': 1})
 
 
 class ManifestDocument(BaseModel):
-    DocumentType: Optional[str] = Field(None, example='manifest')
-    MimeType: Optional[str] = Field(None, example='text/html')
+    DocumentType: Optional[str] = Field(None, json_schema_extra={'example': 'manifest'})
+    MimeType: Optional[str] = Field(None, json_schema_extra={'example': 'text/html'})
     File: Optional[str] = Field(
         None,
         description='the manifest file encoded base64',
-        example='0eWxlPmJvZHkgeyBmb250LXNpemU6MTBweDsgZm9udC1mYW1pbHk',
+        json_schema_extra={'example': '0eWxlPmJvZHkgeyBmb250LXNpemU6MTBweDsgZm9udC1mYW1pbHk'},
     )
 
 
@@ -3632,8 +3632,8 @@ class ManifestOrderItem(BaseModel):
     OrderItem
     """
 
-    orderItemId: Optional[int] = Field(None, example=1)
-    returnReason: Optional[str] = Field(None, example='Product not available')
+    orderItemId: Optional[int] = Field(None, json_schema_extra={'example': 1})
+    returnReason: Optional[str] = Field(None, json_schema_extra={'example': 'Product not available'})
 
 
 class Status13(Enum):
@@ -3654,9 +3654,9 @@ class ExportItem(BaseModel):
     userId: Optional[int] = Field(
         None,
         description='ID of user who triggered export. When you request exports you can see also exports\nwhich were created by another users from the same Seller\n',
-        example=524,
+        json_schema_extra={'example': 524},
     )
-    sellerId: Optional[int] = Field(None, example=4089)
+    sellerId: Optional[int] = Field(None, json_schema_extra={'example': 4089})
     status: Optional[Status13] = None
     isDeleted: Optional[bool] = Field(
         None,
@@ -3677,12 +3677,12 @@ class ExportItem(BaseModel):
     exportContent: Optional[str] = Field(
         None,
         description='short description of export file to distinguish between different export items\n',
-        example='Products - Shoes',
+        json_schema_extra={'example': 'Products - Shoes'},
     )
     uuid: Optional[str] = Field(
         None,
         description='Unique identifier of file. You can use it to download file.\n',
-        example='a8fd052d-f29a-471a-b92b-52bb0d2c0be4',
+        json_schema_extra={'example': 'a8fd052d-f29a-471a-b92b-52bb0d2c0be4'},
     )
     note: Optional[str] = Field(
         None,
@@ -3691,19 +3691,19 @@ class ExportItem(BaseModel):
 
 
 class Image2(BaseModel):
-    id: Optional[int] = Field(None, example=1357)
+    id: Optional[int] = Field(None, json_schema_extra={'example': 1357})
     displayUrl: Optional[str] = Field(
-        None, description='URL of the image', example='https://example.com/image-1.jpg'
+        None, description='URL of the image', json_schema_extra={'example': 'https://example.com/image-1.jpg'}
     )
     srcId: Optional[str] = Field(
         None,
         description='ID of image in Shop system. If null means that image was not yet synchronized with Shop and is not visible to end customers.',
-        example='39487664',
+        json_schema_extra={'example': '39487664'},
     )
 
 
 class ProductSetsImage(BaseModel):
-    productSetId: Optional[int] = Field(None, example=5)
+    productSetId: Optional[int] = Field(None, json_schema_extra={'example': 5})
     images: Optional[List[Image2]] = None
 
 
@@ -3712,8 +3712,8 @@ class ProductSetsImages(RootModel[List[ProductSetsImage]]):
 
 
 class ProductSetsCoverImage(BaseModel):
-    productSetId: Optional[int] = Field(None, example=5)
-    imageUrl: Optional[str] = Field(None, example='https://example.com/image-1.jpg')
+    productSetId: Optional[int] = Field(None, json_schema_extra={'example': 5})
+    imageUrl: Optional[str] = Field(None, json_schema_extra={'example': 'https://example.com/image-1.jpg'})
 
 
 class ProductSetsCoverImages(RootModel[List[ProductSetsCoverImage]]):
@@ -3721,18 +3721,18 @@ class ProductSetsCoverImages(RootModel[List[ProductSetsCoverImage]]):
 
 
 class ProductSkusImage(BaseModel):
-    productSetId: Optional[int] = Field(None, example=5)
+    productSetId: Optional[int] = Field(None, json_schema_extra={'example': 5})
     shopSku: Optional[str] = Field(
         None,
         description="SKU on the shop's side. Usually it is visible to end customer. If value is null, it means that product is not yet\nsynchronized with shop and SKU was not assigned.\n",
-        example='NI464AKLCEZ0',
+        json_schema_extra={'example': 'NI464AKLCEZ0'},
     )
     sellerSku: Optional[str] = Field(
         None,
         description="SKU from seller's side. Should be unique across products of seller.\n",
-        example='shoe-123',
+        json_schema_extra={'example': 'shoe-123'},
     )
-    mainImageUrl: Optional[str] = Field(None, example='https://example.com/image-1.jpg')
+    mainImageUrl: Optional[str] = Field(None, json_schema_extra={'example': 'https://example.com/image-1.jpg'})
 
 
 class ProductSkusImages(RootModel[List[ProductSkusImage]]):
@@ -3740,7 +3740,7 @@ class ProductSkusImages(RootModel[List[ProductSkusImage]]):
 
 
 class ProductSetsImage(BaseModel):
-    productSetId: Optional[int] = Field(None, example=5)
+    productSetId: Optional[int] = Field(None, json_schema_extra={'example': 5})
     images: Optional[List[Image]] = None
 
 
@@ -3749,9 +3749,9 @@ class ProductSetsImages(RootModel[List[ProductSetsImage]]):
 
 
 class ProductSetsTag(BaseModel):
-    tagId: Optional[int] = Field(None, example=5)
-    tagName: Optional[str] = Field(None, example='Fresh products')
-    productSetId: Optional[int] = Field(None, example=5)
+    tagId: Optional[int] = Field(None, json_schema_extra={'example': 5})
+    tagName: Optional[str] = Field(None, json_schema_extra={'example': 'Fresh products'})
+    productSetId: Optional[int] = Field(None, json_schema_extra={'example': 5})
 
 
 class ProductSetsTags(RootModel[List[ProductSetsTag]]):
@@ -3762,69 +3762,69 @@ class Kpi(BaseModel):
     name: Optional[str] = Field(
         None,
         description='name of the KPI',
-        example='Average Business Delivery Time From Shipped',
+        json_schema_extra={'example': 'Average Business Delivery Time From Shipped'},
     )
     period: Optional[int] = Field(
-        None, description='calculation period of the KPI by day', example=30
+        None, description='calculation period of the KPI by day', json_schema_extra={'example': 30}
     )
-    kpiValue: Optional[float] = Field(None, description='KPI value', example=1)
-    kpiUnit: Optional[str] = Field(None, description='unit KPI value', example='hrs')
+    kpiValue: Optional[float] = Field(None, description='KPI value', json_schema_extra={'example': 1})
+    kpiUnit: Optional[str] = Field(None, description='unit KPI value', json_schema_extra={'example': 'hrs'})
     rating: Optional[str] = Field(
-        None, description='KPI rating', example='Extremely Good'
+        None, description='KPI rating', json_schema_extra={'example': 'Extremely Good'}
     )
-    score: Optional[float] = Field(None, description='KPI score', example=1)
-    weight: Optional[float] = Field(None, description='KPI weight', example=10)
+    score: Optional[float] = Field(None, description='KPI score', json_schema_extra={'example': 1})
+    weight: Optional[float] = Field(None, description='KPI weight', json_schema_extra={'example': 10})
     sellerRatingScore: Optional[float] = Field(
-        None, description='Actual score per KPI', example=10
+        None, description='Actual score per KPI', json_schema_extra={'example': 10}
     )
 
 
 class Rating(BaseModel):
     overallScore: Optional[float] = Field(
-        None, description='Overall rating of seller', example=10
+        None, description='Overall rating of seller', json_schema_extra={'example': 10}
     )
     endDate: Optional[datetime_aliased] = Field(
         None,
         description="Seller rating's end date",
-        example='2022-05-22T23:59:59+00:00',
+        json_schema_extra={'example': '2022-05-22T23:59:59+00:00'},
     )
     calculationDate: Optional[datetime_aliased] = Field(
         None,
         description="Seller rating's calculation date",
-        example='2022-05-22T23:59:59+00:00',
+        json_schema_extra={'example': '2022-05-22T23:59:59+00:00'},
     )
     kpis: Optional[List[Kpi]] = Field(None, description='List of KPIs')
 
 
 class Status14(BaseModel):
     Active: Optional[str] = Field(
-        None, description='Number of active products', example=22
+        None, description='Number of active products', json_schema_extra={'example': 22}
     )
-    All: Optional[str] = Field(None, description='Number of all products', example=32)
+    All: Optional[str] = Field(None, description='Number of all products', json_schema_extra={'example': 32})
     Deleted: Optional[str] = Field(
-        None, description='Number of deleted products', example=2
+        None, description='Number of deleted products', json_schema_extra={'example': 2}
     )
     ImageMissing: Optional[str] = Field(
-        None, description='Number of products with image missing', example=5
+        None, description='Number of products with image missing', json_schema_extra={'example': 5}
     )
     Inactive: Optional[str] = Field(
-        None, description='Number of inactive products', example=3
+        None, description='Number of inactive products', json_schema_extra={'example': 3}
     )
-    Live: Optional[str] = Field(None, description='Number of live products', example=4)
+    Live: Optional[str] = Field(None, description='Number of live products', json_schema_extra={'example': 4})
     Pending: Optional[str] = Field(
-        None, description='Number of product pending', example=8
+        None, description='Number of product pending', json_schema_extra={'example': 8}
     )
     PoorQuality: Optional[str] = Field(
-        None, description='Number of products with poor quality', example=9
+        None, description='Number of products with poor quality', json_schema_extra={'example': 9}
     )
     SoldOut: Optional[str] = Field(
-        None, description='Number of sold out products', example=15
+        None, description='Number of sold out products', json_schema_extra={'example': 15}
     )
 
 
 class Products(BaseModel):
     Total: Optional[int] = Field(
-        None, description='Total number of products', example=131
+        None, description='Total number of products', json_schema_extra={'example': 131}
     )
     Status: Optional[Status14] = None
 
@@ -3871,7 +3871,7 @@ class Status15(BaseModel):
 
 class Orders(BaseModel):
     Status: Optional[Status15] = None
-    Total: Optional[int] = Field(None, description='Total number of orders', example=12)
+    Total: Optional[int] = Field(None, description='Total number of orders', json_schema_extra={'example': 12})
 
 
 class OrdersItemsPending(BaseModel):
@@ -3962,7 +3962,7 @@ class Statistics(BaseModel):
     LastDataUpdate: Optional[datetime_aliased] = Field(
         None,
         description='As response is cached, this value informs you on datetime when statistics were gathered.',
-        example='2022-05-22T23:59:59+00:00',
+        json_schema_extra={'example': '2022-05-22T23:59:59+00:00'},
     )
     result: Optional[Result] = Field(None, description="Seller rating's end date")
 
@@ -3988,22 +3988,22 @@ class Metrics(BaseModel):
 
 
 class OrderItemIds(BaseModel):
-    orderItemIds: List[int] = Field(..., example=[123456, 654321])
+    orderItemIds: List[int] = Field(..., json_schema_extra={'example': [123456, 654321]})
 
 
 class SetInvoiceNumber(BaseModel):
-    orderItemId: int = Field(..., description='Order item Identifier.', example=1)
+    orderItemId: int = Field(..., description='Order item Identifier.', json_schema_extra={'example': 1})
     invoiceNumber: str = Field(
-        ..., description='The actual invoice value.', example='INV-20'
+        ..., description='The actual invoice value.', json_schema_extra={'example': 'INV-20'}
     )
 
 
 class OrderItem3(BaseModel):
-    orderItemId: int = Field(..., example=1)
+    orderItemId: int = Field(..., json_schema_extra={'example': 1})
     accessKey: str = Field(
         ...,
         description='If this field is empty, try to get accessKey from InvoiceEncodedXml.',
-        example='12345678901234567890123456789012345678901234',
+        json_schema_extra={'example': '12345678901234567890123456789012345678901234'},
     )
     documentUrl: Optional[str] = Field(
         None, description='The URL to the shipment document (optional)'
@@ -4024,84 +4024,84 @@ class Attribute1(BaseModel):
     id: Optional[int] = Field(
         None,
         description='Attribute identifier. Please, consider the fact that there could be several attributes with\nthe same name, but with different IDs. For example, there can be AttributeSets "Shoes", "Dresses"\nand "Jewelry". Shoes and Dresses has "color", but there is no such attribute for "Jewelry".\n\nSo when you want to create product in "Shoes" or "Dresses" you can (and if "color" is mandatory -\nshould) pass value of "color". But this attribute "color" will have different IDs, probably\ndifferent set of options, maybe different validation rules and so on.\n',
-        example=7865,
+        json_schema_extra={'example': 7865},
     )
     label: Optional[str] = Field(
         None,
         description='Attribute label, in general same as name, but can contain spaces and non-latin and/or non numeric\ncharacters. Subject to change. For example, there is attribute with label "Colour" but then new\nattribute "Second color" was added to make end users be able to shop for perfect colour combination.\nAfter that attribute with label "Colour" may change its label to "Main Colour". You can use this\nproperty if you are building your own UI for SellerCenter operations as label for attribute.\n',
-        example='Sample attribute label',
+        json_schema_extra={'example': 'Sample attribute label'},
     )
     name: Optional[str] = Field(
         None,
         description='Attribute name for internal usage. You can ignore this property.',
-        example='Attribute name',
+        json_schema_extra={'example': 'Attribute name'},
     )
     feedName: Optional[str] = Field(
         None,
         description='Feed name: this is how attribute is displayed in XLSX exports and expected to be in imports. When your\nintegration with SellerCenter will generate files for upload to SellerCenter, then you need to use this\nproperty as column name. Very rarely changed, but you need to consider that is can happen.\n',
-        example='Feed name',
+        json_schema_extra={'example': 'Feed name'},
     )
     groupName: Optional[str] = Field(
         None,
         description='Attribute\'s group name. If you implement own UI for SellerCenter it is useful to display attributes in\ngroups, for example "Delivery", "Product Additional Details". By using this field you can split\nattributes in groups and display accordingly.\n',
-        example='Content',
+        json_schema_extra={'example': 'Content'},
     )
     isMandatory: Optional[bool] = Field(
-        None, description='Attribute is mandatory.\n', example=False
+        None, description='Attribute is mandatory.\n', json_schema_extra={'example': False}
     )
     isGlobalAttribute: Optional[bool] = Field(
         None,
         description='Is true when attribute does not belong to certain AttributeSet and can be set for any product.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     description: Optional[str] = Field(
         None,
         description='Attribute description. Maybe useful to see more about meaning of attribute or when you develop\nown UI for SellerCenter operations.\n',
-        example='Some description of an attribute',
+        json_schema_extra={'example': 'Some description of an attribute'},
     )
     productType: Optional[str] = Field(
         None,
         description='Legacy field indicating whether attribute belongs to product ("simple"), product set ("config") or very-special\n("sellercenter"). Please, do not rely on this field as it is subject to change in near future. It is left\nfor compatibility reasons for some clients of previous versions of API.\n',
-        example='sellercenter',
+        json_schema_extra={'example': 'sellercenter'},
     )
     inputType: Optional[InputType] = Field(
         None,
         description='Type of input to display to user. See enum values for possible values. This may be\nuseful if you develop your own UI for SellerCenter.\n',
-        example='numberfield',
+        json_schema_extra={'example': 'numberfield'},
     )
     attributeType: Optional[AttributeType] = Field(
         None,
         description='Type of an attribute, see enum for possible values. It defines how SellerCenter stores value of certain\nattribute. For type of "value" - it is stored "as-is", for "option" - ID of option stored,\nfor "multi_option" - array or option IDs.\n\nThis is useful when you get information about product set and you want to understand whether\n123 is plain value or ID of option.\n\nThere is a special attribute type called "system". Attribute with those types returned for purposes\nof making aware about logic of those attributes. For example, you may see attribute "Brand" among them.\nFrom this attribute you will see useful information like "is it mandatory?", "what is example value of\nit?", "what description can I show to my users while I develop our own UI for SellerCenter".\n\nAttributes of this type should not be sent in array of "attributes" when you create or update your\nproduct sets. Continuing with example of Brand attribute: to pass this information you should use\nfield brandId in root of payload for creation of product set.\n',
-        example='system',
+        json_schema_extra={'example': 'system'},
     )
     exampleValue: Optional[str] = Field(None, description="Attribute's example value")
     maxLength: Optional[int] = Field(
         None,
         description="Attribute's max length, applicable for string attributes.\n",
-        example=23,
+        json_schema_extra={'example': 23},
     )
     isVisibleForHybrid: Optional[bool] = Field(
         None,
         description='This flag enables/disable if an attribute is visible or not for a hybrid product\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     attributeDefinitionType: Optional[AttributeDefinitionType] = Field(
-        None, description='Is used to define the attribute type\n', example='price'
+        None, description='Is used to define the attribute type\n', json_schema_extra={'example': 'price'}
     )
     attributeDefinitionCountry: Optional[AttributeDefinitionCountry] = Field(
         None,
         description="Is used to define the attribute's country/vendor\n",
-        example='MY',
+        json_schema_extra={'example': 'MY'},
     )
     inputMode: Optional[InputMode] = Field(
         None,
         description='Is used to disable, hide a field. See enum values for possible values.\n',
-        example='edit',
+        json_schema_extra={'example': 'edit'},
     )
     forbidEmpty: Optional[bool] = Field(
         None,
         description='If set to true an attribute can not be 0 or NULL.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     options: Optional[List[Option2]] = Field(
         None,
@@ -4110,12 +4110,12 @@ class Attribute1(BaseModel):
     isEditionBySellerBlocked: Optional[bool] = Field(
         None,
         description='If set to true then the value of the attribute can not be changed after the product was synced with the shop.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     isUsedInConsignmentFormulas: Optional[bool] = Field(
         None,
         description='If set to true then the attribute is used in consignment formulas.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
 
 
@@ -4123,28 +4123,28 @@ class AttributeOptions(BaseModel):
     id: Optional[int] = Field(
         None,
         description='Option identifier. Please note that several attrbiutes can have options with same name,\nbut with different IDs. You need to use right option ID for right attribute. For example,\nthere are attributes "Colour" (ID=1) and "Soil color" (ID=2). "Color" has option "Black"\nwith ID=1234 and "Soil color" has option "Black" with ID=9876. Even though name of options\nare the same, when you want to pass value for "Soil color" you can send only 9876,\n',
-        example=631,
+        json_schema_extra={'example': 631},
     )
     name: Optional[str] = Field(
         None,
         description='Option name. If you implement own UI for SellerCenter you can display this to user, also\nsame value end user in the shop will see. If you are generating XLS files for future\nupload to SellerCenter then you need also to use this value. Please, note that very rarely\nthis value can be changed (for example, one colour got splitted in two or more, renamed\nto be more understandable for end user)\n',
-        example='Black',
+        json_schema_extra={'example': 'Black'},
     )
     isDefault: Optional[bool] = Field(
         None,
         description='Is option default. Used as hint when this option is most commonly used. It may be useful\nif you implementing own UI for SellerCenter and this option should be displayed as\nselected by defaul when your user sees the screen of product set creation.\n',
-        example=False,
+        json_schema_extra={'example': False},
     )
 
 
 class AttributeValidator(BaseModel):
-    maxLength: Optional[int] = Field(None, description='Max length', example=255)
-    decimalPlaces: Optional[int] = Field(None, description='Decimal places', example=2)
+    maxLength: Optional[int] = Field(None, description='Max length', json_schema_extra={'example': 255})
+    decimalPlaces: Optional[int] = Field(None, description='Decimal places', json_schema_extra={'example': 2})
     type: Optional[str] = Field(None, description='Type')
-    notEmpty: Optional[bool] = Field(None, description='Not empty', example=True)
-    signed: Optional[bool] = Field(None, description='Is signed', example=False)
+    notEmpty: Optional[bool] = Field(None, description='Not empty', json_schema_extra={'example': True})
+    signed: Optional[bool] = Field(None, description='Is signed', json_schema_extra={'example': False})
     checkedInBlacklist: Optional[bool] = Field(
-        None, description='Is checked in blacklist', example=False
+        None, description='Is checked in blacklist', json_schema_extra={'example': False}
     )
 
 
@@ -4231,11 +4231,11 @@ class Action3(Enum):
 
 class Feed(BaseModel):
     id: Optional[int] = None
-    userId: Optional[int] = Field(None, description='ID of the feed.\n', example=524)
+    userId: Optional[int] = Field(None, description='ID of the feed.\n', json_schema_extra={'example': 524})
     sellerId: Optional[int] = Field(
         None,
         description='ID of seller for who this feed is. Useful when your user role allow you to manage multiple sellers.',
-        example=4089,
+        json_schema_extra={'example': 4089},
     )
     status: Optional[Status16] = None
     action: Optional[Action3] = Field(
@@ -4255,22 +4255,22 @@ class Feed(BaseModel):
     totalRecords: Optional[int] = Field(
         None,
         description='Feed can contain multiple items and this number indicated total number of recognized items\n',
-        example=4089,
+        json_schema_extra={'example': 4089},
     )
     processedRecords: Optional[int] = Field(
         None,
         description='Feed items are processed in chunks and using this number you can see how many items were processed.\n',
-        example=123,
+        json_schema_extra={'example': 123},
     )
     failedRecords: Optional[int] = Field(
         None,
         description='How many items were failed to process (contains wrong data, validation failed for data, etc).\n',
-        example=64,
+        json_schema_extra={'example': 64},
     )
     failureReportExportItemid: Optional[int] = Field(
         None,
         description='ID of related export item. Can be null if there is no related error for feed. If present, you can\nget information about this export item by doing another request to export endpoint. Export item can\nhave download link and by using it you can download CSV or XLSX file with errors or warnings related\nto this feed.\n',
-        example=64,
+        json_schema_extra={'example': 64},
     )
 
 
@@ -4291,13 +4291,13 @@ class FeedItemWarning(BaseModel):
 
 class FeedRawInput(BaseModel):
     FeedUuid: Optional[str] = Field(
-        None, example='2283380623-57c9-4163-b062-9f558d1934c2'
+        None, json_schema_extra={'example': '2283380623-57c9-4163-b062-9f558d1934c2'}
     )
-    MimeType: Optional[str] = Field(None, example='text/html')
+    MimeType: Optional[str] = Field(None, json_schema_extra={'example': 'text/html'})
     File: Optional[str] = Field(
         None,
         description='the manifest file encoded base64',
-        example='0eWxlPmJvZHkgeyBmb250LXNpemU6MTBweDsgZm9udC1mYW1pbHk',
+        json_schema_extra={'example': '0eWxlPmJvZHkgeyBmb250LXNpemU6MTBweDsgZm9udC1mYW1pbHk'},
     )
 
 
@@ -4310,35 +4310,35 @@ class Type9(Enum):
 
 
 class QcRejectReason(BaseModel):
-    id: Optional[int] = Field(None, description='Id of the reject reason.\n', example=1)
+    id: Optional[int] = Field(None, description='Id of the reject reason.\n', json_schema_extra={'example': 1})
     name: Optional[str] = Field(
         None,
         description="The name of the reject reason in venture locale. The ones set to 'Not Authorized' will have (Not Authorized) added as suffix.\n",
-        example='Wrong description',
+        json_schema_extra={'example': 'Wrong description'},
     )
-    type: Optional[Type9] = Field(None, example='product')
+    type: Optional[Type9] = Field(None, json_schema_extra={'example': 'product'})
     isSetToNotAuthorized: Optional[bool] = Field(
         None,
         description='If true, this reason can be used to set product to not authorized status.\nNot authorized products are taken offline and blocked from going to product QC. Cannot be edited after saving.\n',
-        example=False,
+        json_schema_extra={'example': False},
     )
     isEnabled: Optional[bool] = Field(
         None,
         description='Whether or not the reject reason is currently enabled.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
 
 
 class CreateWebhook(BaseModel):
     webhookId: Optional[str] = Field(
-        None, example='7dffaa4e-1713-42c2-84ba-1d2fbd4537ab'
+        None, json_schema_extra={'example': '7dffaa4e-1713-42c2-84ba-1d2fbd4537ab'}
     )
     createdAt: Optional[datetime_aliased] = None
 
 
 class UpdateWebhook(BaseModel):
     webhookId: Optional[str] = Field(
-        None, example='7dffaa4e-1713-42c2-84ba-1d2fbd4537ab'
+        None, json_schema_extra={'example': '7dffaa4e-1713-42c2-84ba-1d2fbd4537ab'}
     )
     updatedAt: Optional[datetime_aliased] = None
 
@@ -4351,17 +4351,17 @@ class ProductSetId(BaseModel):
     syncClass: Optional[str] = Field(
         None,
         description='Used to know if the icon for product uploaded should be displayed or not',
-        example='iconset-visible',
+        json_schema_extra={'example': 'iconset-visible'},
     )
     message: Optional[str] = Field(
         None,
         description='Message for the product set containing successful message or error message. If the product set is\nuploaded the message will be "Uploaded to shop", all other messages representing that product was not uploaded \nsuccessfully\n',
-        example='Latest version not yet uploaded to shop',
+        json_schema_extra={'example': 'Latest version not yet uploaded to shop'},
     )
     dirtStatus: Optional[bool] = Field(
         None,
         description='Represents a flag to know if the product set has dirty data',
-        example=True,
+        json_schema_extra={'example': True},
     )
 
 class QualityControlStatus(BaseModel):
@@ -4397,12 +4397,12 @@ class Event(BaseModel):
     name: Optional[str] = Field(
         None,
         description='Human readable string identifier of an Event.',
-        example='Updated',
+        json_schema_extra={'example': 'Updated'},
     )
     alias: Optional[str] = Field(
         None,
         description='Human readable string identifier of an Event combined with its Entity.',
-        example='onMetricsUpdated',
+        json_schema_extra={'example': 'onMetricsUpdated'},
     )
 
 
@@ -4410,7 +4410,7 @@ class WebhookEntity(BaseModel):
     name: Optional[str] = Field(
         None,
         description='Human readable string identifier of an Entity.',
-        example='Metrics',
+        json_schema_extra={'example': 'Metrics'},
     )
     events: Optional[List[Event]] = None
 
@@ -4428,24 +4428,24 @@ class Webhook(BaseModel):
     publicId: Optional[str] = Field(
         None,
         description='Identifier of a Webhook as assigned by SellerCenter.',
-        example='3f0c27aa-ca28-4526-88f0-a13e6c9a007b',
+        json_schema_extra={'example': '3f0c27aa-ca28-4526-88f0-a13e6c9a007b'},
     )
     sellerId: Optional[int] = Field(
         None,
         description='Identifier of a Seller as assigned by SellerCenter.',
-        example=1024,
+        json_schema_extra={'example': 1024},
     )
     callbackUrl: Optional[str] = Field(
         None,
         description='The webhook url that will be called by SellerCenter.',
-        example='https://sellercenter.com/callbacks',
+        json_schema_extra={'example': 'https://sellercenter.com/callbacks'},
     )
     creationSource: Optional[CreationSource] = Field(
         None, description='The webhook source of creation.'
     )
-    createdAt: Optional[str] = Field(None, example='2022-09-01 16:35:42')
-    updatedAt: Optional[str] = Field(None, example='2022-09-01 16:35:42')
-    isEnabled: Optional[bool] = Field(None, example=True)
+    createdAt: Optional[str] = Field(None, json_schema_extra={'example': '2022-09-01 16:35:42'})
+    updatedAt: Optional[str] = Field(None, json_schema_extra={'example': '2022-09-01 16:35:42'})
+    isEnabled: Optional[bool] = Field(None, json_schema_extra={'example': True})
     events: Optional[List[Event]] = Field(
         None, description='List of webhook related events identified by its alias.'
     )
@@ -4464,27 +4464,27 @@ class Status17(Enum):
 
 class WebhookCallback(BaseModel):
     id: Optional[int] = Field(
-        None, description='Identifier of a Webhook Callback', example=1
+        None, description='Identifier of a Webhook Callback', json_schema_extra={'example': 1}
     )
     sellerId: Optional[int] = Field(
         None,
         description='Identifier of a Seller as assigned by SellerCenter.',
-        example=1024,
+        json_schema_extra={'example': 1024},
     )
     url: Optional[str] = Field(
         None,
         description='The webhook url that will be called by SellerCenter.',
-        example='https://sellercenter.com/callbacks',
+        json_schema_extra={'example': 'https://sellercenter.com/callbacks'},
     )
     status: Optional[Status17] = Field(
-        None, description='Status of the webhook callback.', example='inprogress'
+        None, description='Status of the webhook callback.', json_schema_extra={'example': 'inprogress'}
     )
-    createdAt: Optional[str] = Field(None, example='2023-10-25T23:30:34+00:00')
-    lastCallAt: Optional[str] = Field(None, example='2023-10-25T23:30:34+00:00')
-    event: Optional[str] = Field(None, example='onOrderItemsStatusChanged')
+    createdAt: Optional[str] = Field(None, json_schema_extra={'example': '2023-10-25T23:30:34+00:00'})
+    lastCallAt: Optional[str] = Field(None, json_schema_extra={'example': '2023-10-25T23:30:34+00:00'})
+    event: Optional[str] = Field(None, json_schema_extra={'example': 'onOrderItemsStatusChanged'})
     payload: Optional[str] = Field(
         None,
-        example='{"event":"onOrderItemsStatusChanged","payload":{"OrderId":1,"OrderItemIds":["2"],"NewStatus":"ready_to_ship"}}',
+        json_schema_extra={'example': '{"event":"onOrderItemsStatusChanged","payload":{"OrderId":1,"OrderItemIds":["2"],"NewStatus":"ready_to_ship"}}'},
     )
 
 
@@ -4492,12 +4492,12 @@ class WebhookEntityEvent(BaseModel):
     name: Optional[str] = Field(
         None,
         description='Human readable string identifier of an Event.',
-        example='Updated',
+        json_schema_extra={'example': 'Updated'},
     )
     alias: Optional[str] = Field(
         None,
         description='Human readable string identifier of an Event combined with its Entity.',
-        example='onMetricsUpdated',
+        json_schema_extra={'example': 'onMetricsUpdated'},
     )
 
 
@@ -4514,67 +4514,67 @@ class QualityControlStatus(Enum):
 
 class VisibilityRule(BaseModel):
     productSetId: Optional[int] = Field(
-        None, description='Id of the ProductSet\n', example=1
+        None, description='Id of the ProductSet\n', json_schema_extra={'example': 1}
     )
     hasAtLeastOneActiveProduct: Optional[bool] = Field(
         None,
         description='The flag shows if the ProductSet has at least one active Product\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     isSellerActive: Optional[bool] = Field(
         None,
         description='The flag shows if the Seller of the ProductSet is active or not\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     isBrandActive: Optional[bool] = Field(
         None,
         description='The flag shows if the Brand of the ProductSet is active or not\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     hasZeroPrices: Optional[bool] = Field(
         None,
         description='The flag shows if any variations of the ProductSet has a price with 0 value\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     hasZeroStocks: Optional[bool] = Field(
         None,
         description='The flag shows if any variations of the ProductSet have no stocks in the warehouse\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     hasImages: Optional[bool] = Field(
         None,
         description='The flag shows if at least 1 image was uploaded for the ProductSet\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     hasActiveCategories: Optional[bool] = Field(
         None,
         description='The flag shows if at least 1 image was uploaded for the ProductSet\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     isBrandApproved: Optional[bool] = Field(
         None,
         description='The flag shows if the Brand of the ProductSet is approved or not\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     isProductSetAuthorized: Optional[bool] = Field(
         None,
         description='The flag shows if the ProductSet is authorized or not\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     isLatestVersionUploaded: Optional[bool] = Field(
         None,
         description='The flag shows if the latest version of the ProductSet was uploaded to the store\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     latestVersionUploadedMessage: Optional[str] = Field(
         None,
         description='A detailed message (with error) about the latest uploaded version of the ProductSet\n',
-        example='Latest version not yet uploaded to shopLatest version not yet uploaded to shop',
+        json_schema_extra={'example': 'Latest version not yet uploaded to shopLatest version not yet uploaded to shop'},
     )
     qualityControlStatus: Optional[QualityControlStatus] = Field(
         None,
         description='The quality control status of the ProductSet without details (comment/reject reason)\n',
-        example='pending',
+        json_schema_extra={'example': 'pending'},
     )
 
 
@@ -4584,69 +4584,69 @@ class Status18(Enum):
 
 
 class UserCreate(BaseModel):
-    aclRoleId: Optional[int] = Field(None, description='Role Id', example=2)
-    apiKey: Optional[str] = Field(None, example='093a9e34dqw2312241gcz53766e338abf')
-    email: Optional[str] = Field(None, example='email@gmail.com')
-    languageId: Optional[int] = Field(None, description='Language Id', example=3)
-    name: Optional[str] = Field(None, example='John')
+    aclRoleId: Optional[int] = Field(None, description='Role Id', json_schema_extra={'example': 2})
+    apiKey: Optional[str] = Field(None, json_schema_extra={'example': '093a9e34dqw2312241gcz53766e338abf'})
+    email: Optional[str] = Field(None, json_schema_extra={'example': 'email@gmail.com'})
+    languageId: Optional[int] = Field(None, description='Language Id', json_schema_extra={'example': 3})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'John'})
     notifyNewUser: Optional[bool] = None
-    sellerId: Optional[int] = Field(None, example=1)
+    sellerId: Optional[int] = Field(None, json_schema_extra={'example': 1})
     status: Optional[Status18] = None
     enablePassword: Optional[bool] = Field(
         None,
         description='Indicates whether the user is allowed to use a password for authentication',
-        example=True,
+        json_schema_extra={'example': True},
     )
     switchableSellerIds: Optional[List[int]] = Field(
         None,
         description='Array of seller IDs that the user can switch between',
-        example=[1, 2, 232],
+        json_schema_extra={'example': [1, 2, 232]},
     )
 
 
 class UserUpdate(BaseModel):
-    roleId: Optional[int] = Field(None, description='Role Id', example=2)
-    apiKey: Optional[str] = Field(None, example='093a9e34dqw2312241gcz53766e338abf')
-    email: Optional[str] = Field(None, example='email@gmail.com')
-    name: Optional[str] = Field(None, example='John')
+    roleId: Optional[int] = Field(None, description='Role Id', json_schema_extra={'example': 2})
+    apiKey: Optional[str] = Field(None, json_schema_extra={'example': '093a9e34dqw2312241gcz53766e338abf'})
+    email: Optional[str] = Field(None, json_schema_extra={'example': 'email@gmail.com'})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'John'})
     status: Optional[Status18] = None
     enablePassword: Optional[bool] = Field(
         None,
         description='Indicates whether the user is allowed to use a password for authentication',
-        example=True,
+        json_schema_extra={'example': True},
     )
     switchableSellerIds: Optional[List[int]] = Field(
         None,
         description='Array of seller IDs that the user can switch between',
-        example=[1, 2, 232],
+        json_schema_extra={'example': [1, 2, 232]},
     )
 
 
 class SwitchableSeller(BaseModel):
-    id: Optional[str] = Field(None, example='123')
-    name: Optional[str] = Field(None, example='Seller Name')
+    id: Optional[str] = Field(None, json_schema_extra={'example': '123'})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Seller Name'})
 
 
 class User(BaseModel):
-    id: Optional[int] = Field(None, example=32)
-    email: Optional[str] = Field(None, example='test@example.com')
-    name: Optional[str] = Field(None, example='Test name')
+    id: Optional[int] = Field(None, json_schema_extra={'example': 32})
+    email: Optional[str] = Field(None, json_schema_extra={'example': 'test@example.com'})
+    name: Optional[str] = Field(None, json_schema_extra={'example': 'Test name'})
     apiKey: Optional[str] = Field(
         None,
         description='Only available for admin, maintenance, and seller full access roles',
-        example='5b7878b7b1ed868cc549c2c2f7202309bcfe9737',
+        json_schema_extra={'example': '5b7878b7b1ed868cc549c2c2f7202309bcfe9737'},
     )
-    aclRoleId: Optional[int] = Field(None, example=2)
-    sellerId: Optional[int] = Field(None, example=1)
+    aclRoleId: Optional[int] = Field(None, json_schema_extra={'example': 2})
+    sellerId: Optional[int] = Field(None, json_schema_extra={'example': 1})
     status: Optional[str] = Field(
         None,
         description='Status can be one of these: active, deactivated, seller_deactivated, seller_deleted',
-        example='active',
+        json_schema_extra={'example': 'active'},
     )
     enablePassword: Optional[bool] = Field(
         None,
         description='Indicates if the password is enabled for the user',
-        example=True,
+        json_schema_extra={'example': True},
     )
     switchableSellers: Optional[List[SwitchableSeller]] = Field(
         None, description='List of switchable sellers with their IDs and names'
@@ -4746,17 +4746,17 @@ class Status20(Enum):
 
 
 class OrderHistory(BaseModel):
-    orderItemId: int = Field(..., description='Order item identifier', example=1111)
-    shopSku: str = Field(..., description='Shop SKU', example='164097_L')
-    status: Status20 = Field(..., description='Order Item status.\n', example='pending')
+    orderItemId: int = Field(..., description='Order item identifier', json_schema_extra={'example': 1111})
+    shopSku: str = Field(..., description='Shop SKU', json_schema_extra={'example': '164097_L'})
+    status: Status20 = Field(..., description='Order Item status.\n', json_schema_extra={'example': 'pending'})
     note: Optional[str] = Field(None, description='Additional information')
     createdAt: str = Field(
         ...,
         description='Date when change occurred',
-        example='2021-09-22T23:21:42.123456Z',
+        json_schema_extra={'example': '2021-09-22T23:21:42.123456Z'},
     )
     editor: Optional[str] = Field(
-        None, description='Author of the change', example='admin@sellercenter.net'
+        None, description='Author of the change', json_schema_extra={'example': 'admin@sellercenter.net'}
     )
 
 
@@ -4791,56 +4791,56 @@ class Type10(Enum):
 
 class SellerContract(BaseModel):
     contractId: Optional[int] = Field(
-        None, description='Id of the contract', example=123
+        None, description='Id of the contract', json_schema_extra={'example': 123}
     )
-    sellerId: Optional[int] = Field(None, description='Id of the seller', example=123)
+    sellerId: Optional[int] = Field(None, description='Id of the seller', json_schema_extra={'example': 123})
     type: Optional[Type10] = Field(None, description='Type of the contract')
     url: Optional[str] = Field(
         None,
         description='Url of the contract file',
-        example='https://example.com/contract.pdf',
+        json_schema_extra={'example': 'https://example.com/contract.pdf'},
     )
     approvedAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the contract was approved',
-        example='2022-11-01 03:33:47',
+        json_schema_extra={'example': '2022-11-01 03:33:47'},
     )
     createdAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the contract was created',
-        example='2022-11-01 03:33:47',
+        json_schema_extra={'example': '2022-11-01 03:33:47'},
     )
     updatedAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the contract was last updated',
-        example='2022-11-01 03:33:47',
+        json_schema_extra={'example': '2022-11-01 03:33:47'},
     )
     expirationDate: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the contract will expire',
-        example='2022-11-01 03:33:47',
+        json_schema_extra={'example': '2022-11-01 03:33:47'},
     )
     approverUserName: Optional[str] = Field(
-        None, description='Username of the approver', example='seller1'
+        None, description='Username of the approver', json_schema_extra={'example': 'seller1'}
     )
     approverEmail: Optional[str] = Field(
-        None, description='Email of the approver', example='seller1@sc.net'
+        None, description='Email of the approver', json_schema_extra={'example': 'seller1@sc.net'}
     )
 
 
 class SellerPayoutTransactionStatement(BaseModel):
     statementNumber: Optional[str] = Field(
-        None, description='Url of the contract file', example='TEST1234-20221122'
+        None, description='Url of the contract file', json_schema_extra={'example': 'TEST1234-20221122'}
     )
     createdAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the statement was created',
-        example='2022-11-01 03:33:47',
+        json_schema_extra={'example': '2022-11-01 03:33:47'},
     )
     updatedAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the statement was last updated',
-        example='2022-11-01 03:33:47',
+        json_schema_extra={'example': '2022-11-01 03:33:47'},
     )
     openingBalance: Optional[float] = Field(None, description='The opening balance')
     itemRevenue: Optional[float] = Field(
@@ -4888,15 +4888,15 @@ class Transaction(BaseModel):
     Transaction info
     """
 
-    id: Optional[int] = Field(None, description='Unique ID of transaction', example=1)
-    sellerId: Optional[int] = Field(None, description='Seller Id', example=1)
+    id: Optional[int] = Field(None, description='Unique ID of transaction', json_schema_extra={'example': 1})
+    sellerId: Optional[int] = Field(None, description='Seller Id', json_schema_extra={'example': 1})
     transactionTypeId: Optional[int] = Field(
         None,
         description='Transaction type Id.\nList of types you can find In /v2/transaction/types\n',
-        example=1,
+        json_schema_extra={'example': 1},
     )
     treStatementGroupId: Optional[int] = Field(
-        None, description='Transaction Rule Engine group Id', example=2
+        None, description='Transaction Rule Engine group Id', json_schema_extra={'example': 2}
     )
     transactionGroupName: Optional[str] = Field(
         None, description='Transaction Rule Engine group name'
@@ -4904,33 +4904,33 @@ class Transaction(BaseModel):
     transactionTriggerEventId: Optional[int] = Field(
         None,
         description='Transaction trigger event Id.\nList of events you can find In /v2/transaction/trigger-events\n',
-        example=1,
+        json_schema_extra={'example': 1},
     )
     isUnique: Optional[bool] = Field(None, description='Is unique transaction')
     transactionSource: Optional[Union[TransactionSource, str]] = Field(None, description='Transaction source')
     userId: Optional[int] = Field(None, description='User Id')
     description: Optional[str] = Field(None, description='Info about transaction')
-    value: Optional[float] = Field(None, description='Value', example=65.3)
-    taxesVat: Optional[float] = Field(None, description='Value-Added Tax', example=2.3)
-    taxesWht: Optional[float] = Field(None, description='Withholding tax', example=1.3)
-    isWhtInAmount: Optional[bool] = Field(None, description='Is Withholding tax in amount', example=True)
-    ref: Optional[int] = Field(None, description='Reference to the transaction object. For example on Order Item Id.', example=12)
+    value: Optional[float] = Field(None, description='Value', json_schema_extra={'example': 65.3})
+    taxesVat: Optional[float] = Field(None, description='Value-Added Tax', json_schema_extra={'example': 2.3})
+    taxesWht: Optional[float] = Field(None, description='Withholding tax', json_schema_extra={'example': 1.3})
+    isWhtInAmount: Optional[bool] = Field(None, description='Is Withholding tax in amount', json_schema_extra={'example': True})
+    ref: Optional[int] = Field(None, description='Reference to the transaction object. For example on Order Item Id.', json_schema_extra={'example': 12})
     refDate: Optional[int] = Field(None, description='Reference date')
     number: Optional[str] = Field(None, description='Transaction number')
     transactionStatementId: Optional[int] = Field(None, description='Transaction statement Id')
     createdAt: Optional[datetime_aliased] = Field(
         None,
         description='Transaction create date-time',
-        example='2021-09-22T23:21:42+02:00',
+        json_schema_extra={'example': '2021-09-22T23:21:42+02:00'},
     )
     updatedAt: Optional[datetime_aliased] = Field(
         None,
         description='Transaction last update date-time',
-        example='2021-09-22T23:21:42+02:00',
+        json_schema_extra={'example': '2021-09-22T23:21:42+02:00'},
     )
-    qcUserId: Optional[int] = Field(None, description='QC User Id', example=44)
+    qcUserId: Optional[int] = Field(None, description='QC User Id', json_schema_extra={'example': 44})
     hash: Optional[str] = Field(None, description='Unique hash of transaction')
-    currency: Optional[str] = Field(None, description='Currency', example='USD')
+    currency: Optional[str] = Field(None, description='Currency', json_schema_extra={'example': 'USD'})
     reference: Optional[int] = Field(None, description='Identifier of the reference type.')
     referenceType: Optional[str] = Field(
         None, description='Reference type tels who was the creator of given transaction'
@@ -4968,12 +4968,12 @@ class TransactionType(BaseModel):
     """
 
     accountStatementSection: AccountStatementSection = Field(
-        ..., description='Account statement section', example='other_transactions'
+        ..., description='Account statement section', json_schema_extra={'example': 'other_transactions'}
     )
     description: str = Field(..., description='Description')
     feeType: int = Field(..., description='Fee type')
-    id: int = Field(..., description='Id', example=1)
-    refSource: str = Field(..., description='Ref source', example='sales_order_item')
+    id: int = Field(..., description='Id', json_schema_extra={'example': 1})
+    refSource: str = Field(..., description='Ref source', json_schema_extra={'example': 'sales_order_item'})
     type: Type11 = Field(..., description='Type')
 
 
@@ -4983,7 +4983,7 @@ class Outcome(BaseModel):
     """
 
     value: Optional[str] = Field(
-        None, description='outcome value', example='debit_transaction'
+        None, description='outcome value', json_schema_extra={'example': 'debit_transaction'}
     )
 
 
@@ -5002,31 +5002,31 @@ class TransactionAccountStatementGroup(BaseModel):
     """
 
     accountStatementGroupId: str = Field(
-        ..., description='Account statement group identifier', example=1
+        ..., description='Account statement group identifier', json_schema_extra={'example': 1}
     )
     name: str = Field(
-        ..., description='Account statement group name', example='Payment Deposit'
+        ..., description='Account statement group name', json_schema_extra={'example': 'Payment Deposit'}
     )
     outcome: Outcome = Field(..., description='Outcome')
     transactionTypeId: int = Field(
-        ..., description='Transaction type identifier', example=1
+        ..., description='Transaction type identifier', json_schema_extra={'example': 1}
     )
     accountStatementSection: str = Field(
-        ..., description='Account statement section', example='fees'
+        ..., description='Account statement section', json_schema_extra={'example': 'fees'}
     )
     transactionType: str = Field(
-        ..., description='Transaction type name', example='Selling Fee Credit'
+        ..., description='Transaction type name', json_schema_extra={'example': 'Selling Fee Credit'}
     )
     marker: str = Field(
         ...,
         description='Marker',
-        example='account_statement_group-balance-deduction-10',
+        json_schema_extra={'example': 'account_statement_group-balance-deduction-10'},
     )
     statementType: StatementType5 = Field(
         ..., description='Shows to which statement this groups is associated'
     )
     transactionTypeRefSource: str = Field(
-        ..., description='Transaction type reference source', example='seller'
+        ..., description='Transaction type reference source', json_schema_extra={'example': 'seller'}
     )
 
 
@@ -5035,9 +5035,9 @@ class TransactionTriggerEvent(BaseModel):
     Transaction info
     """
 
-    id: int = Field(..., description='Id', example=1)
-    name: str = Field(..., description='Trigger name', example='order_item_shipped')
-    label: str = Field(..., description='Display name', example='Item Shipped')
+    id: int = Field(..., description='Id', json_schema_extra={'example': 1})
+    name: str = Field(..., description='Trigger name', json_schema_extra={'example': 'order_item_shipped'})
+    label: str = Field(..., description='Display name', json_schema_extra={'example': 'Item Shipped'})
 
 
 class TransactionStatement(BaseModel):
@@ -5045,38 +5045,38 @@ class TransactionStatement(BaseModel):
     Transaction info
     """
 
-    id: int = Field(..., description='Id', example=1)
-    sellerId: int = Field(..., description='Seller Id', example=2)
+    id: int = Field(..., description='Id', json_schema_extra={'example': 1})
+    sellerId: int = Field(..., description='Seller Id', json_schema_extra={'example': 2})
     startDate: datetime_aliased = Field(
         ...,
         description='Transaction statement start date.',
-        example='2021-09-22T23:21:42+02:00',
+        json_schema_extra={'example': '2021-09-22T23:21:42+02:00'},
     )
     endDate: datetime_aliased = Field(
         ...,
         description='Transaction statement end date.',
-        example='2021-09-22T23:21:42+02:00',
+        json_schema_extra={'example': '2021-09-22T23:21:42+02:00'},
     )
     openingBalance: float = Field(
-        ..., description='Balance before transaction', example=32.5
+        ..., description='Balance before transaction', json_schema_extra={'example': 32.5}
     )
     guaranteeDeposit: str = Field(..., description='Guarantee deposit')
     closingBalance: float = Field(
-        ..., description='Balance after transaction', example=30.6
+        ..., description='Balance after transaction', json_schema_extra={'example': 30.6}
     )
-    payout: float = Field(..., description='Payout amount', example=2.4)
-    currency: str = Field(..., description='Currency', example='USD')
+    payout: float = Field(..., description='Payout amount', json_schema_extra={'example': 2.4})
+    currency: str = Field(..., description='Currency', json_schema_extra={'example': 'USD'})
     createdAt: datetime_aliased = Field(
         ...,
         description='Transaction statement create date-time.',
-        example='2021-09-22T23:21:42+02:00',
+        json_schema_extra={'example': '2021-09-22T23:21:42+02:00'},
     )
     updatedAt: datetime_aliased = Field(
         ...,
         description='Transaction statement last update date-time.',
-        example='2021-09-22T23:21:42+02:00',
+        json_schema_extra={'example': '2021-09-22T23:21:42+02:00'},
     )
-    paid: bool = Field(..., description='Is paid', example=False)
+    paid: bool = Field(..., description='Is paid', json_schema_extra={'example': False})
     note: str = Field(..., description='Additional info about statement')
     userId: int = Field(..., description='User Id')
     number: str = Field(..., description='Statement number')
@@ -5084,86 +5084,86 @@ class TransactionStatement(BaseModel):
     paymentRef: str = Field(..., description='Payment reference')
     uploadId: int = Field(..., description='Upload Id')
     paidAt: datetime_aliased = Field(
-        ..., description='Date of payment.', example='2021-09-22T23:21:42+02:00'
+        ..., description='Date of payment.', json_schema_extra={'example': '2021-09-22T23:21:42+02:00'}
     )
     dueAt: datetime_aliased = Field(
-        ..., description='Due at.', example='2021-09-22T23:21:42+02:00'
+        ..., description='Due at.', json_schema_extra={'example': '2021-09-22T23:21:42+02:00'}
     )
 
 
 class Resource(BaseModel):
-    id: Optional[int] = Field(None, description='Id of user resource.\n', example=1)
+    id: Optional[int] = Field(None, description='Id of user resource.\n', json_schema_extra={'example': 1})
     name: Optional[str] = Field(
-        None, description='The name of the user resource.\n', example='login'
+        None, description='The name of the user resource.\n', json_schema_extra={'example': 'login'}
     )
     label: Optional[str] = Field(
-        None, description='The label of the user resource.\n', example='Frontend login'
+        None, description='The label of the user resource.\n', json_schema_extra={'example': 'Frontend login'}
     )
     description: Optional[str] = Field(
         None,
         description='A descriptive text of the user resource.\n',
-        example='Some details about the user resource',
+        json_schema_extra={'example': 'Some details about the user resource'},
     )
     maintenanceOnly: Optional[bool] = Field(
         None,
         description='Whether or not the resource is only available for maintenance user.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     tags: Optional[List[str]] = None
 
 
 class Role(BaseModel):
-    id: Optional[int] = Field(None, description='Id of role.\n', example=1)
+    id: Optional[int] = Field(None, description='Id of role.\n', json_schema_extra={'example': 1})
     name: Optional[str] = Field(
-        None, description='The name of the role.\n', example='maintenance'
+        None, description='The name of the role.\n', json_schema_extra={'example': 'maintenance'}
     )
     displayName: Optional[str] = Field(
-        None, description='The display name of the role.\n', example='Maintenance'
+        None, description='The display name of the role.\n', json_schema_extra={'example': 'Maintenance'}
     )
     group: Optional[str] = Field(
-        None, description='What group the role belongs to.\n', example='venture'
+        None, description='What group the role belongs to.\n', json_schema_extra={'example': 'venture'}
     )
     description: Optional[str] = Field(
         None,
         description='A descriptive text of the user role.\n',
-        example='Some details about the role',
+        json_schema_extra={'example': 'Some details about the role'},
     )
     canBeEditedByRoleIds: Optional[List[int]] = Field(
         None, description='Ids of roles that can edit the role'
     )
     userCount: Optional[int] = Field(
-        None, description='How many users share the user role.\n', example=103
+        None, description='How many users share the user role.\n', json_schema_extra={'example': 103}
     )
     canEdit: Optional[bool] = Field(
         None,
         description='Whether or not you have enough rights to edit the role. Use this to check whether or not to show the resources.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     canDelete: Optional[bool] = Field(
         None,
         description='Whether or not you can delete the role. If there are users that are assigned to the role, this will\nbe false even if you have enough permissions for deletion.\n',
-        example=False,
+        json_schema_extra={'example': False},
     )
     resources: Optional[List[Resource]] = None
 
 
 class UserResource(BaseModel):
-    id: Optional[int] = Field(None, description='Id of user resource.\n', example=1)
+    id: Optional[int] = Field(None, description='Id of user resource.\n', json_schema_extra={'example': 1})
     name: Optional[str] = Field(
-        None, description='The name of the user resource.\n', example='login'
+        None, description='The name of the user resource.\n', json_schema_extra={'example': 'login'}
     )
     label: Optional[str] = Field(
-        None, description='The label of the user resource.\n', example='Frontend login'
+        None, description='The label of the user resource.\n', json_schema_extra={'example': 'Frontend login'}
     )
     description: Optional[str] = Field(
         None,
         description='A descriptive text of the user resource.\n',
-        example='Some details about the user resource',
+        json_schema_extra={'example': 'Some details about the user resource'},
     )
     maintenanceOnly: Optional[bool] = Field(
         None,
         description='Whether or not the resource is only available for maintenance user.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     tags: Optional[List[str]] = None
 
@@ -5172,22 +5172,22 @@ class ApiKeyGenerate(BaseModel):
     apiKey: Optional[str] = Field(
         None,
         description='The generated api key.',
-        example='3b521ea8c6e7fcaf7e9ed82fc9a869bc',
+        json_schema_extra={'example': '3b521ea8c6e7fcaf7e9ed82fc9a869bc'},
     )
 
 
 class RoleAdd(BaseModel):
-    id: Optional[int] = Field(None, description='Id of role.\n', example=123)
+    id: Optional[int] = Field(None, description='Id of role.\n', json_schema_extra={'example': 123})
     displayName: Optional[str] = Field(
-        None, description='The display name of the role.\n', example='Maintenance'
+        None, description='The display name of the role.\n', json_schema_extra={'example': 'Maintenance'}
     )
     group: Optional[str] = Field(
-        None, description='What group the role belongs to.\n', example='venture'
+        None, description='What group the role belongs to.\n', json_schema_extra={'example': 'venture'}
     )
     description: Optional[str] = Field(
         None,
         description='A descriptive text of the user role.\n',
-        example='Some details about the role',
+        json_schema_extra={'example': 'Some details about the role'},
     )
     canBeEditedByRoleIds: Optional[List[int]] = Field(
         None, description='Ids of roles that can edit the role'
@@ -5195,17 +5195,17 @@ class RoleAdd(BaseModel):
 
 
 class RoleEdit(BaseModel):
-    id: Optional[int] = Field(None, description='Id of role.\n', example=123)
+    id: Optional[int] = Field(None, description='Id of role.\n', json_schema_extra={'example': 123})
     displayName: Optional[str] = Field(
-        None, description='The display name of the role.\n', example='Maintenance'
+        None, description='The display name of the role.\n', json_schema_extra={'example': 'Maintenance'}
     )
     group: Optional[str] = Field(
-        None, description='What group the role belongs to.\n', example='venture'
+        None, description='What group the role belongs to.\n', json_schema_extra={'example': 'venture'}
     )
     description: Optional[str] = Field(
         None,
         description='A descriptive text of the user role.\n',
-        example='Some details about the role',
+        json_schema_extra={'example': 'Some details about the role'},
     )
     canBeEditedByRoleIds: Optional[List[int]] = Field(
         None, description='Ids of roles that can edit the role'
@@ -5213,43 +5213,43 @@ class RoleEdit(BaseModel):
 
 
 class EnabledResourcesListItem(BaseModel):
-    id: Optional[int] = Field(None, description='Id of user resource.\n', example=1)
+    id: Optional[int] = Field(None, description='Id of user resource.\n', json_schema_extra={'example': 1})
     name: Optional[str] = Field(
-        None, description='The name of the user resource.\n', example='login'
+        None, description='The name of the user resource.\n', json_schema_extra={'example': 'login'}
     )
     label: Optional[str] = Field(
-        None, description='The label of the user resource.\n', example='Frontend login'
+        None, description='The label of the user resource.\n', json_schema_extra={'example': 'Frontend login'}
     )
     description: Optional[str] = Field(
         None,
         description='A descriptive text of the user resource.\n',
-        example='Some details about the user resource',
+        json_schema_extra={'example': 'Some details about the user resource'},
     )
     maintenanceOnly: Optional[bool] = Field(
         None,
         description='Whether or not the resource is only available for maintenance user.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     tags: Optional[List[str]] = None
 
 
 class ResourcesListItem(BaseModel):
-    id: Optional[int] = Field(None, description='Id of user resource.\n', example=1)
+    id: Optional[int] = Field(None, description='Id of user resource.\n', json_schema_extra={'example': 1})
     name: Optional[str] = Field(
-        None, description='The name of the user resource.\n', example='login'
+        None, description='The name of the user resource.\n', json_schema_extra={'example': 'login'}
     )
     label: Optional[str] = Field(
-        None, description='The label of the user resource.\n', example='Frontend login'
+        None, description='The label of the user resource.\n', json_schema_extra={'example': 'Frontend login'}
     )
     description: Optional[str] = Field(
         None,
         description='A descriptive text of the user resource.\n',
-        example='Some details about the user resource',
+        json_schema_extra={'example': 'Some details about the user resource'},
     )
     maintenanceOnly: Optional[bool] = Field(
         None,
         description='Whether or not the resource is only available for maintenance user.\n',
-        example=True,
+        json_schema_extra={'example': True},
     )
     tags: Optional[List[str]] = None
 
@@ -5295,15 +5295,15 @@ class FinanceStatement(BaseModel):
     currency: str = Field(
         ...,
         description='The currency of the transaction. Three-letter code, ISO 4217 standard.',
-        example='USD',
+        json_schema_extra={'example': 'USD'},
     )
     country: str = Field(
         ...,
         description='The country code of the transaction. Two-letter code, ISO 3166-1 alpha-2 standard.',
-        example='US',
+        json_schema_extra={'example': 'US'},
     )
     type: Type12 = Field(
-        ..., description='The type of the account statement', example='marketplace'
+        ..., description='The type of the account statement', json_schema_extra={'example': 'marketplace'}
     )
 
 
@@ -5398,12 +5398,12 @@ class FinanceStatementDetails(BaseModel):
     currency: str = Field(
         ...,
         description='The currency of the transaction. Three-letter code, ISO 4217 standard.',
-        example='USD',
+        json_schema_extra={'example': 'USD'},
     )
     country: str = Field(
         ...,
         description='The country code of the transaction. Two-letter code, ISO 3166-1 alpha-2 standard.',
-        example='DE',
+        json_schema_extra={'example': 'DE'},
     )
     details: Details
 
@@ -5438,7 +5438,7 @@ class FinanceTransaction(BaseModel):
     number: str = Field(..., description='Transaction number.')
     typeId: int = Field(..., description='The type of the transaction.')
     treStatementGroupId: int = Field(
-        ..., description='Transaction Rule Engine group Id', example=2
+        ..., description='Transaction Rule Engine group Id', json_schema_extra={'example': 2}
     )
     amount: float = Field(..., description='The amount of the transaction.')
     vatAmount: float = Field(..., description='The VAT amount of the transaction.')
@@ -5455,12 +5455,12 @@ class FinanceTransaction(BaseModel):
     currency: str = Field(
         ...,
         description='The currency of the transaction. Three-letter code, ISO 4217 standard.',
-        example='USD',
+        json_schema_extra={'example': 'USD'},
     )
     country: str = Field(
         ...,
         description='The country code of the transaction. Two-letter code, ISO 3166-1 alpha-2 standard.',
-        example='DE',
+        json_schema_extra={'example': 'DE'},
     )
     typeName: str = Field(..., description='The name of the transaction type.')
     groupName: str = Field(..., description='The name of the transaction group.')
@@ -5607,12 +5607,12 @@ class FinanceOrderItemTransaction(BaseModel):
     currency: str = Field(
         ...,
         description='The currency of the transaction. Three-letter code, ISO 4217 standard.',
-        example='USD',
+        json_schema_extra={'example': 'USD'},
     )
     country: str = Field(
         ...,
         description='The country code of the transaction. Two-letter code, ISO 3166-1 alpha-2 standard.',
-        example='DE',
+        json_schema_extra={'example': 'DE'},
     )
     statementType: StatementType8 = Field(
         ..., description="The transaction's associated statement type."
@@ -5745,20 +5745,20 @@ class CurrentFinanceStatementDetails(BaseModel):
 
 class CheckStatus(BaseModel):
     processStatus: Optional[str] = Field(
-        None, description='Current status of the file.', example='FINISHED'
+        None, description='Current status of the file.', json_schema_extra={'example': 'FINISHED'}
     )
 
 
 class CreditNoteNumber(BaseModel):
     generationType: Optional[str] = Field(
-        None, description='Generation type', example='autoincrement_number'
+        None, description='Generation type', json_schema_extra={'example': 'autoincrement_number'}
     )
     prefix: Optional[str] = Field(
-        None, description='Prefix for the credit note number', example='ABC'
+        None, description='Prefix for the credit note number', json_schema_extra={'example': 'ABC'}
     )
-    nextNumber: Optional[int] = Field(None, description='The next number', example=123)
+    nextNumber: Optional[int] = Field(None, description='The next number', json_schema_extra={'example': 123})
     nextFormatedValue: Optional[str] = Field(
-        None, description='The next formated value', example='CNCODEABC123'
+        None, description='The next formated value', json_schema_extra={'example': 'CNCODEABC123'}
     )
 
 
@@ -5777,20 +5777,20 @@ class SellerExternalFile(BaseModel):
     fileType: Optional[FileType] = Field(
         None,
         description='Type of the file. Note that types can be added and/or removed in future.\n',
-        example='generic',
+        json_schema_extra={'example': 'generic'},
     )
     fileName: Optional[str] = Field(
         None,
         description='Name of the file, usually original name of the file. You can use this field to display the file name in the UI  and to understand what kind of information is in certain file.\n',
-        example='Addendum_May2024.pdf',
+        json_schema_extra={'example': 'Addendum_May2024.pdf'},
     )
     uploadedAt: Optional[datetime_aliased] = Field(
         None,
         description='Date and time when the file was uploaded.\n',
-        example='2024-10-08T13:35:17+00:00',
+        json_schema_extra={'example': '2024-10-08T13:35:17+00:00'},
     )
     downloadUrl: Optional[str] = Field(
         None,
         description='Temporal link to download the file. This link is valid for 1 hour and can be used to download the file.\n',
-        example='https://some-s3-bucket.s3.amazonaws.com/path/to/your/object?Expires=EXPIRATION_TIMESTAMP&Signature=SIGNATURE',
+        json_schema_extra={'example': 'https://some-s3-bucket.s3.amazonaws.com/path/to/your/object?Expires=EXPIRATION_TIMESTAMP&Signature=SIGNATURE'},
     )

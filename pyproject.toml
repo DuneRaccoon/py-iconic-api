@@ -1,6 +1,6 @@
 [project]
 name = "py-iconic-api"
-version = "0.2.0"
+version = "0.2.3"
 description = "Python package for interacting with the Iconic API"
 authors = [
     {name = "DuneRaccoon", email = "benjamincsherro@hotmail.com"}
@@ -23,7 +23,7 @@ packages = [{ include = "iconic_api" }]
 [tool.poetry.dependencies]
 python = "^3.10"
 httpx = "^0.28.1"
-pydantic = "^2.11.3"
+pydantic = "^2.13.5"
 
 
 [tool.poetry.group.dev.dependencies]

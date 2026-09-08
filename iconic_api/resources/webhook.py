@@ -217,7 +217,7 @@ class Webhook(IconicResource):
         if not hasattr(self._client, '_make_request_sync'):
             raise TypeError("This method requires a synchronous client")
         
-        request_data = WebhookStatusUpdateRequest(is_enabled=is_enabled)
+        request_data = WebhookStatusUpdateRequest(isEnabled=is_enabled)
         
         url = f"/v2/webhook/{webhook_uuid}/status"
         prepared_data = self._prepare_request_data(request_data.model_dump(by_alias=True))
@@ -234,7 +234,7 @@ class Webhook(IconicResource):
         if not hasattr(self._client, '_make_request_async'):
             raise TypeError("This method requires an asynchronous client")
         
-        request_data = WebhookStatusUpdateRequest(is_enabled=is_enabled)
+        request_data = WebhookStatusUpdateRequest(isEnabled=is_enabled)
         
         url = f"/v2/webhook/{webhook_uuid}/status"
         prepared_data = self._prepare_request_data(request_data.model_dump(by_alias=True))

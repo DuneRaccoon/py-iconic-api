@@ -3,7 +3,6 @@ from __future__ import annotations
 from datetime import date as date_aliased, datetime as datetime_aliased
 from enum import Enum, StrEnum
 from typing import Any, Dict, List, Optional, Union, Literal
-from uuid import UUID
 
 from pydantic import BaseModel, Field, ConfigDict
 
@@ -26,14 +25,16 @@ class BaseRequestParamsModel(BaseModel):
     """
     Base model for all request models.
     """
+    # No json_encoders: it is deprecated in pydantic v2 (removed in v3) and was a
+    # no-op here anyway. It only ever applied to JSON-mode serialisation, and the
+    # two encoders it declared reproduced pydantic v2's own defaults exactly -
+    # datetime -> ISO-8601, UUID -> str. What this model actually uses is
+    # to_api_params(), which is model_dump() in python mode; the datetime -> string
+    # conversion for the query string happens in utils.clean_params().
     model_config = ConfigDict(
         allow_extra = "allow",
         validate_by_name = True,
         use_enum_values = False,
-        json_encoders = {
-            datetime_aliased: lambda v: v.isoformat() if isinstance(v, datetime_aliased) else v,
-            UUID: lambda v: str(v) if isinstance(v, UUID) else v,
-        }
     )
     
     limit: int = 100

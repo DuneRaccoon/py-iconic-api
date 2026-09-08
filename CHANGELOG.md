@@ -9,6 +9,105 @@ Every endpoint, parameter and field claim below was checked against
 `sc-api-schemas/iconic_api_full.json` (OpenAPI 3.0.3, server
 `https://sellercenter-api.theiconic.com.au`).
 
+## [0.2.3] - 2026-09-08
+
+### Changed
+
+- **Requires pydantic `>=2.13.5`** (was `>=2.11.3`), the current release. `poetry.lock`
+  refreshed accordingly: pydantic 2.13.5, pydantic-core 2.46.5, typing-extensions
+  4.16.0, typing-inspection 0.4.4.
+
+### Fixed
+
+- **896 `PydanticDeprecatedSince20` warnings on every import.** The generated models
+  passed OpenAPI's `example=` straight through to `Field()`, which pydantic v2
+  deprecates ("Using extra keyword arguments on `Field` is deprecated ... Use
+  `json_schema_extra` instead") and v3 removes outright. Every one is now
+  `json_schema_extra={'example': ...}`. The rewrite was applied through the AST, one
+  keyword span at a time, so values - including the multi-line lists and dicts - are
+  copied verbatim; `model_json_schema()` for all 298 generated models is byte-identical
+  before and after, so nothing about the published schema changed.
+
+- **`json_encoders` deprecation on `BaseRequestParamsModel`.** Removed rather than
+  ported: it only ever applied to JSON-mode serialisation, and its two encoders
+  (datetime -> ISO-8601, UUID -> str) reproduced pydantic v2's own defaults exactly, so
+  `model_dump_json()` output is unchanged. `to_api_params()` uses `model_dump()` in
+  python mode, which `json_encoders` never touched; the datetime -> string conversion
+  for the query string happens in `utils.clean_params()`.
+
+  Loading the SDK inside Odoo went from **897 deprecation warnings per module load to
+  zero**.
+
+- **`WebhookResource.update_webhook_status()` could never succeed.** Both the sync and
+  async versions built `WebhookStatusUpdateRequest(is_enabled=...)`, but that field is
+  aliased to `isEnabled` and the model does not populate by field name, so every call
+  raised `ValidationError` before a request was made. They now pass `isEnabled=`, as
+  `create_webhook` and `update_webhook` already did. Found while running the test suite
+  against the new pydantic; it fails identically on 2.11.4, so it is not an upgrade
+  regression. `tests/test_webhook_integration.py` used the same wrong spelling in three
+  places and has been corrected - the suite now passes (was 1 failed / 2 passed).
+
+### Verified
+
+- Every candidate breaking change in the pydantic 2.12 and 2.13 release notes (62 of
+  them) was checked against this codebase; none applies. The SDK uses only
+  `BaseModel`/`RootModel`, `Field`, `ConfigDict`, enum annotations and
+  `model_dump`/`model_dump_json`/`model_validate`/`model_json_schema` - no validators,
+  serializers, `validate_call`, dataclasses, `TypedDict`, settings or JSON-schema
+  customisation, which is where those changes land.
+- Differential test: all 320 models were validated against payloads built from the
+  spec's own `example` values under pydantic 2.11.4 and 2.13.5. Validation outcome,
+  serialised output and error types/locations are identical on both.
+
+### Known issues (not changed here)
+
+- `BaseRequestParamsModel.model_config` declares `allow_extra="allow"`. That is not a
+  pydantic config key - the real one is `extra` - so pydantic silently ignores it and
+  the default `extra="ignore"` applies. Any filter a caller passes that the request
+  model does not declare (`ListOrdersRequest(**params)`, `ListAttributesRequest(**kwargs)`,
+  `InvoiceRequest(**kwargs)`) is therefore dropped without a word. Renaming the key to
+  `extra` restores the intended pass-through but is a behaviour change, so it is left
+  for a deliberate decision.
+
+- Six generated models (`ExportSalesReport`, `ExportOrderItemTransaction`,
+  `ExportReportTransaction`, `ExportUnifiedTransactions` x2, `InvoiceTaxDocument`) give
+  an enum-typed field a raw string default, e.g. `statementType: Optional[StatementType] =
+  Field('marketplace', ...)`. Defaults are not validated, so serialising one of these
+  emits `PydanticSerializationUnexpectedValue(Expected 'enum')`. None of the six is
+  referenced anywhere in this SDK or its consumers, so nothing emits it today.
+
+## [0.2.2] - 2026-09-08
+
+### Fixed
+
+- **`Brand.list_all_brands` silently truncated at 5,000 brands.** `MAX_BRAND_PAGES`
+  was 50 and the walk fetched 100 per page, so a seller with more than 5,000 brands
+  (Oxford has roughly that) got a short list with no error and no warning — a brand
+  past the cut simply could not be found in the picker. The walk now reads the
+  envelope's `totalCount`, stops exactly when it has everything, logs a warning if it
+  ever stops short, and the page cap is raised to 500 so it is a runaway guard rather
+  than a limit anyone reaches.
+
+### Added
+
+- **`Brand.search_brands(name, limit, offset, **filters)`** returning a
+  `PaginatedResponse`, so one request yields both a page and `total_count`. Uses the
+  API's own `name` filter (`GET /v2/brands?name=`) for server-side search. Async twin
+  included.
+
+## [0.2.1] - 2026-09-07
+
+### Fixed
+
+- **`Brand.list_brands` never worked.** `GET /v2/brands` answers with the
+  `{"items": [...], "pagination": {...}}` envelope, but the method iterated the
+  response directly — walking the dict's KEYS — so every call raised
+  `TypeError: Brand() argument after ** must be a mapping, not str`. It now reads the
+  envelope, and supplies the `limit`/`offset` the endpoint marks REQUIRED even when
+  given a bare filter dict.
+- Added `Brand.list_all_brands` to walk limit/offset, since a caller that reads only
+  the first page silently hides brands.
+
 ## [0.2.0] - 2026-09-07
 
 ### BREAKING: `IconicResource.__getattr__` no longer fabricates HTTP calls
