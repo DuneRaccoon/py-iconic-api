@@ -787,7 +787,6 @@ client = IconicClient(
     client_secret="your_client_secret",
     instance_domain="your_instance.sellercenter.com.au",
     rate_limit_rps=20,  # Requests per second
-    redis_url="redis://localhost:6379/0"  # Optional Redis for distributed rate limiting
 )
 ```
 

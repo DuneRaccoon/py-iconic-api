@@ -6,9 +6,6 @@ import logging
 from typing import Optional, Any, Dict, Union, Type, Tuple, List
 from urllib.parse import urlparse
 
-from leakybucket import LeakyBucket, AsyncLeakyBucket
-from leakybucket.persistence import InMemoryLeakyBucketStorage, RedisLeakyBucketStorage
-
 from .exceptions import (
     IconicAPIError, 
     AuthenticationError, 
@@ -46,7 +43,6 @@ class BaseIconicClient:
         client_id: str,
         client_secret: str,
         instance_domain: str, # e.g., "your-instance.com" (used for both token and API base URLs)
-        redis_url: Optional[str] = None,
         rate_limit_rps: float = DEFAULT_RATE_LIMIT_RPS,
         timeout: float = 60.0,
         token_buffer_seconds: int = DEFAULT_TOKEN_BUFFER_SECONDS,
