@@ -9,6 +9,66 @@ Every endpoint, parameter and field claim below was checked against
 `sc-api-schemas/iconic_api_full.json` (OpenAPI 3.0.3, server
 `https://sellercenter-api.theiconic.com.au`).
 
+## [0.2.5] - 2026-09-16
+
+### Fixed
+
+- **Listing orders failed completely.** `Order.targetToShip` is declared
+  `required: true, nullable: true` in the OpenAPI document; the code generator honoured
+  `required` and ignored `nullable`, so the model demanded a `str`. Every live order
+  returns `null` for it, so `orders.list_orders()` raised `ValidationError` on the first
+  record and no page could be read at all. Thirty-seven fields across fifteen models had
+  the same defect, including `TransactionStatement.paidAt`/`payout`/`closingBalance`
+  (the payout reconciliation path) and five fields on `OrderItemShipment`.
+
+- **Zero-date sentinels aborted order parsing.** The platform returns MySQL's
+  `0000-00-00 00:00:00` for "never", which arrives timezone-shifted as
+  `-0001-11-30T00:00:00.000000+10:04`. No date parser accepts a year of -1. Such values,
+  and empty strings in date fields, are now read as `None`. Confirmed present in live
+  data (`items[].lastStatusChangedAt`).
+
+- **Unknown enum values aborted parsing.** `GET /v2/finance/transaction/types` returns an
+  `accountStatementSection` the spec does not list, and all 91 records failed. Enum-typed
+  fields are now `Union[TheEnum, str]` with `union_mode='left_to_right'`: a known value
+  still validates to the enum member exactly as before, an unrecognised one passes
+  through as a plain string instead of destroying the response. Applied to the 79 bare
+  enum fields; the four already declared `Union[..., str]` are untouched, since changing
+  their resolution would alter values callers already receive.
+
+### Changed
+
+- **No field in `openapi_generated.py` is required any more.** These are response models:
+  reporting what arrived is their job, and one unexpected null must never cost the caller
+  the whole page. Scalar and object fields default to `None`; **containers keep the
+  guarantee they had** - a list or dict field that could never be `None` before still
+  cannot be, it becomes empty instead, so existing loops stay safe. Request models
+  (`models/api_requests.py`, `models/webhook.py`, `models/stock.py`,
+  `models/attribute.py`) are untouched and still enforce their required fields - no
+  generated model is used to build a request body.
+
+- New `models/_response_base.py` with `IconicResponseModel`, the base every generated
+  model now inherits. It carries the sentinel-date and container normalisation in one
+  place rather than field by field, and caches its per-class keysets.
+
+### Verified
+
+- Against live data: **1333 records across 15 endpoints, all validating** (orders over
+  four time windows plus a second page, order items, failure reasons, shipment providers,
+  finance transactions, order-item transactions, trigger events, transaction types,
+  products, product sets, brands, category tree). Before the change, 0 of 500 orders and
+  0 of 91 transaction types validated.
+- 14 unit tests covering both reported payloads, valid dates surviving untouched,
+  container normalisation, empty and unknown-field payloads, enum drift in and out of
+  lists, and a guard that request models remain strict.
+
+### Known issues (not changed here)
+
+- `WebhookResource.list_webhooks()` issues `GET /v2/webhook`, which the API answers with
+  **405**; the spec defines the listing at `GET /v2/webhooks` (plural). Not a validation
+  problem, so it is left for a deliberate fix.
+- `BaseRequestParamsModel.model_config` still declares `allow_extra="allow"` instead of
+  `extra="allow"` (see 0.2.3); undeclared filters are still silently dropped.
+
 ## [0.2.3] - 2026-09-08
 
 ### Changed
