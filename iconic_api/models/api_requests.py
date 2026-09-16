@@ -4,7 +4,7 @@ from datetime import date as date_aliased, datetime as datetime_aliased
 from enum import Enum, StrEnum
 from typing import Any, Dict, List, Optional, Union, Literal
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 from ..models import (
     Order, 
@@ -19,11 +19,15 @@ from ..models import (
     ProductSetCreated
 )
 
+from .order_search import OrderSearchFilteredStatus, OrderSearchKey
 from ..utils import clean_params
 
-class BaseRequestParamsModel(BaseModel):
-    """
-    Base model for all request models.
+class BaseRequestModel(BaseModel):
+    """Shared configuration and query-string rendering for every request model.
+
+    Split out of ``BaseRequestParamsModel`` so an endpoint that takes no pagination -
+    ``GET /v2/orders/search`` - can render its parameters without sending a ``limit``
+    and ``offset`` it does not accept.
     """
     # No json_encoders: it is deprecated in pydantic v2 (removed in v3) and was a
     # no-op here anyway. It only ever applied to JSON-mode serialisation, and the
@@ -37,9 +41,6 @@ class BaseRequestParamsModel(BaseModel):
         use_enum_values = False,
     )
     
-    limit: int = 100
-    offset: int = 0
-    
     def to_api_params(self) -> Dict[str, Any]:
         """
         Converts the model instance to a dictionary of API parameters.
@@ -47,6 +48,13 @@ class BaseRequestParamsModel(BaseModel):
         params = self.model_dump(exclude_none=True)
         cleaned_params = clean_params(params)
         return cleaned_params
+
+
+class BaseRequestParamsModel(BaseRequestModel):
+    """Base model for the paginated list endpoints."""
+
+    limit: int = 100
+    offset: int = 0
 
 class UpdateProductSetRequest(BaseRequestParamsModel):
     """
@@ -418,3 +426,36 @@ class ListAttributesRequest(BaseRequestParamsModel):
         params["offset"] = self.offset
         
         return clean_params(params)
+
+
+class SearchOrdersRequest(BaseRequestModel):
+    """Request model for ``GET /v2/orders/search``.
+
+    Both ``key`` and ``query`` are mandatory. The API does not validate their absence -
+    it answers a request missing either with a **500 Internal Server Error** - so they
+    are enforced here instead, where the message can say what went wrong.
+
+    ``key`` is typed loosely on purpose: the enum documents the five values the API
+    accepts today, but a value it adds tomorrow still goes through, and an unrecognised
+    one comes back as a 400 that names every valid choice.
+    """
+
+    key: Union[OrderSearchKey, str] = OrderSearchKey.ORDER_NUMBER
+    query: str
+    filtered_status: Optional[Union[OrderSearchFilteredStatus, str]] = None
+
+    @field_validator("query")
+    @classmethod
+    def _reject_empty_query(cls, value: str) -> str:
+        if not value or not value.strip():
+            raise ValueError(
+                "query must not be empty - the API answers an empty query with a 500"
+            )
+        return value
+
+    @field_validator("key")
+    @classmethod
+    def _reject_empty_key(cls, value):
+        if not value or (isinstance(value, str) and not value.strip()):
+            raise ValueError("key must not be empty")
+        return value

@@ -442,6 +442,46 @@ print(f"Total orders in the last 30 days: {len(all_orders)}")
 client.close()
 ```
 
+#### Searching Orders
+
+`GET /v2/orders/search` powers a type-ahead box. It returns **suggestions, not orders** -
+take the `value` of a suggestion and pass it to `list_orders()` to fetch the orders.
+
+```python
+from iconic_api.client import IconicClient
+from iconic_api.models import OrderSearchKey, OrderSearchFilteredStatus
+
+client = IconicClient(
+    client_id="your_client_id",
+    client_secret="your_client_secret",
+    instance_domain="https://sellercenter-api.theiconic.com.au/"
+)
+
+# Order numbers starting with 27694
+for suggestion in client.orders.search_orders("27694"):
+    print(suggestion.label, suggestion.value)
+
+# Search by customer name, product, order source or cancelation reason
+customers = client.orders.search_orders("smith", key=OrderSearchKey.CUSTOMER)
+products = client.orders.search_orders("shirt", key=OrderSearchKey.PRODUCT)
+# products carry the product name in `sublabel`
+for p in products:
+    print(p.value, "-", p.sublabel)
+
+# Restrict suggestions to one status or shipment group
+shipped = client.orders.search_orders(
+    "27694", filtered_status=OrderSearchFilteredStatus.SHIPPED
+)
+
+client.close()
+```
+
+`key` defaults to `OrderSearchKey.ORDER_NUMBER` (`order_nr`). Note the API's source key is
+`source`, not the `order_source` given in The Iconic's documentation, and omitting
+`filtered_status` searches every status. `query` may not be empty - the API answers an
+empty query with a 500, so the client refuses it first. The async client exposes the same
+call as `search_orders_async()`.
+
 #### Updating Order Status
 
 ```python

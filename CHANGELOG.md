@@ -9,6 +9,47 @@ Every endpoint, parameter and field claim below was checked against
 `sc-api-schemas/iconic_api_full.json` (OpenAPI 3.0.3, server
 `https://sellercenter-api.theiconic.com.au`).
 
+## [0.2.6] - 2026-09-16
+
+### Added
+
+- **`orders.search_orders()`** and **`orders.search_orders_async()`**, wrapping
+  `GET /v2/orders/search`. The endpoint returns autocomplete *suggestions*, not orders:
+  one row per match with a `label` to display, a `value` to feed back into an order
+  filter, and a `sublabel` carrying the product name when searching by product. Feed the
+  values to `list_orders()` to fetch the orders themselves.
+
+  New in `models/order_search.py`: `OrderSearchKey`, `OrderSearchFilteredStatus`,
+  `OrderSearchResult` and `OrderSearchResponse`; `SearchOrdersRequest` joins the other
+  request models in `models/api_requests.py`.
+
+  Two details the published documentation gets wrong, both confirmed against the live
+  API, whose validation errors enumerate the accepted values:
+
+  * the source key is **`source`**, not the documented `order_source` - passing
+    `order_source` is rejected with a 400,
+  * `filteredStatus` accepts **26** values, not the 24 listed; `group_kpi_rejection_rate`
+    and `group_kpi_return_rate` are missing from the docs. The documented default of
+    `status_pending` is also wrong: omitting it searches every status.
+
+  `key` and `query` are both mandatory and the API answers a request missing either with
+  a **500**, so `SearchOrdersRequest` refuses to build one - the caller gets a
+  `ValidationError` naming the problem instead of an opaque server error. `key` is typed
+  `Union[OrderSearchKey, str]` so a value The Iconic adds later still goes through.
+
+### Changed
+
+- `BaseRequestParamsModel` split: the shared config and `to_api_params()` moved up into
+  a new `BaseRequestModel`, and `BaseRequestParamsModel` now adds only `limit`/`offset`
+  on top. `GET /v2/orders/search` takes no pagination, so its request model must not
+  send either. Existing request models are unaffected.
+
+### Notes
+
+- `sc-api-schemas/iconic_api_full.json` does not describe this endpoint (nor
+  `POST /v2/orders/anonymize`); the vendored spec snapshot predates them. The
+  implementation was built from the live API's behaviour and its validation errors.
+
 ## [0.2.5] - 2026-09-16
 
 ### Fixed

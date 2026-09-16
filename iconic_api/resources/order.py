@@ -14,7 +14,12 @@ from ..models import (
     OrderFinance,
     OrderHistory,
     OrderItem,
-    ListOrdersRequest
+    ListOrdersRequest,
+    SearchOrdersRequest,
+    OrderSearchFilteredStatus,
+    OrderSearchKey,
+    OrderSearchResponse,
+    OrderSearchResult,
 )
 
 class BulkFetchTransactionsData(BaseModel):
@@ -124,6 +129,99 @@ class Order(IconicResource):
         else:
             raise TypeError("This method requires an asynchronous client")
             
+    def search_orders(
+        self,
+        query: str,
+        key: Union[OrderSearchKey, str] = OrderSearchKey.ORDER_NUMBER,
+        filtered_status: Optional[Union[OrderSearchFilteredStatus, str]] = None,
+    ) -> List[OrderSearchResult]:
+        """
+        Look up autocomplete suggestions for an order filter.
+
+        This endpoint returns **suggestions, not orders**: one row per match, carrying a
+        label to display and a value to feed back into a filter. To fetch the orders
+        themselves, take the values from here and pass them to :meth:`list_orders` (for
+        ``order_nr``, the value is the order number).
+
+        Args:
+            query: The text to match. Must not be empty - the API answers an empty
+                query with a 500 rather than a validation error.
+            key: What to match ``query`` against. Defaults to the order number.
+                Note the published documentation names the source key ``order_source``;
+                the API accepts ``source``, which is what :class:`OrderSearchKey` holds.
+            filtered_status: Restrict suggestions to one status or shipment group.
+                Omitting it searches every status.
+
+        Returns:
+            The suggestion rows, in the order the API returned them. An empty list means
+            nothing matched - it is not an error.
+
+        Raises:
+            ValidationError: if ``key`` or ``query`` is empty.
+        """
+        params = SearchOrdersRequest(
+            key=key, query=query, filtered_status=filtered_status
+        ).to_api_params()
+
+        url = "/v2/orders/search"
+
+        if hasattr(self._client, '_make_request_sync'):
+            response = self._client._make_request_sync("GET", url, params=params)
+            return self._parse_search_response(response)
+        else:
+            raise TypeError("This method requires a synchronous client")
+
+    async def search_orders_async(
+        self,
+        query: str,
+        key: Union[OrderSearchKey, str] = OrderSearchKey.ORDER_NUMBER,
+        filtered_status: Optional[Union[OrderSearchFilteredStatus, str]] = None,
+    ) -> List[OrderSearchResult]:
+        """
+        Look up autocomplete suggestions for an order filter.
+
+        This endpoint returns **suggestions, not orders**: one row per match, carrying a
+        label to display and a value to feed back into a filter. To fetch the orders
+        themselves, take the values from here and pass them to :meth:`list_orders` (for
+        ``order_nr``, the value is the order number).
+
+        Args:
+            query: The text to match. Must not be empty - the API answers an empty
+                query with a 500 rather than a validation error.
+            key: What to match ``query`` against. Defaults to the order number.
+                Note the published documentation names the source key ``order_source``;
+                the API accepts ``source``, which is what :class:`OrderSearchKey` holds.
+            filtered_status: Restrict suggestions to one status or shipment group.
+                Omitting it searches every status.
+
+        Returns:
+            The suggestion rows, in the order the API returned them. An empty list means
+            nothing matched - it is not an error.
+
+        Raises:
+            ValidationError: if ``key`` or ``query`` is empty.
+        """
+        params = SearchOrdersRequest(
+            key=key, query=query, filtered_status=filtered_status
+        ).to_api_params()
+
+        url = "/v2/orders/search"
+
+        if hasattr(self._client, '_make_request_async'):
+            response = await self._client._make_request_async("GET", url, params=params)
+            return self._parse_search_response(response)
+        else:
+            raise TypeError("This method requires an asynchronous client")
+
+    @staticmethod
+    def _parse_search_response(response: Any) -> List[OrderSearchResult]:
+        """Read the ``{"results": [...]}`` envelope, tolerating a bare list."""
+        if not response:
+            return []
+        if isinstance(response, list):
+            return [OrderSearchResult(**row) for row in response]
+        return OrderSearchResponse(**response).results
+
     def get_by_order_id(self, order_id: Union[int, str]) -> "Order":
         """
         Get an order by its numeric Iconic order id.
