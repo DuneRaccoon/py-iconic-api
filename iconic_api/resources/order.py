@@ -409,14 +409,11 @@ class Order(IconicResource):
         
     def get_order_shipment_providers(self) -> List[str]:
         """
-        Get the shipment providers for this order.
+        Get the shipment providers for any order.
 
         Returns:
             The shipment providers
         """
-        if not self.id:
-            raise ValueError("Cannot get shipment providers without an order id")
-
         url = f"/v2/orders-shipment-providers"
 
         if hasattr(self._client, '_make_request_sync'):
