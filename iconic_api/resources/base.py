@@ -474,3 +474,16 @@ class IconicResource:
                 break
                 
             offset += limit
+            
+    # ------------------------------------------------------------------
+    # SC wide methods
+    # ------------------------------------------------------------------
+    
+    def get_enabled_countries(self) -> List[str]:
+        """Get the enabled countries."""
+        if not hasattr(self._client, '_make_request_sync'):
+            raise TypeError("This method requires a synchronous client")
+        
+        url = "/v2/countries/enabled"
+        response = self._client._make_request_sync("GET", url)
+        return response

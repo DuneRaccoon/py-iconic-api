@@ -406,6 +406,24 @@ class Order(IconicResource):
             return OrderFinance(**response)
         else:
             raise TypeError("This method requires an asynchronous client")
+        
+    def get_order_shipment_providers(self) -> List[str]:
+        """
+        Get the shipment providers for this order.
+
+        Returns:
+            The shipment providers
+        """
+        if not self.id:
+            raise ValueError("Cannot get shipment providers without an order id")
+
+        url = f"/v2/orders-shipment-providers"
+
+        if hasattr(self._client, '_make_request_sync'):
+            response = self._client._make_request_sync("GET", url)
+            return response
+        else:
+            raise TypeError("This method requires a synchronous client")
 
     # ------------------------------------------------------------------
     # Write-back
